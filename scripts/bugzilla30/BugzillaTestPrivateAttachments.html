@@ -1,0 +1,822 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>Test Private Attachments and Comments</title>
+  </head>
+
+  <body>
+    <table cellpadding="1" cellspacing="1" border="1">
+      <thead>
+        <tr>
+          <td rowspan="1" colspan="3">Bugzilla Test Private Attachments</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>loadConfigFileAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>storeParams</td>
+          <td>inst branch admin_user_login admin_user_passwd unprivileged_user_login unprivileged_user_passwd</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}relogin.cgi</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log In</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>log_in</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Parameters</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>exact:Configuration: Required Settings</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Group Security</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>exact:Configuration: Group Security</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>//select[@name='insidergroup']</td>
+          <td>label=admin</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Save Changes']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Parameters Updated</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=New</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><b>assertNoErrorOnNextAndGoto</b></td>
+          <td>Actual value 'Select Classification' did not match 'Enter Bug'</td>
+          <td>classification_end_1</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Unclassified</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><b>label</b></td>
+          <td>classification_end_1</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug: TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>short_desc</td>
+          <td>Some comments are private</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>short_desc</td>
+          <td>Some comments are private</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>and some attachments too, like this one.</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>and some attachments too, like this one.</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>commentprivacy</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>commentprivacy</td>
+          <td>on</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@value='Add an attachment']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>data</td>
+          <td>/var/www/html/selenium/bugzilla/patch.diff</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>data</td>
+          <td>patch.diff</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>description</td>
+          <td>private attachment, v1</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>description</td>
+          <td>private attachment, v1</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>ispatch</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>ispatch</td>
+          <td>on</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>commit</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>regexp:Bug \d+ Submitted</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>storeValue</td>
+          <td>//input[@name='id' and @type='hidden']</td>
+          <td>bug1_id</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>private attachment, v1 (</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>and some attachments too, like this one</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>isprivate-0</td>
+          <td>on</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Add an attachment</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Create New Attachment for Bug #${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>data</td>
+          <td>/var/www/html/selenium/bugzilla/patch.diff</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>data</td>
+          <td>patch.diff</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>description</td>
+          <td>public attachment, v2</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>description</td>
+          <td>public attachment, v2</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>ispatch</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>ispatch</td>
+          <td>on</td>
+        </tr>
+        <tr>
+          <td>verifyTextPresent</td>
+          <td>private attachment, v1</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>this patch is public. Everyone can see it.</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>this patch is public. Everyone can see it.</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>isprivate</td>
+          <td>off</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>create</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Changes Submitted</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Retrieve the attachment ID -->
+        <tr>
+          <td>storeAttribute</td>
+          <td>//a[@title='public attachment, v2']@href</td>
+          <td>alink</td>
+        </tr>
+        <tr>
+          <td>parseString</td>
+          <td>${alink}</td>
+          <td>(?:id=(\d+))</td>
+        </tr>
+        <tr>
+          <td>store</td>
+          <td>javascript{storedVars["_match"][2]}</td>
+          <td>attachment1_id</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} – Some comments are private</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>public attachment, v2 (</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>this patch is public. Everyone can see it</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>isprivate-1</td>
+          <td>off</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>quicksearch</td>
+          <td>${bug1_id}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>quicksearch</td>
+          <td>${bug1_id}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>find_top</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} – Some comments are private</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextNotPresent</td>
+          <td>private attachment, v1</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>public attachment, v2 (</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextNotPresent</td>
+          <td>and some attachments too, like this one</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>this patch is public. Everyone can see it</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log In</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${unprivileged_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${unprivileged_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${unprivileged_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${unprivileged_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>log_in</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} – Some comments are private</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextNotPresent</td>
+          <td>private attachment, v1</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextPresent</td>
+          <td>public attachment, v2</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextNotPresent</td>
+          <td>and some attachments too, like this one</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextPresent</td>
+          <td>this patch is public. Everyone can see it</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Add an attachment</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Create New Attachment for Bug #${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>data</td>
+          <td>/var/www/html/selenium/bugzilla/patch.diff</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>data</td>
+          <td>patch.diff</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>ispatch</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>ispatch</td>
+          <td>on</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>[no attachments can be made obsolete]</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>description</td>
+          <td>My patch, which I should see, always</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>description</td>
+          <td>My patch, which I should see, always</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>This is my patch!</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>This is my patch!</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>create</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Changes Submitted</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Retrieve the attachment ID -->
+        <tr>
+          <td>storeAttribute</td>
+          <td>//a[@title='My patch, which I should see, always']@href</td>
+          <td>alink</td>
+        </tr>
+        <tr>
+          <td>parseString</td>
+          <td>${alink}</td>
+          <td>(?:id=(\d+))</td>
+        </tr>
+        <tr>
+          <td>store</td>
+          <td>javascript{storedVars["_match"][2]}</td>
+          <td>attachment2_id</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} – Some comments are private</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>My patch, which I should see, always (</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>This is my patch!</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log In</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>log_in</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>//input[@class='txt' and @name='quicksearch']</td>
+          <td>${bug1_id}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@class='txt' and @name='quicksearch']</td>
+          <td>${bug1_id}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>find_top</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} – Some comments are private</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//a[@href='attachment.cgi?id=${attachment2_id}&action=edit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Attachment ${attachment2_id} Details for Bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>isprivate</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>isprivate</td>
+          <td>on</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>Making the powerless user's patch private.</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>Making the powerless user's patch private.</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>update</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Changes Submitted</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} – Some comments are private</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>My patch, which I should see, always (</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>isprivate-3</td>
+          <td>on</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Making the powerless user's patch private.</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>quicksearch</td>
+          <td>${bug1_id}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>quicksearch</td>
+          <td>${bug1_id}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>find_top</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} – Some comments are private</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextNotPresent</td>
+          <td>private attachment, v1</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextNotPresent</td>
+          <td>My patch, which I should see, always (</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>This is my patch!</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextNotPresent</td>
+          <td>Making the powerless user's patch private</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=log in</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${unprivileged_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${unprivileged_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${unprivileged_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${unprivileged_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>log_in</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} – Some comments are private</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>My patch, which I should see, always (</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=My patch, which I should see, always</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- You get an empty title when viewing an attachment. -->
+        <tr>
+          <td>assertTitle</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

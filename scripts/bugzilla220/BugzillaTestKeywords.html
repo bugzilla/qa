@@ -1,0 +1,768 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>Test Keywords</title>
+  </head>
+
+  <body>
+  <table cellpadding="1" cellspacing="1" border="1">
+    <thead>
+      <tr>
+        <td rowspan="1" colspan="3">Bugzilla Test Keywords</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>loadConfigFileAndWait</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeParams</td>
+        <td>inst branch test_bug_1 test_bug_2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editkeywords.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Find and delete all key-selenium-foo keywords if they exist -->
+      <tr>
+        <td>storeText</td>
+        <td>//table</td>
+        <td>keytable</td>
+      </tr>
+      <tr>
+        <td>parseString</td>
+        <td>${keytable}</td>
+        <td>(?:key-selenium-\w+)</td>
+      </tr>
+      <!-- We have to store the result in a variable, else it will be overwritten -->
+      <tr>
+        <td>storeMatches</td>
+        <td>key</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>store</td>
+        <td>javascript{storedVars["key"][0]}</td>
+        <td>links_found</td>
+      </tr>
+      <tr>
+        <td><b>while</b></td>
+        <td>${links_found} > 0</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- storeURLOfLink() takes a litteral string, and so we cannot use javascript{} there -->
+      <tr>
+        <td>store</td>
+        <td>javascript{storedVars["key"][storedVars["links_found"]]}</td>
+        <td>link_name</td>
+      </tr>
+      <tr>
+        <td>storeURLOfLink</td>
+        <td>link=${link_name}</td>
+        <td>myurl</td>
+      </tr>
+      <tr>
+        <td>parseString</td>
+        <td>${myurl}</td>
+        <td>(?:id=([0-9]+))</td>
+      </tr>
+      <tr>
+        <td>store</td>
+        <td>javascript{storedVars["_match"][2]}</td>
+        <td>keyid</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href="editkeywords.cgi?action=delete&id=${keyid}"]</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- If the keyword had bugs associated with it, the user gets a prompt -->
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>'Are you sure you want to delete' was found in page text.</td>
+        <td>keyword_had_no_bugs</td>
+      </tr>
+      <tr>
+        <td>assertTextNotPresent</td>
+        <td>Are you sure you want to delete</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Yes, really delete the keyword']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>keyword_had_no_bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Delete keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Rebuilding the keyword cache everytime may take a long time. Let's do it later -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Edit more keywords</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>store</td>
+        <td>javascript{storedVars["links_found"] - 1}</td>
+        <td>links_found</td>
+      </tr>
+      <tr>
+        <td><b>endWhile</b></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Rebuild the keyword cache -->
+      <tr>
+        <td>open</td>
+        <td>${inst}sanitycheck.cgi?rebuildkeywordcache=1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bugzilla Sanity Check</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Keywords</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Known state is none of the testing keywords exist and current page is editkeywords.cgi -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Add a new keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Add keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>name</td>
+        <td>key-selenium-kone</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>name</td>
+        <td>key-selenium-kone</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>description</td>
+        <td>Hopefully an ice cream</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>description</td>
+        <td>Hopefully an ice cream</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Add']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Adding new keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=add another keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Add keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>name</td>
+        <td>key-selenium-kone</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>name</td>
+        <td>key-selenium-kone</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>description</td>
+        <td>FIX ME!</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>description</td>
+        <td>FIX ME!</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Add']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Keyword Already Exists</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>goBackAndWait</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Add keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>name</td>
+        <td>key-selenium-ktwo</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>name</td>
+        <td>key-selenium-ktwo</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Add']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Adding new keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Edit existing keywords</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=key-selenium-ktwo</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>name</td>
+        <td>key-selenium-kone</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>name</td>
+        <td>key-selenium-kone</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>description</td>
+        <td>the second keyword</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>description</td>
+        <td>the second keyword</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Update']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Keyword Already Exists</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>key-selenium-kone already exists</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>goBackAndWait</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>name</td>
+        <td>key-selenium-ktwo</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>name</td>
+        <td>key-selenium-ktwo</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Update']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Update keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoIf</b></td>
+        <td>storedVars["branch"] == 222</td>
+        <td>footer_222_1</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>id</td>
+        <td>${test_bug_1}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>id</td>
+        <td>${test_bug_1}</td>
+      </tr>
+      <tr>
+        <td><b>gotoLabel</b></td>
+        <td>footer_222_end_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>footer_222_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>quicksearch</td>
+        <td>${test_bug_1}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>quicksearch</td>
+        <td>${test_bug_1}</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>footer_222_end_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Find']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug ${test_bug_1} - .*</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Do not overwrite existing keywords -->
+      <tr>
+        <td>storeValue</td>
+        <td>keywords</td>
+        <td>keywords_list</td>
+      </tr>
+      <tr>
+        <td>store</td>
+        <td>javascript{storedVars["keywords_list"] + ", key-selenium-kone"}</td>
+        <td>keywords_list</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>keywords</td>
+        <td>${keywords_list}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>keywords</td>
+        <td>${keywords_list}</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Commit']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug processed</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Changes submitted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoIf</b></td>
+        <td>storedVars["branch"] == 222</td>
+        <td>footer_222_2</td>
+      </tr>
+      <!-- Stupid hack because show_bug/process_bug also have an input field with the same name -->
+      <tr>
+        <td>type</td>
+        <td>//input[@name="id" and @size="6"]</td>
+        <td>${test_bug_2}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>//input[@name="id" and @size="6"]</td>
+        <td>${test_bug_2}</td>
+      </tr>
+      <tr>
+        <td><b>gotoLabel</b></td>
+        <td>footer_222_end_2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>footer_222_2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>quicksearch</td>
+        <td>${test_bug_2}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>quicksearch</td>
+        <td>${test_bug_2}</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>footer_222_end_2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Find']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug ${test_bug_2} - .*</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Do not overwrite existing keywords -->
+      <tr>
+        <td>storeValue</td>
+        <td>keywords</td>
+        <td>keywords_list</td>
+      </tr>
+      <tr>
+        <td>store</td>
+        <td>javascript{storedVars["keywords_list"] + ", key-selenium-ktwo, KEY-SeleniUm-kOne"}</td>
+        <td>keywords_list</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>keywords</td>
+        <td>${keywords_list}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>keywords</td>
+        <td>${keywords_list}</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Commit']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug processed</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Changes submitted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Now let's do a query based on these keywords -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Search</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Find a Specific Bug' did not match 'Search for bugs'</td>
+        <td>jump_advanced_search</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search for bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Advanced Search</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search for bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>jump_advanced_search</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>selectNone</td>
+        <td>product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>selectNone</td>
+        <td>bug_status</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>keywords</td>
+        <td>key-selenium-kone</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>keywords</td>
+        <td>key-selenium-kone</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Search']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>2 bugs found.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Search for the second keyword -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Search</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search for bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>selectNone</td>
+        <td>product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>selectNone</td>
+        <td>bug_status</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>keywords</td>
+        <td>key-selenium-ktWO</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>keywords</td>
+        <td>key-selenium-ktWO</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Search']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>One bug found.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Edit Search</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search for bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- All bug statuses should already be unselected -->
+      <tr>
+        <td>selectNone</td>
+        <td>product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>selectNone</td>
+        <td>bug_status</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>keywords</td>
+        <td>selenium</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>keywords</td>
+        <td>selenium</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Search']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Unknown Keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>selenium is not a known keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=listed here</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bugzilla Keyword Descriptions</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Verify that describekeywords.cgi displays correct data and links -->
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>key-selenium-kone</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Hopefully an ice cream</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>key-selenium-ktwo</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>the second keyword</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='buglist.cgi?keywords=key-selenium-kone']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyElementPresent</td>
+        <td>//a[@href='show_bug.cgi?id=${test_bug_1}']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyElementPresent</td>
+        <td>//a[@href='show_bug.cgi?id=${test_bug_2}']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>2 bugs found</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>goBackAndWait</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='buglist.cgi?keywords=key-selenium-ktwo']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyElementPresent</td>
+        <td>//a[@href='show_bug.cgi?id=${test_bug_2}']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>One bug found</td>
+        <td>&nbsp;</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

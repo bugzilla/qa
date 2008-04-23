@@ -1,0 +1,1092 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>Test Default Groups</title>
+  </head>
+
+  <body>
+    <table cellpadding="1" cellspacing="1" border="1">
+      <thead>
+        <tr>
+          <td rowspan="1" colspan="3">Bugzilla Test Default Groups</td>
+        </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>loadConfigFileAndWait</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeParams</td>
+        <td>inst branch admin_user_login admin_user_passwd admin_group</td>
+        <td>&nbsp;</td>
+      </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}relogin.cgi</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}editparams.cgi?section=groupsecurity</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+      <tr>
+        <td>type</td>
+        <td>Bugzilla_password</td>
+        <td>${admin_user_passwd}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>Bugzilla_password</td>
+        <td>${admin_user_passwd}</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Log in']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>exact:Configuration: Group Security</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='makeproductgroups' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='useentrygroupdefault' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@name='action' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Parameters Updated</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>no_classification_1</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='  editproducts.cgi?action=add&amp;classification=Unclassified']</td>
+        <td>&nbsp;</td>
+      </tr>
+    <tr>
+      <td><b>gotoLabel</b></td>
+      <td>classification_end_1</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>label</b></td>
+      <td>no_classification_1</td>
+      <td>&nbsp;</td>
+    </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Add</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Create a new product -->
+      <tr>
+        <td>assertTitle</td>
+        <td>Add Product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>product</td>
+        <td>ready_to_die</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>product</td>
+        <td>ready_to_die</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>description</td>
+        <td>will die</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>description</td>
+        <td>will die</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@value='Add']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>New Product Created</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Make sure a group has been created and is active -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeURLOfLink</td>
+        <td>link=ready_to_die</td>
+        <td>group_url</td>
+      </tr>
+      <tr>
+        <td>parseString</td>
+        <td>${group_url}</td>
+        <td>(?:group=(\d+))</td>
+      </tr>
+      <tr>
+        <td>store</td>
+        <td>javascript{storedVars["_match"][2]}</td>
+        <td>group1_id</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Access to bugs in the ready_to_die product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=ready_to_die</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Change Group: ready_to_die</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Admin group must inherit from it -->
+      <tr>
+        <td>verifyValue</td>
+        <td>grp-${admin_group}</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>bless-${admin_group}</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>isactive</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>classification_end_2</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=ready_to_die</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Edit Group Access Controls:</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Group Controls for ready_to_die</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>entry_${group1_id}</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>canedit_${group1_id}</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>membercontrol_${group1_id}</td>
+        <td>label=Default</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>othercontrol_${group1_id}</td>
+        <td>label=NA</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>no_classification_3</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Stupid! There are two whitespaces in front of the URL -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='  editproducts.cgi?action=del&amp;product=ready_to_die&amp;classification=Unclassified']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoLabel</b></td>
+        <td>classification_end_3</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>no_classification_3</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='  editproducts.cgi?action=del&amp;product=ready_to_die']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_3</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Delete Product 'ready_to_die'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@value='Yes, delete']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Deleting product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Product ready_to_die deleted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The corresponding group must still be here -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Access to bugs in the ready_to_die product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Turn off the ENTRY bit by default -->
+      <tr>
+        <td>open</td>
+        <td>${inst}editparams.cgi?section=groupsecurity</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>exact:Configuration: Group Security</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='useentrygroupdefault' and @value='0']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@name='action' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Parameters Updated</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>no_classification_4</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='  editproducts.cgi?action=add&amp;classification=Unclassified']</td>
+        <td>&nbsp;</td>
+      </tr>
+    <tr>
+      <td><b>gotoLabel</b></td>
+      <td>classification_end_4</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>label</b></td>
+      <td>no_classification_4</td>
+      <td>&nbsp;</td>
+    </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Add</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_4</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Add Product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>product</td>
+        <td>ready_to_die</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>product</td>
+        <td>ready_to_die</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>description</td>
+        <td>will die</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>description</td>
+        <td>will die</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@value='Add']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>New Product Created</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Make sure a group has been created and is active -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The trailing _ is not an error :) -->
+      <tr>
+        <td>storeURLOfLink</td>
+        <td>link=ready_to_die_</td>
+        <td>group_url</td>
+      </tr>
+      <tr>
+        <td>parseString</td>
+        <td>${group_url}</td>
+        <td>(?:group=(\d+))</td>
+      </tr>
+      <tr>
+        <td>store</td>
+        <td>javascript{storedVars["_match"][2]}</td>
+        <td>group2_id</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Access to bugs in the ready_to_die product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=ready_to_die_</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Change Group: ready_to_die_</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Admin group must inherit from it -->
+      <tr>
+        <td>verifyValue</td>
+        <td>grp-${admin_group}</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>bless-${admin_group}</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>isactive</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>classification_end_5</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_5</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=ready_to_die</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>ready_to_die_: Default/NA</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Edit Group Access Controls:</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Group Controls for ready_to_die</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>entry_${group1_id}</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>entry_${group2_id}</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>canedit_${group1_id}</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>canedit_${group2_id}</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>membercontrol_${group1_id}</td>
+        <td>label=NA</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>othercontrol_${group1_id}</td>
+        <td>label=NA</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>membercontrol_${group2_id}</td>
+        <td>label=Default</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>othercontrol_${group2_id}</td>
+        <td>label=NA</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>no_classification_6</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='  editproducts.cgi?action=del&amp;product=ready_to_die&amp;classification=Unclassified']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoLabel</b></td>
+        <td>classification_end_6</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>no_classification_6</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='  editproducts.cgi?action=del&amp;product=ready_to_die']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_6</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Delete Product 'ready_to_die'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@value='Yes, delete']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Deleting product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Product ready_to_die deleted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Now turn off the creation group param -->
+      <tr>
+        <td>open</td>
+        <td>${inst}editparams.cgi?section=groupsecurity</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>exact:Configuration: Group Security</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='makeproductgroups' and @value='0']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='useentrygroupdefault' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@name='action' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Parameters Updated</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>no_classification_7</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='  editproducts.cgi?action=add&amp;classification=Unclassified']</td>
+        <td>&nbsp;</td>
+      </tr>
+    <tr>
+      <td><b>gotoLabel</b></td>
+      <td>classification_end_7</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>label</b></td>
+      <td>no_classification_7</td>
+      <td>&nbsp;</td>
+    </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Add</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_7</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Add Product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>product</td>
+        <td>ready_to_die</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>product</td>
+        <td>ready_to_die</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>description</td>
+        <td>will die</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>description</td>
+        <td>will die</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@value='Add']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>New Product Created</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>classification_end_71</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_71</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=ready_to_die</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Edit Group Access Controls:</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Group Controls for ready_to_die</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- No group should have been created nor any group associated with this product -->
+      <tr>
+        <td>verifyTextNotPresent</td>
+        <td>ready_to_die__</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>entry_${group1_id}</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>canedit_${group1_id}</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>entry_${group2_id}</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>canedit_${group2_id}</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>membercontrol_${group1_id}</td>
+        <td>label=NA</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>othercontrol_${group1_id}</td>
+        <td>label=NA</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>membercontrol_${group2_id}</td>
+        <td>label=NA</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>othercontrol_${group2_id}</td>
+        <td>label=NA</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextNotPresent</td>
+        <td>ready_to_die__</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Delete all created groups -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='editgroups.cgi?action=del&amp;group=${group1_id}']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Delete group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>removeusers</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Make sure a warning is displayed about this product-group relationship -->
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>This group is tied to the ready_to_die product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>unbind</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@value='Yes, delete']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Deleting group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>The group ready_to_die has been deleted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=group list</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='editgroups.cgi?action=del&amp;group=${group2_id}']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Delete group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>removeusers</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@value='Yes, delete']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Deleting group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>The group ready_to_die_ has been deleted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>no_classification_8</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='  editproducts.cgi?action=del&amp;product=ready_to_die&amp;classification=Unclassified']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoLabel</b></td>
+        <td>classification_end_8</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>no_classification_8</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='  editproducts.cgi?action=del&amp;product=ready_to_die']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_8</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Delete Product 'ready_to_die'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@value='Yes, delete']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Deleting product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Product ready_to_die deleted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Log out</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Logged Out</td>
+        <td>&nbsp;</td>
+      </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,1345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>Test Groups</title>
+  </head>
+
+  <body>
+    <table cellpadding="1" cellspacing="1" border="1">
+    <thead>
+      <tr>
+        <td rowspan="1" colspan="3">Bugzilla Test Groups (*)</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>loadConfigFileAndWait</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeParams</td>
+        <td>inst branch</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editgroups.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Add Group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Add group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>name</td>
+        <td>Selenium-test</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>name</td>
+        <td>Selenium-test</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>desc</td>
+        <td>Test group for Selenium</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>desc</td>
+        <td>Test group for Selenium</td>
+      </tr>
+      <!-- The checkbox should previously be on. If it's off, turn it on. -->
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'off' did not match 'on'</td>
+        <td>jump_checkbox_1</td>
+      </tr>
+      <tr>
+        <td>assertValue</td>
+        <td>//input[@name="isactive" and @value="1"]</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name="isactive" and @value="1"]</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>jump_checkbox_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The checkbox should previously be on. If it's off, let it off. -->
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'on' did not match 'off'</td>
+        <td>jump_checkbox_2</td>
+      </tr>
+      <tr>
+        <td>assertValue</td>
+        <td>//input[@name="insertnew" and @value="1"]</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name="insertnew" and @value="1"]</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>jump_checkbox_2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Add']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Adding new group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- We have to store the new group ID -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=group list</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeURLOfLink</td>
+        <td>link=Selenium-test</td>
+        <td>group_url</td>
+      </tr>
+      <tr>
+        <td>parseString</td>
+        <td>${group_url}</td>
+        <td>(?:group=(\d+))</td>
+      </tr>
+      <tr>
+        <td>store</td>
+        <td>javascript{storedVars["_match"][2]}</td>
+        <td>group_id</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>classification_end_1</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Edit Group Access Controls:</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Group Controls for TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>membercontrol_${group_id}</td>
+        <td>label=Shown</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>othercontrol_${group_id}</td>
+        <td>label=Mandatory</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='submit']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Update group access controls for TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=New</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Enter Bug'</td>
+        <td>classification_end_2</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug: TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Test group for Selenium</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The checkbox MUST BE unchecked. Else that's a bug -->
+      <tr>
+        <td>assertValue</td>
+        <td>bit-${group_id}</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>bit-${group_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>short_desc</td>
+        <td>bug restricted to the Selenium group</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>short_desc</td>
+        <td>bug restricted to the Selenium group</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>comment</td>
+        <td>should be invisible</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>comment</td>
+        <td>should be invisible</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='    Commit    ']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug \d+ Submitted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Bug 1 has been restricted to a group -->
+      <tr>
+        <td>storeValue</td>
+        <td>//input[@name='id' and @type='hidden']</td>
+        <td>bug1_id</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Test group for Selenium</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The checkbox MUST BE checked. Else that's a bug -->
+      <tr>
+        <td>assertValue</td>
+        <td>bit-${group_id}</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Search</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Find a Specific Bug' did not match 'Search for bugs'</td>
+        <td>jump_advanced_search_1</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search for bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Advanced Search</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search for bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>jump_advanced_search_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>product</td>
+        <td>label=TestProduct</td>
+      </tr>
+      <tr>
+        <td>selectNone</td>
+        <td>bug_status</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>selectMulti</td>
+        <td>bug_status</td>
+        <td>UNCONFIRMED NEW</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>field0-0-0</td>
+        <td>label=Group</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>field0-0-0</td>
+        <td>label=Group</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>type0-0-0</td>
+        <td>label=is equal to</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>type0-0-0</td>
+        <td>label=is equal to</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>value0-0-0</td>
+        <td>Selenium-test</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>value0-0-0</td>
+        <td>Selenium-test</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Search']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>One bug found</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>bug restricted to the Selenium group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>newqueryname</td>
+        <td>Selenium bugs</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>newqueryname</td>
+        <td>Selenium bugs</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Remember search']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>OK, you have a new search named Selenium bugs.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List: Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>One bug found</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Make sure the bug we just submitted is restricted -->
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug1_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Change Group: Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertValue</td>
+        <td>//input[@name='isactive' and @value='1']</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='isactive' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Updating group hierarchy</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=New</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Enter Bug'</td>
+        <td>classification_end_3</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_3</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug: TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>short_desc</td>
+        <td>bug restricted to the Selenium group</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>short_desc</td>
+        <td>bug restricted to the Selenium group</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>comment</td>
+        <td>should be *visible* when created (the group is disabled)</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>comment</td>
+        <td>should be *visible* when created (the group is disabled)</td>
+      </tr>
+      <tr>
+        <td>verifyTextNotPresent</td>
+        <td>Test group for Selenium</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The checkbox MUST NOT BE present. Else that's a bug -->
+      <tr>
+        <td>assertElementNotPresent</td>
+        <td>bit-${group_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='    Commit    ']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug \d+ Submitted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeValue</td>
+        <td>//input[@name='id' and @type='hidden']</td>
+        <td>bug2_id</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List: Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>One bug found</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The first bug we submitted is restricted, but the second one should not be -->
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug1_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextNotPresent</td>
+        <td>${bug2_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertValue</td>
+        <td>//input[@name='isactive' and @value='1']</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='isactive' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Change Group: Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Updating group hierarchy</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List: Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>One bug found</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Enabling the group should not affect the bugs as this group is not mandatory -->
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug1_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextNotPresent</td>
+        <td>${bug2_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>classification_end_4</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_4</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Selenium-test: Shown/Mandatory</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Edit Group Access Controls:</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>membercontrol_${group_id}</td>
+        <td>label=Mandatory</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='submit']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Update group access controls for TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoIf<b></td>
+        <td>storedVars["branch"] == 220</td>
+        <td>text_update_220</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Adding bugs to group 'Selenium-test' which is mandatory for this product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoLabel</b></td>
+        <td>text_update_220_end</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label<b></td>
+        <td>text_update_220</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Adding bugs to Mandatory group Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>text_update_220_end</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List: Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Making the group mandatory must restrict ALL bugs from this product -->
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug1_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug2_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=New</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Enter Bug'</td>
+        <td>classification_end_5</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_5</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug: TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>short_desc</td>
+        <td>Selenium-test group mandatory</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>short_desc</td>
+        <td>Selenium-test group mandatory</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>comment</td>
+        <td>group enabled</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>comment</td>
+        <td>group enabled</td>
+      </tr>
+      <tr>
+        <td>verifyTextNotPresent</td>
+        <td>Test group for Selenium</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The checkbox MUST NOT BE present. Else that's a bug -->
+      <tr>
+        <td>assertElementNotPresent</td>
+        <td>bit-${group_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='    Commit    ']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug \d+ Submitted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeValue</td>
+        <td>//input[@name='id' and @type='hidden']</td>
+        <td>bug3_id</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List: Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The newly created bug MUST be restricted to the group -->
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug1_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug2_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug3_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Change Group: Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertValue</td>
+        <td>//input[@name='isactive' and @value='1']</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='isactive' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Updating group hierarchy</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=New</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Enter Bug'</td>
+        <td>classification_end_6</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_6</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug: TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>short_desc</td>
+        <td>bug restricted to the Selenium-test group</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>short_desc</td>
+        <td>bug restricted to the Selenium-test group</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>comment</td>
+        <td>group disabled</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>comment</td>
+        <td>group disabled</td>
+      </tr>
+      <tr>
+        <td>verifyTextNotPresent</td>
+        <td>Test group for Selenium</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The checkbox MUST NOT BE present. Else that's a bug -->
+      <tr>
+        <td>assertElementNotPresent</td>
+        <td>bit-${group_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='    Commit    ']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug \d+ Submitted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeValue</td>
+        <td>//input[@name='id' and @type='hidden']</td>
+        <td>bug4_id</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List: Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The newly created bug SHOULD NOT be restricted to the group -->
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug1_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug2_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug3_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextNotPresent</td>
+        <td>${bug4_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Change Group: Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertValue</td>
+        <td>//input[@name='isactive' and @value='1']</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='isactive' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Updating group hierarchy</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- We have enabled the mandatory group again. This should protect the last bug we created -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List: Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- The last created bug SHOULD now be restricted to the mandatory group -->
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug1_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug2_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug3_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>${bug4_id}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Products</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>classification_end_7</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_7</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Selenium-test: Mandatory/Mandatory</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Edit Group Access Controls:</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Group Controls for TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Selenium-test</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>membercontrol_${group_id}</td>
+        <td>label=NA</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>othercontrol_${group_id}</td>
+        <td>label=NA</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='submit']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Make sure you get a warning if you try to change the group to NA/NA -->
+      <tr>
+        <td>assertTitle</td>
+        <td>Confirm Group Control Change for product 'TestProduct'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>the group is no longer applicable and will be removed</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit Groups</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//a[@href='editgroups.cgi?action=del&amp;group=${group_id}']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Delete group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Do you really want to delete this group?</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- There are bugs restricted to this group. A warning should be displayed about -->
+      <tr>
+        <td>assertElementPresent</td>
+        <td>removebugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>removebugs</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Remove all bugs from this group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- There are users belonging to this group. A warning should be displayed about -->
+      <tr>
+        <td>assertElementPresent</td>
+        <td>removeusers</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>removeusers</td>
+        <td>off</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Remove all users from this group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Yes, delete']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Deleting group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>This group cannot be deleted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>goBackAndWait</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>removebugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>removebugs</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>removeusers</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>removeusers</td>
+        <td>on</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Yes, delete']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Deleting group</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>The group Selenium-test has been deleted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Bug List: Selenium bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- No more bugs are associated with this deleted group -->
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Zarro Boogs found</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Forget Search 'Selenium bugs'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Search is gone</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>OK, the Selenium bugs search is gone</td>
+        <td>&nbsp;</td>
+      </tr>
+    </tbody>
+  </table>
+  </body>
+</html>

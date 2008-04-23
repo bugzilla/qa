@@ -1,0 +1,735 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>Test Require Login</title>
+  </head>
+
+  <body>
+    <table cellpadding="1" cellspacing="1" border="1">
+    <thead>
+      <tr>
+        <td rowspan="1" colspan="3">Bugzilla Test Require Login</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>loadConfigFileAndWait</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeParams</td>
+        <td>inst branch admin_user_passwd admin_user_login unprivileged_user_login</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}relogin.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Logged Out</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Log In</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>Bugzilla_login</td>
+        <td>${admin_user_login}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>Bugzilla_login</td>
+        <td>${admin_user_login}</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>Bugzilla_password</td>
+        <td>${admin_user_passwd}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>Bugzilla_password</td>
+        <td>${admin_user_passwd}</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Log in']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bugzilla Main Page</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Parameters</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>exact:Configuration: Required Settings</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=User Authentication</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>exact:Configuration: User Authentication</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='requirelogin' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Parameters Updated</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Log out</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Logged Out</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Now you're logged out with 'requirelogin' turned on -->
+      <tr>
+        <td>open</td>
+        <td>${inst}attachment.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}buglist.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}chart.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}colchange.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- accessing config.cgi is fine, but no sensitive data will be displayed -->
+      <tr>
+        <td>open</td>
+        <td>${inst}config.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyNotTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}createaccount.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Create a new Bugzilla account</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}describecomponents.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}describekeywords.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}duplicates.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editclassifications.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editcomponents.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editflagtypes.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editgroups.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editkeywords.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editmilestones.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editparams.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editproducts.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editsettings.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editusers.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editvalues.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editversions.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editwhines.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}enter_bug.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- accessing index.cgi is fine as you can log in from here -->
+      <tr>
+        <td>open</td>
+        <td>${inst}index.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Bugzilla Main Page</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}long_list.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}page.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}post_bug.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}process_bug.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}query.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}query.cgi?format=report-table</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}query.cgi?format=report-graph</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}quips.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}relogin.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Logged Out</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}report.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}reports.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}request.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}sanitycheck.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}show_activity.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}showattachment.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}show_bug.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}showdependencygraph.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}showdependencytree.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}sidebar.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}summarize_time.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}token.cgi?a=reqpw&loginname=${unprivileged_user_login}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyNotTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}userprefs.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}votes.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}votes.cgi?action=show_user</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}votes.cgi?action=show_bug</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}xml.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Login again to change parameter -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Home</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bugzilla Main Page</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Log In</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>Bugzilla_login</td>
+        <td>${admin_user_login}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>Bugzilla_login</td>
+        <td>${admin_user_login}</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>Bugzilla_password</td>
+        <td>${admin_user_passwd}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>Bugzilla_password</td>
+        <td>${admin_user_passwd}</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Log in']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bugzilla Main Page</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Parameters</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- now reset the parameter -->
+      <tr>
+        <td>assertTitle</td>
+        <td>exact:Configuration: Required Settings</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=User Authentication</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>exact:Configuration: User Authentication</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='requirelogin' and @value='0']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Parameters Updated</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- back to shared testing -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Log out</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Logged Out</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Search</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyNotTitle</td>
+        <td>Log in to Bugzilla</td>
+        <td>&nbsp;</td>
+      </tr>
+    </tbody>
+    </table>
+  </body>
+</html>

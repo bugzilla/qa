@@ -1,0 +1,974 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>BugzillaTestVotes</title>
+  </head>
+
+  <body>
+    <table cellpadding="1" cellspacing="1" border="1">
+      <thead>
+        <tr>
+          <td rowspan="1" colspan="3">Bugzilla Test Votes</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>loadConfigFileAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>storeParams</td>
+          <td>inst branch admin_user_login admin_user_passwd permanent_user</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}relogin.cgi</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log In</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Log in']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+    <!-- Let's not waste our time fighting against classifications -->
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Parameters</td>
+          <td>&nbsp;</td>
+        </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>exact:Configuration: Required Settings</td>
+      <td>&nbsp;</td>
+    </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Bug Fields</td>
+        <td>&nbsp;</td>
+      </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>exact:Configuration: Bug Fields</td>
+      <td>&nbsp;</td>
+    </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='useclassification' and @value='0']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Parameters Updated</td>
+      <td>&nbsp;</td>
+    </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Products</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Select product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Add</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Add Product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>product</td>
+          <td>Eureka</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>product</td>
+          <td>Eureka</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>description</td>
+          <td>A great new product</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>description</td>
+          <td>A great new product</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>votesperuser</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>votesperuser</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>maxvotesperbug</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>maxvotesperbug</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>votestoconfirm</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>votestoconfirm</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@value='Add']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>New Product Created</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=add at least one component</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Add component to Product 'Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>component</td>
+          <td>Pegasus</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>component</td>
+          <td>Pegasus</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>description</td>
+          <td>A constellation in the north hemisphere.</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>description</td>
+          <td>A constellation in the north hemisphere.</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>initialowner</td>
+          <td>${permanent_user}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>initialowner</td>
+          <td>${permanent_user}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>create</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Adding new Component of Product 'Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>The component 'Pegasus' has been created</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=New</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Eureka</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug: Eureka</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>bug_status</td>
+          <td>label=NEW</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>short_desc</td>
+          <td>Aries</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>short_desc</td>
+          <td>Aries</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>1st constellation</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>1st constellation</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>commit</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>regexp:Bug \d+ Submitted</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Save the bug ID. We will come back to it later -->
+        <tr>
+          <td>storeValue</td>
+          <td>//input[@name='id' and @type='hidden']</td>
+          <td>bug1_id</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Votes: 0</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>flatlink=Vote for this bug</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Change Votes</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Eureka (Note: only 5 votes allowed per bug in this product.)</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>bug_${bug1_id}</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>bug_${bug1_id}</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>change</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Change Votes</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>4 votes used out of 10 allowed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=New</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Eureka</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug: Eureka</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>bug_status</td>
+          <td>label=UNCONFIRMED</td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>bug_status</td>
+          <td>label=UNCONFIRMED</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>short_desc</td>
+          <td>Taurus</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>short_desc</td>
+          <td>Taurus</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>2nd constellation</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>2nd constellation</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>commit</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>regexp:Bug \d+ Submitted</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Save the bug ID. We will come back to it later -->
+        <tr>
+          <td>storeValue</td>
+          <td>//input[@name='id' and @type='hidden']</td>
+          <td>bug2_id</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>flatlink=Vote for this bug</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Change Votes</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>bug_${bug2_id}</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>bug_${bug2_id}</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>change</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Change Votes</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextPresent</td>
+          <td>Bug ${bug2_id} confirmed by number of votes</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=New</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Eureka</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug: Eureka</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>bug_status</td>
+          <td>label=UNCONFIRMED</td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>bug_status</td>
+          <td>label=UNCONFIRMED</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>short_desc</td>
+          <td>Gemini</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>short_desc</td>
+          <td>Gemini</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>3rd constellation</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>3rd constellation</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>commit</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>regexp:Bug \d+ Submitted</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Save the bug ID. We will come back to it later -->
+        <tr>
+          <td>storeValue</td>
+          <td>//input[@name='id' and @type='hidden']</td>
+          <td>bug3_id</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>flatlink=Vote for this bug</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Change Votes</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>bug_${bug1_id}</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>bug_${bug1_id}</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>bug_${bug3_id}</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>bug_${bug3_id}</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>change</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Change Votes</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>bug_${bug2_id}</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>bug_${bug2_id}</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>change</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Illegal Vote</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You may only use at most 5 votes for a single bug in the Eureka product, but you are trying to use 15</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>bug_${bug2_id}</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>bug_${bug2_id}</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>bug_${bug1_id}</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>bug_${bug1_id}</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>change</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Illegal Vote</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You tried to use 12 votes in the Eureka product, which exceeds the maximum of 10 votes for this product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Products</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Select product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Eureka</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Edit Product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>votestoconfirm</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>votestoconfirm</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>submit</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Updating Product 'Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Updated number of votes needed to confirm a bug from 3 to 2</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Bug ${bug3_id} confirmed by number of votes</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link='Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Edit Product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>maxvotesperbug</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>maxvotesperbug</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>submit</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Updating Product 'Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Updated maximum votes per bug from 5 to 4</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>removed votes for bug ${bug2_id} from ${admin_user_login}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=${bug2_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug2_id} – Taurus</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Votes: 4</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link='Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Edit Product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>votesperuser</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>votesperuser</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>submit</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Updating Product 'Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Updated votes per user from 10 to 5</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>removed votes for bug</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=${bug3_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug3_id} – Gemini</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Votes: 2</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>link='Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link='Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Edit Product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>votestoconfirm</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>votestoconfirm</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>submit</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Updating Product 'Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Updated number of votes needed to confirm a bug from 2 to 0</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=New</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Eureka</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug: Eureka</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertSelectNotPresentOptions</td>
+          <td>bug_status</td>
+          <td>UNCONFIRMED</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>short_desc</td>
+          <td>Cancer</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>short_desc</td>
+          <td>Cancer</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>4th constellation</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>4th constellation</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>commit</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>regexp:Bug \d+ Submitted</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Save the bug ID. We will come back to it later -->
+        <tr>
+          <td>storeValue</td>
+          <td>//input[@name='id' and @type='hidden']</td>
+          <td>bug4_id</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>product</td>
+          <td>label=TestProduct</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>commit</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Verify New Product Details...</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>change_product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug4_id} processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Products</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Select product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//a[@href='  editproducts.cgi?action=del&product=Eureka']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Delete Product 'Eureka'</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>There are 3 bugs entered for this product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Pegasus: A constellation in the north hemisphere</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>delete</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Deleting product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

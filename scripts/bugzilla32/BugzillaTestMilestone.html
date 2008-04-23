@@ -1,0 +1,727 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>Test Milestones</title>
+  </head>
+
+  <body>
+  <table cellpadding="1" cellspacing="1" border="1">
+  <thead>
+    <tr>
+      <td rowspan="1" colspan="3">Bugzilla Test Milestones</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>loadConfigFileAndWait</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>storeParams</td>
+      <td>inst branch</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>open</td>
+      <td>${inst}</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Bugzilla Main Page</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Parameters</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>exact:Configuration: Required Settings</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Bug Fields</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>exact:Configuration: Bug Fields</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>click</td>
+      <td>//input[@name='usetargetmilestone' and @value='1']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Save Changes']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Parameters Updated</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Bug Change Policies</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>exact:Configuration: Bug Change Policies</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>click</td>
+      <td>//input[@name='musthavemilestoneonaccept' and @value='1']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>click</td>
+      <td>//input[@name='letsubmitterchoosemilestone' and @value='1']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Save Changes']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Parameters Updated</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Products</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>assertNoErrorOnNextAndGoto</b></td>
+      <td>Actual value 'Select Classification' did not match 'Select product'</td>
+      <td>classifications_off</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Select product</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Unclassified</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>label</b></td>
+      <td>classifications_off</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=TestProduct</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Edit Product</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Edit milestones:</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Select milestone of product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Add</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Add Milestone to Product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>type</td>
+      <td>milestone</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <td>verifyValue</td>
+      <td>milestone</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <td>type</td>
+      <td>sortkey</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>verifyValue</td>
+      <td>sortkey</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Add']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Adding new Milestone of Product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <!-- Now that we have created a new milestone, we will use it to test 'musthavemilestoneonaccept' -->
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=New</td>
+      <td>&nbsp;</td>
+    </tr>
+      <!-- We don't want to fail if classifications are in use -->
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Enter Bug'</td>
+        <td>jump_classification_end_1</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>jump_classification_end_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug: TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>target_milestone</td>
+        <td>label=---</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>short_desc</td>
+        <td>Target Milestone left to default</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>short_desc</td>
+        <td>Target Milestone left to default</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>comment</td>
+        <td>Created by Selenium to test 'musthavemilestoneonaccept'</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>comment</td>
+        <td>Created by Selenium to test 'musthavemilestoneonaccept'</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='    Commit    ']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug \d+ Submitted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Save the bug ID. We will come back to it later -->
+      <tr>
+        <td>storeValue</td>
+        <td>//input[@name='id' and @type='hidden']</td>
+        <td>bug1_id</td>
+      </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='knob' and @value='accept']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Milestone Required</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You must determine a target milestone</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>target_milestone</td>
+          <td>label=2.0</td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>target_milestone</td>
+          <td>label=2.0</td>
+        </tr>
+        <!-- Just in case it has been erased while coming back -->
+        <tr>
+          <td>click</td>
+          <td>//input[@name='knob' and @value='accept']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- We create a second bug, but this time with the milestone already changed -->
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=New</td>
+          <td>&nbsp;</td>
+        </tr>
+      <!-- We don't want to fail if classifications are in use -->
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Enter Bug'</td>
+        <td>jump_classification_end_2</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>jump_classification_end_2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug: TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>target_milestone</td>
+        <td>label=2.0</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>target_milestone</td>
+        <td>label=2.0</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>short_desc</td>
+        <td>Target Milestone set to non-default</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>short_desc</td>
+        <td>Target Milestone set to non-default</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>comment</td>
+        <td>Created by Selenium to test 'musthavemilestoneonaccept'</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>comment</td>
+        <td>Created by Selenium to test 'musthavemilestoneonaccept'</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='    Commit    ']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug \d+ Submitted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Save the bug ID. We will come back to it later -->
+      <tr>
+        <td>storeValue</td>
+        <td>//input[@name='id' and @type='hidden']</td>
+        <td>bug2_id</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='knob' and @value='accept']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Commit']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug ${bug2_id} processed</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Back to milestone editing -->
+      <tr>
+        <td>open</td>
+        <td>${inst}editmilestones.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit milestones for which product?</td>
+        <td>&nbsp;</td>
+      </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=TestProduct</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Select milestone of product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=2.0</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Edit Milestone '2.0' of product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>type</td>
+      <td>milestone</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <td>verifyValue</td>
+      <td>milestone</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Update']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Updating Milestone '1.0' of Product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Add</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Add Milestone to Product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>type</td>
+      <td>milestone</td>
+      <td>1.5</td>
+    </tr>
+    <tr>
+      <td>verifyValue</td>
+      <td>milestone</td>
+      <td>1.5</td>
+    </tr>
+    <tr>
+      <td>type</td>
+      <td>sortkey</td>
+      <td>99999999999999999</td>
+    </tr>
+    <tr>
+      <td>verifyValue</td>
+      <td>sortkey</td>
+      <td>99999999999999999</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Add']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Invalid Milestone Sortkey</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>verifyTextPresent</td>
+      <td>The sortkey '99999999999999999' for milestone '1.5' is not in the range -32768</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>goBackAndWait</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>type</td>
+      <td>sortkey</td>
+      <td>-polu7A</td>
+    </tr>
+    <tr>
+      <td>verifyValue</td>
+      <td>sortkey</td>
+      <td>-polu7A</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Add']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Invalid Milestone Sortkey</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>verifyTextPresent</td>
+      <td>The sortkey '-polu7A' for milestone '1.5' is not in the range -32768</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>goBackAndWait</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link='TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Select milestone of product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//a[@href='editmilestones.cgi?action=del&amp;product=TestProduct&amp;milestone=1.0']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Delete Milestone of Product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>verifyFlatTextPresent</td>
+      <td>When you delete this milestone, ALL stored bugs will be reassigned to the default milestone of this product</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Yes, delete']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Deleted Milestone '1.0' of Product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <!-- Make sure the target milestone on bugs has fallen back to the default milestone -->
+    <tr>
+      <td>open</td>
+      <td>${inst}show_bug.cgi?id=${bug1_id}</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>regexp:Bug \d+ – .*</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>verifyFlatTextPresent</td>
+      <td>Target Milestone: ---</td>
+      <td>&nbsp;</td>
+    </tr>
+      <!-- Now that the product has only one milestone, it should not require you to choose one -->
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=New</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- We don't want to fail if classifications are in use -->
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Enter Bug'</td>
+        <td>jump_classification_end_3</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>jump_classification_end_3</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug: TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>target_milestone</td>
+        <td>label=---</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>short_desc</td>
+        <td>Only one Target Milestone available</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>short_desc</td>
+        <td>Only one Target Milestone available</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>comment</td>
+        <td>Created by Selenium to test 'musthavemilestoneonaccept'</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>comment</td>
+        <td>Created by Selenium to test 'musthavemilestoneonaccept'</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='    Commit    ']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug \d+ Submitted</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Just in case :) -->
+      <tr>
+        <td>storeValue</td>
+        <td>//input[@name='id' and @type='hidden']</td>
+        <td>bug3_id</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='knob' and @value='accept']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Commit']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug ${bug3_id} processed</td>
+        <td>&nbsp;</td>
+      </tr>
+    <!-- Turn off the param again, we don't want it by default -->
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Parameters</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>exact:Configuration: Required Settings</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Bug Change Policies</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>exact:Configuration: Bug Change Policies</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>click</td>
+      <td>//input[@name='musthavemilestoneonaccept' and @value='0']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Save Changes']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Parameters Updated</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+  </table>
+  </body>
+</html>

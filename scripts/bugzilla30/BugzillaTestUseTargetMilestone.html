@@ -1,0 +1,462 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>Test Target Milestones</title>
+  </head>
+
+  <body>
+    <table border="1" cellpadding="1" cellspacing="1">
+      <thead>
+      <tr>
+        <td rowspan="1" colspan="3">Bugzilla Test Target Milestones</td>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>loadConfigFileAndWait</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeParams</td>
+        <td>inst branch test_bug_1 admin_user_login admin_user_passwd</td>
+        <td>&nbsp;</td>
+      </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}relogin.cgi</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log In</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Log in']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+    <!-- First create the TM1 target milestone -->
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Products</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>assertNoErrorOnNextAndGoto</b></td>
+      <td>Actual value 'Select Classification' did not match 'Select product'</td>
+      <td>classifications_off</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Select product</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Unclassified</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>label</b></td>
+      <td>classifications_off</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=TestProduct</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Edit Product</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Edit milestones:</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Select milestone of product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=Add</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Add Milestone to Product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>type</td>
+      <td>milestone</td>
+      <td>TM1</td>
+    </tr>
+    <tr>
+      <td>verifyValue</td>
+      <td>milestone</td>
+      <td>TM1</td>
+    </tr>
+    <tr>
+      <td>type</td>
+      <td>sortkey</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>verifyValue</td>
+      <td>sortkey</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Add']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Adding new Milestone of Product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+      <!-- Now jump directly to the config page and turn the param on -->
+      <tr>
+        <td>open</td>
+        <td>${inst}editparams.cgi?section=bugfields</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>exact:Configuration: Bug Fields</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='usetargetmilestone' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Parameters Updated</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- make sure the target milestone field in show_bug.cgi is visible -->
+      <tr>
+        <td>open</td>
+        <td>${inst}show_bug.cgi?id=${test_bug_1}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug ${test_bug_1} – .*</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>Target Milestone:</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>target_milestone</td>
+        <td>label=TM1</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>target_milestone</td>
+        <td>label=TM1</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Commit']</td>
+        <td>label=TM1</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug ${test_bug_1} processed</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- make sure the search page has the target milestone field available -->
+      <tr>
+        <td>open</td>
+        <td>${inst}query.cgi?format=advanced</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search for bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextPresent</td>
+        <td>Target:</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- create a saved search with a milestone -->
+      <tr>
+        <td>select</td>
+        <td>product</td>
+        <td>label=TestProduct</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>product</td>
+        <td>label=TestProduct</td>
+      </tr>
+      <tr>
+        <td>select</td>
+        <td>target_milestone</td>
+        <td>label=TM1</td>
+      </tr>
+      <tr>
+        <td>verifySelected</td>
+        <td>target_milestone</td>
+        <td>label=TM1</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Search']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>One bug found</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>newqueryname</td>
+        <td>selenium_m0</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>newqueryname</td>
+        <td>selenium_m0</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Remember search']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bugzilla Message</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>OK, you have a new search named selenium_m0</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- turn off milestones -->
+      <tr>
+        <td>open</td>
+        <td>${inst}editparams.cgi?section=bugfields</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>exact:Configuration: Bug Fields</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='usetargetmilestone' and @value='0']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Parameters Updated</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Search</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search for bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyTextNotPresent</td>
+        <td>Target:</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}show_bug.cgi?id=${test_bug_1}</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>regexp:Bug ${test_bug_1} – .*</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextNotPresent</td>
+        <td>Target Milestone:</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=selenium_m0</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bug List: selenium_m0</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>One bug found</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Forget Search 'selenium_m0'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search is gone</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>OK, the selenium_m0 search is gone</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- We want the target milestone to be available by default -->
+      <tr>
+        <td>open</td>
+        <td>${inst}editparams.cgi?section=bugfields</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>exact:Configuration: Bug Fields</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='usetargetmilestone' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Parameters Updated</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Now delete the TM1 target milestone -->
+      <tr>
+        <td>open</td>
+        <td>${inst}editmilestones.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit milestones for which product?</td>
+        <td>&nbsp;</td>
+      </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>link=TestProduct</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Select milestone of product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//a[@href='editmilestones.cgi?action=del&amp;product=TestProduct&amp;milestone=TM1']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Delete Milestone of Product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>verifyFlatTextPresent</td>
+      <td>When you delete this milestone, ALL stored bugs will be reassigned to the default milestone of this product</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Yes, delete']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Deleted Milestone 'TM1' of Product 'TestProduct'</td>
+      <td>&nbsp;</td>
+    </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

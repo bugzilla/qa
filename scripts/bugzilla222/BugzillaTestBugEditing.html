@@ -1,0 +1,2340 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>Test Bug Creation and Editing</title>
+  </head>
+
+  <body>
+    <table cellpadding="1" cellspacing="1" border="1">
+      <thead>
+        <tr>
+          <td rowspan="1" colspan="3">Bugzilla Test Bug Creation and Editing</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>loadConfigFileAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>storeParams</td>
+          <td>inst branch test_bug_1 master_group QA_Selenium_TEST_user_login QA_Selenium_TEST_user_passwd
+              admin_user_login admin_user_passwd unprivileged_user_login unprivileged_user_passwd</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}relogin.cgi</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log In</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${QA_Selenium_TEST_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${QA_Selenium_TEST_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${QA_Selenium_TEST_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${QA_Selenium_TEST_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Log in']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=New</td>
+          <td>&nbsp;</td>
+        </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Enter Bug'</td>
+        <td>classification_end_1</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_1</td>
+        <td>&nbsp;</td>
+      </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Enter Bug: TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>bug_severity</td>
+          <td>label=critical</td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>bug_severity</td>
+          <td>label=critical</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>short_desc</td>
+          <td>Test bug editing</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>short_desc</td>
+          <td>Test bug editing</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>ploc</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>ploc</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='    Commit    ']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>regexp:Bug \d+ Submitted</td>
+          <td>&nbsp;</td>
+        </tr>
+      <tr>
+        <td>storeValue</td>
+        <td>//input[@name='id' and @type='hidden']</td>
+        <td>bug1_id</td>
+      </tr>
+        <tr>
+          <td>select</td>
+          <td>rep_platform</td>
+          <td>label=Other
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>rep_platform</td>
+          <td>label=Other
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>op_sys</td>
+          <td>label=Other
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>op_sys</td>
+          <td>label=Other
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>priority</td>
+          <td>label=P1
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>priority</td>
+          <td>label=P1
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>bug_severity</td>
+          <td>label=blocker
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>bug_severity</td>
+          <td>label=blocker
+          </td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>bug_file_loc</td>
+          <td>foo.cgi?action=bar</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>bug_file_loc</td>
+          <td>foo.cgi?action=bar</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>status_whiteboard</td>
+          <td>[Selenium was here]</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>status_whiteboard</td>
+          <td>[Selenium was here]</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>dependson</td>
+          <td>${test_bug_1}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>dependson</td>
+          <td>${test_bug_1}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>new comment from me :)</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>new comment from me :)</td>
+        </tr>
+        <!-- The resolution is FIXED by default. But we don't really care -->
+        <tr>
+          <td>click</td>
+          <td>//input[@name='knob' and @value='resolve']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Back To Bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} - Test bug editing</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>product</td>
+          <td>label=QA-Selenium-TEST
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>product</td>
+          <td>label=QA-Selenium-TEST
+          </td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>moving to QA-Selenium-TEST</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>moving to QA-Selenium-TEST</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Verify New Product Details...</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='addtonewgroup' and @value='yes']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Back To Bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>bug_severity</td>
+          <td>label=normal
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>bug_severity</td>
+          <td>label=normal
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>priority</td>
+          <td>label=P2
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>priority</td>
+          <td>label=P2
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>op_sys</td>
+          <td>label=All
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>op_sys</td>
+          <td>label=All
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>rep_platform</td>
+          <td>label=All
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>rep_platform</td>
+          <td>label=All
+          </td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>newcc</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>newcc</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>Unchecking the reporter_accessible checkbox</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>Unchecking the reporter_accessible checkbox</td>
+        </tr>
+        <!-- This one is turned on by default -->
+        <tr>
+          <td>click</td>
+          <td>//input[@name='reporter_accessible' and @value='1']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='knob' and @value='reopen']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log in again.</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- We could log in with editbugs_user_login, but I need to edit product properties later -->
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Log in']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}show_bug.cgi?id=${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} - Test bug editing</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>bug_severity</td>
+          <td>label=blocker
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>bug_severity</td>
+          <td>label=blocker
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>priority</td>
+          <td>label=P1
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>priority</td>
+          <td>label=P1
+          </td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>status_whiteboard</td>
+          <td>[Selenium was here][admin too]</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>status_whiteboard</td>
+          <td>[Selenium was here][admin too]</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='knob' and @value='reassign']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>assigned_to</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>assigned_to</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>I have editbugs privs. Taking!</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>I have editbugs privs. Taking!</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Back To Bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} - Test bug editing</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='cclist_accessible' and @value='1']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>Am I allowed to turn off this bit?</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>Am I allowed to turn off this bit?</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>dependson</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>dependson</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='knob' and @value='accept']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Back To Bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>product</td>
+          <td>label=TestProduct
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>product</td>
+          <td>label=TestProduct
+          </td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>newcc</td>
+          <td>${unprivileged_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>newcc</td>
+          <td>${unprivileged_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>-> Moving back to Testproduct.</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>-> Moving back to Testproduct.</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Verify New Product Details...</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='addtonewgroup' and @value='no']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log In</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${unprivileged_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${unprivileged_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${unprivileged_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${unprivileged_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Log in']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}show_bug.cgi?id=${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} - Test bug editing</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>I have no privs, I can only comment. :(</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>I have no privs, I can only comment. :(</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>bug_severity</td>
+          <td>label=enhancement
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>bug_severity</td>
+          <td>label=enhancement
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>priority</td>
+          <td>label=P3
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>priority</td>
+          <td>label=P3
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>op_sys</td>
+          <td>label=Other
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>op_sys</td>
+          <td>label=Other
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>rep_platform</td>
+          <td>label=Other
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>rep_platform</td>
+          <td>label=Other
+          </td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>cc</td>
+          <td>label=${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>cc</td>
+          <td>label=${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>name=removecc</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>dependson</td>
+          <td>${test_bug_1}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>dependson</td>
+          <td>${test_bug_1}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Not allowed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You tried to change the Depends on field</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>dependson</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>dependson</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Not allowed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You tried to change the Severity field from blocker to enhancement</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>bug_severity</td>
+          <td>label=blocker
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>bug_severity</td>
+          <td>label=blocker
+          </td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Not allowed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You tried to change the OS field from All to Other</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>op_sys</td>
+          <td>label=All
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>op_sys</td>
+          <td>label=All
+          </td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Not allowed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You tried to change the Priority field from P1 to P3</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>priority</td>
+          <td>label=P1
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>priority</td>
+          <td>label=P1
+          </td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Not allowed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You tried to change the Hardware field from All to Other</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>rep_platform</td>
+          <td>label=All
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>rep_platform</td>
+          <td>label=All
+          </td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Back To Bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} - Test bug editing</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Select the first product of the list, whatever it is; we don't care as the change will
+             be rejected anyway. Let's just hope the first product of the list is not TestProduct -->
+        <tr>
+          <td>select</td>
+          <td>product</td>
+          <td>index=0
+          </td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>product</td>
+          <td>index=0
+          </td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>Moving to another product</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>Moving to another product</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Not allowed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You tried to change the Product field from TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log in again.</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Log in']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Products</td>
+          <td>&nbsp;</td>
+        </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>classification_end_2</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_2</td>
+        <td>&nbsp;</td>
+      </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Edit Product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Edit Group Access Controls:</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Edit Group Controls for TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- If we came here, then CANEDIT was 'off' previously -->
+        <tr>
+          <td>click</td>
+          <td>//input[@name='canedit_${master_group}' and @value='1']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='submit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Update group access controls for TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}show_bug.cgi?id=${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} - Test bug editing</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>Do nothing except adding a comment...</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>Do nothing except adding a comment...</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log In</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${QA_Selenium_TEST_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${QA_Selenium_TEST_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${QA_Selenium_TEST_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${QA_Selenium_TEST_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Log in']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}show_bug.cgi?id=${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>Just a comment too...</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>Just a comment too...</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Product Edit Access Denied</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You are not permitted to edit bugs in product TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log In</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Log in']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Search</td>
+          <td>&nbsp;</td>
+        </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Find a Specific Bug' did not match 'Search for bugs'</td>
+        <td>jump_advanced_search_1</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search for bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Advanced Search</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Search for bugs</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>jump_advanced_search_1</td>
+        <td>&nbsp;</td>
+      </tr>
+        <tr>
+          <td>select</td>
+          <td>product</td>
+          <td>label=TestProduct</td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>product</td>
+          <td>label=TestProduct</td>
+        </tr>
+        <tr>
+          <td>selectNone</td>
+          <td>bug_status</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>emailtype1</td>
+          <td>label=is</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>email1</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>email1</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='emailassigned_to2' and @value='1']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='emailqa_contact2' and @value='1']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='emailcc2' and @value='1']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>emailtype2</td>
+          <td>label=is</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>email2</td>
+          <td>${QA_Selenium_TEST_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>email2</td>
+          <td>${QA_Selenium_TEST_user_login}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value="Search"]</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug List</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextPresent</td>
+          <td>One bug found</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>newqueryname</td>
+          <td>My bugs from QA_Selenium</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>newqueryname</td>
+          <td>My bugs from QA_Selenium</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Remember search']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Message</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>OK, you have a new search named My bugs from QA_Selenium</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>goBackAndWait</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Long Format']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Full Text Bug Listing</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Status: ASSIGNED</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Reported By: ${QA_Selenium_TEST_user_login}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Assigned To: ${admin_user_login}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Severity: blocker</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Priority: P1</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Make sure comments are also displayed -->
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>I have no privs, I can only comment. :(</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log in again.</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${QA_Selenium_TEST_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${QA_Selenium_TEST_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${QA_Selenium_TEST_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${QA_Selenium_TEST_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Log in']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- A second bug opened by this user is required to test mass-change -->
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=New</td>
+          <td>&nbsp;</td>
+        </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Enter Bug'</td>
+        <td>classification_end_3</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_3</td>
+        <td>&nbsp;</td>
+      </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Enter Bug: TestProduct</td>
+        <td>&nbsp;</td>
+      </tr>
+        <tr>
+          <td>select</td>
+          <td>bug_severity</td>
+          <td>label=blocker</td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>bug_severity</td>
+          <td>label=blocker</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>short_desc</td>
+          <td>New bug from me</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>short_desc</td>
+          <td>New bug from me</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>I can enter a new bug, but not edit it, right?</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>I can enter a new bug, but not edit it, right?</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='    Commit    ']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>regexp:Bug \d+ Submitted</td>
+          <td>&nbsp;</td>
+        </tr>
+      <tr>
+        <td>storeValue</td>
+        <td>//input[@name='id' and @type='hidden']</td>
+        <td>bug2_id</td>
+      </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>Make sure</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>Make sure</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Product Edit Access Denied</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>You are not permitted to edit bugs in product TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Logged Out</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Log In</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Log in to Bugzilla</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_login</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>Bugzilla_password</td>
+          <td>${admin_user_passwd}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Log in']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Main Page</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}show_bug.cgi?id=${bug2_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug2_id} - New bug from me</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='knob' and @value='reassign']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>assigned_to</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>assigned_to</td>
+          <td>${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>Taking!</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>Taking!</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>flatlink=My bugs from QA_Selenium</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug List: My bugs from QA_Selenium</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextPresent</td>
+          <td>2 bugs found</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>flatlink=Change Several Bugs at Once</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug List</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@type='button' and @value='Check All']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>Next step will be "moving"</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>Next step will be "moving"</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='knob' and @value='resolve']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>select</td>
+          <td>resolution</td>
+          <td>label=WORKSFORME</td>
+        </tr>
+        <tr>
+          <td>verifySelected</td>
+          <td>resolution</td>
+          <td>label=WORKSFORME</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Back To Bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug1_id} - Test bug editing</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Resolution: WORKSFORME</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=View Bug Activity</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Changes made to bug ${bug1_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>URL foo.cgi?action=bar</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Severity critical blocker</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Status Whiteboard [Selenium was here] [Selenium was here][admin too]</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Product QA-Selenium-TEST TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Status ASSIGNED RESOLVED</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Last step: moving bugs to another DB -->
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Parameters</td>
+          <td>&nbsp;</td>
+        </tr>
+    <tr>
+      <td><b>gotoIf</b></td>
+      <td>storedVars["branch"] == 222</td>
+      <td>bz_222_editparams_1</td>
+    </tr>
+    <!-- Code for 2.20 -->
+    <tr>
+      <td>assertTitle</td>
+      <td>Edit parameters</td>
+      <td>&nbsp;</td>
+    </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='move-enabled' and @value='1']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>//input[@name="move-button-text"]</td>
+          <td>Move to Selenium</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="move-button-text"]</td>
+          <td>Move to Selenium</td>
+        </tr>
+        <!-- Do not check this field! It would fail on 'http:' -->
+        <tr>
+          <td>type</td>
+          <td>//input[@name="move-to-url"]</td>
+          <td>http://www.foo.com/</td>
+        </tr>
+        <!-- I will listen ;) -->
+        <tr>
+          <td>type</td>
+          <td>//input[@name="move-to-address"]</td>
+          <td>LpSolit@gmail.com</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="move-to-address"]</td>
+          <td>LpSolit@gmail.com</td>
+        </tr>
+        <!-- No need to be a valid email address -->
+        <tr>
+          <td>type</td>
+          <td>//input[@name="moved-from-address"]</td>
+          <td>selenium@bugzilla.org</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="moved-from-address"]</td>
+          <td>selenium@bugzilla.org</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>//input[@name="movers"]</td>
+          <td>LpSolit@gmail.com, ${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="movers"]</td>
+          <td>LpSolit@gmail.com, ${admin_user_login}</td>
+        </tr>
+        <!-- Just in case -->
+        <tr>
+          <td>type</td>
+          <td>//input[@name="moved-default-product"]</td>
+          <td>TestProduct</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="moved-default-product"]</td>
+          <td>TestProduct</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>//input[@name="moved-default-component"]</td>
+          <td>TestProduct</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="moved-default-component"]</td>
+          <td>TestProduct</td>
+        </tr>
+    <tr>
+      <td>clickAndWait</td>
+      <td>//input[@type='submit' and @value='Submit changes']</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Saving new parameters</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>gotoLabel</b></td>
+      <td>bz_222_editparams_end_1</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>label</b></td>
+      <td>bz_222_editparams_1</td>
+      <td>&nbsp;</td>
+    </tr>
+      <!-- Code for 2.22 -->
+    <tr>
+      <td>assertTitle</td>
+      <td>Bugzilla Configuration: Required Settings</td>
+      <td>&nbsp;</td>
+    </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Bug Moving</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bugzilla Configuration: Bug Moving</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='move-enabled' and @value='1']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>//input[@name="move-button-text"]</td>
+          <td>Move to Selenium</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="move-button-text"]</td>
+          <td>Move to Selenium</td>
+        </tr>
+        <!-- Do not check this field! It would fail on 'http:' -->
+        <tr>
+          <td>type</td>
+          <td>//input[@name="move-to-url"]</td>
+          <td>http://www.foo.com/</td>
+        </tr>
+        <!-- I will listen ;) -->
+        <tr>
+          <td>type</td>
+          <td>//input[@name="move-to-address"]</td>
+          <td>LpSolit@gmail.com</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="move-to-address"]</td>
+          <td>LpSolit@gmail.com</td>
+        </tr>
+        <!-- No need to be a valid email address -->
+        <tr>
+          <td>type</td>
+          <td>//input[@name="moved-from-address"]</td>
+          <td>selenium@bugzilla.org</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="moved-from-address"]</td>
+          <td>selenium@bugzilla.org</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>//input[@name="movers"]</td>
+          <td>LpSolit@gmail.com, ${admin_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="movers"]</td>
+          <td>LpSolit@gmail.com, ${admin_user_login}</td>
+        </tr>
+        <!-- Just in case -->
+        <tr>
+          <td>type</td>
+          <td>//input[@name="moved-default-product"]</td>
+          <td>TestProduct</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="moved-default-product"]</td>
+          <td>TestProduct</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>//input[@name="moved-default-component"]</td>
+          <td>TestProduct</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>//input[@name="moved-default-component"]</td>
+          <td>TestProduct</td>
+        </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+    <tr>
+      <td>assertTitle</td>
+      <td>Parameters Updated</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b>label</b></td>
+      <td>bz_222_editparams_end_1</td>
+      <td>&nbsp;</td>
+    </tr>
+        <!-- Now we can move bugs -->
+        <tr>
+          <td>clickAndWait</td>
+          <td>flatlink=My bugs from QA_Selenium</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug List: My bugs from QA_Selenium</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextPresent</td>
+          <td>2 bugs found</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>flatlink=Change Several Bugs at Once</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug List</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@type='button' and @value='Check All']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>-> moved</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>-> moved</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Move to Selenium']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><b>gotoIf</b></td>
+          <td>storedVars["branch"] == 220</td>
+          <td>move_220</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Bug ${bug1_id} has been moved to another database</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Bug ${bug2_id} has been moved to another database</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Back To Bug ${bug2_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><b>gotoLabel</b></td>
+          <td>move_end</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><b>label</b></td>
+          <td>move_220</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Move Bugs</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Bug ${bug1_id} moved</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Bug ${bug2_id} moved</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>${inst}show_bug.cgi?id=${bug2_id}</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><b>label</b></td>
+          <td>move_end</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug ${bug2_id} - New bug from me</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>Resolution: MOVED</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- We need to move these two bugs out of our radar. Reassigning -->
+        <tr>
+          <td>clickAndWait</td>
+          <td>flatlink=My bugs from QA_Selenium</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug List: My bugs from QA_Selenium</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTextPresent</td>
+          <td>2 bugs found</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>flatlink=Change Several Bugs at Once</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug List</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@type='button' and @value='Check All']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>comment</td>
+          <td>Reassigning to the reporter</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>comment</td>
+          <td>Reassigning to the reporter</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='knob' and @value='reassign']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>assigned_to</td>
+          <td>${QA_Selenium_TEST_user_login}</td>
+        </tr>
+        <tr>
+          <td>verifyValue</td>
+          <td>assigned_to</td>
+          <td>${QA_Selenium_TEST_user_login}</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='Commit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Bug processed</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Now delete this saved search. We don't need it anymore -->
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Prefs</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>User Preferences</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Saved Searches</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>User Preferences</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//a[@href='buglist.cgi?cmdtype=dorem&remaction=forget&namedcmd=My%20bugs%20from%20QA_Selenium']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Search is gone</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyFlatTextPresent</td>
+          <td>OK, the My bugs from QA_Selenium search is gone</td>
+          <td>&nbsp;</td>
+        </tr>
+        <!-- Last step: reset the CANEDIT bit of TestProduct -->
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Products</td>
+          <td>&nbsp;</td>
+        </tr>
+      <tr>
+        <td><b>assertNoErrorOnNextAndGoto</b></td>
+        <td>Actual value 'Select Classification' did not match 'Select product'</td>
+        <td>classification_end_4</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=Unclassified</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Select product in classification 'Unclassified'</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>classification_end_4</td>
+        <td>&nbsp;</td>
+      </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Edit Product</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>link=Edit Group Access Controls:</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>assertTitle</td>
+          <td>Edit Group Controls for TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>click</td>
+          <td>//input[@name='canedit_${master_group}' and @value='1']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>clickAndWait</td>
+          <td>//input[@type='submit' and @value='submit']</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>verifyTitle</td>
+          <td>Update group access controls for TestProduct</td>
+          <td>&nbsp;</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

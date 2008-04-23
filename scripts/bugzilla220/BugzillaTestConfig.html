@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>Test config.cgi</title>
+  </head>
+
+  <body>
+    <table cellpadding="1" cellspacing="1" border="1">
+    <thead>
+      <tr>
+        <td rowspan="1" colspan="3">Bugzilla Test config.cgi</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>loadConfigFileAndWait</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>storeParams</td>
+        <td>inst branch admin_user_login admin_user_passwd</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}editparams.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoIf</b></td>
+        <td>storedVars["branch"] == 222</td>
+        <td>bz_222_editparams_1</td>
+      </tr>
+      <!-- Code for 2.20 -->
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit parameters</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='requirelogin' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Submit changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Saving new parameters</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoLabel</b></td>
+        <td>bz_222_editparams_end_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>bz_222_editparams_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Code for 2.22 -->
+      <tr>
+        <td>assertTitle</td>
+        <td>Bugzilla Configuration: Required Settings</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=User Authentication</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bugzilla Configuration: User Authentication</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='requirelogin' and @value='1']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Parameters Updated</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>bz_222_editparams_end_1</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>open</td>
+        <td>${inst}relogin.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Logged Out</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTextPresent</td>
+        <td>Your login has been forgotten.</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Make sure no data is displayed at all -->
+      <tr>
+        <td>open</td>
+        <td>${inst}config.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>var status = [ ];</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>var status_open = [ ];</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>var status_closed = [ ];</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>var resolution = [ ];</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>var keyword = [ ];</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>var platform = [ ];</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>var severity = [ ];</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>verifyFlatTextPresent</td>
+        <td>var field = [ ];</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- revert requirelogin to off -->
+      <tr>
+        <td>open</td>
+        <td>${inst}editparams.cgi</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>Bugzilla_login</td>
+        <td>${admin_user_login}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>Bugzilla_login</td>
+        <td>${admin_user_login}</td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>Bugzilla_password</td>
+        <td>${admin_user_passwd}</td>
+      </tr>
+      <tr>
+        <td>verifyValue</td>
+        <td>Bugzilla_password</td>
+        <td>${admin_user_passwd}</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Log in']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoIf</b></td>
+        <td>storedVars["branch"] == 222</td>
+        <td>bz_222_editparams_2</td>
+      </tr>
+      <!-- Code for 2.20 -->
+      <tr>
+        <td>assertTitle</td>
+        <td>Edit parameters</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='requirelogin' and @value='0']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Submit changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Saving new parameters</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>gotoLabel</b></td>
+        <td>bz_222_editparams_end_2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>bz_222_editparams_2</td>
+        <td>&nbsp;</td>
+      </tr>
+      <!-- Code for 2.22 -->
+      <tr>
+        <td>assertTitle</td>
+        <td>Bugzilla Configuration: Required Settings</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>link=User Authentication</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Bugzilla Configuration: User Authentication</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>click</td>
+        <td>//input[@name='requirelogin' and @value='0']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>clickAndWait</td>
+        <td>//input[@type='submit' and @value='Save Changes']</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>assertTitle</td>
+        <td>Parameters Updated</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>label</b></td>
+        <td>bz_222_editparams_end_2</td>
+        <td>&nbsp;</td>
+      </tr>
+    </tbody>
+    </table>
+  </body>
+</html>
