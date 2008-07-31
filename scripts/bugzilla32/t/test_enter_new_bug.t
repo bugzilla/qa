@@ -24,9 +24,9 @@ $sel->type_ok("Bugzilla_password", $config->{admin_user_passwd}, "Enter admin pa
 $sel->click_ok("log_in", undef, "Submit credentials");
 $sel->wait_for_page_to_load(30000);
 # Typing the URL directly lets us avoid the "Choose Classification" page in case
-# useclassifications is on.
-$sel->open_ok("/$config->{bugzilla_installation}/enter_bug.cgi?product=Cobalt%20Jellyfish");
-$sel->title_is("Enter Bug: Cobalt Jellyfish", "Display enter_bug.cgi with the correct product selected (bypass classifications)");
+# useclassifications is on. Classifications are use in another script anyway.
+$sel->open_ok("/$config->{bugzilla_installation}/enter_bug.cgi?product=TestProduct");
+$sel->title_is("Enter Bug: TestProduct", "Display enter_bug.cgi for the selected product (bypass classifications)");
 $sel->type_ok("short_desc", "Bug created by Selenium", "Enter bug summary");
 $sel->type_ok("comment", "--- Bug created by Selenium ---", "Enter bug description");
 $sel->click_ok("commit", undef, "Submit bug data to post_bug.cgi");
