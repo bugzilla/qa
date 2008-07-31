@@ -3,7 +3,7 @@ use warnings;
 use Test::WWW::Selenium;
 use Test::More "no_plan";
 
-my $conf_file = "selenium_test.conf";
+my $conf_file = "../config/selenium_test.conf";
 
 # read the test configuration file
 my $config = do "$conf_file"
