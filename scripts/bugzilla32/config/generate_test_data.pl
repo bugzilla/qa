@@ -1,5 +1,20 @@
 use strict;
 use warnings;
+
+my $conf_path;
+my $config; 
+
+BEGIN {
+    print "reading the config file...\n";
+    my $conf_file = "selenium_test.conf";
+    $config = do "$conf_file"
+        or die "can't read configuration '$conf_file': $!$@";
+
+    $conf_path = $config->{bugzilla_path};
+}
+
+use lib $conf_path;
+
 use Bugzilla;
 use Bugzilla::Bug;
 use Bugzilla::User;
@@ -8,14 +23,6 @@ use Bugzilla::Product;
 use Bugzilla::Component;
 use Bugzilla::Group;
 use Bugzilla::Constants;
-
-print "reading the config file...\n";
-my $conf_file = "selenium_test.conf";
-
-# read the test configuration file
-my $config = do "$conf_file"
-    or die "can't read configuration '$conf_file': $!$@";
-
 
 my $dbh = Bugzilla->dbh;
 
