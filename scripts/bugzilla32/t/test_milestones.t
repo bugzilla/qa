@@ -19,7 +19,7 @@ my $sel = Test::WWW::Selenium->new(
     browser_url => $config->{browser_url}
 );
 
-$sel->open_ok("/$config->{bugzilla_installation}/");
+$sel->open_ok("/$config->{bugzilla_installation}/", undef, "Go to the login page");
 $sel->title_is("Bugzilla Main Page", "Go to Bugzilla Main Page");
 $sel->type_ok("Bugzilla_login", $config->{admin_user_login}, "Enter admin login name");
 $sel->type_ok("Bugzilla_password", $config->{admin_user_passwd}, "Enter admin password");
