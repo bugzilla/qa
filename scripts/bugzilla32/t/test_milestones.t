@@ -19,18 +19,12 @@ my $sel = Test::WWW::Selenium->new(
     browser_url => $config->{browser_url}
 );
 
-$sel->open_ok("/$config->{bugzilla_installation}/", undef, "Go to the login page");
-$sel->title_is("Bugzilla Main Page", "Go to Bugzilla Main Page");
-$sel->type_ok("Bugzilla_login", $config->{admin_user_login}, "Enter admin login name");
-$sel->type_ok("Bugzilla_password", $config->{admin_user_passwd}, "Enter admin password");
-$sel->click_ok("log_in", undef, "Submit credentials");
-$sel->wait_for_page_to_load(30000);
-
 # 1st step: set the following parameters:
 # - usetargetmilestone to ON
 # - musthavemilestoneonaccept to ON
 # - letsubmitterchoosemilestone to ON
 
+log_in($sel, $config, 'admin');
 $sel->click_ok("link=Administration", undef, "Go to the Admin page");
 $sel->wait_for_page_to_load(30000);
 $sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
@@ -56,26 +50,7 @@ $sel->title_is("Parameters Updated", "Parameters Updated");
 
 # 2nd step: Add the milestone "2.0" (with sortkey = 10) to the TestProduct product.
 
-$sel->click_ok("link=Administration", undef, "Go back to the Admin page");
-$sel->wait_for_page_to_load(30000);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
-$sel->click_ok("link=Products", undef, "Go to the Products page");
-$sel->wait_for_page_to_load(30000);
-my $title = $sel->get_title();
-if ($title eq "Select Classification") {
-    ok(1, "Classifications are enabled, page displayed is Select Classification");
-    $sel->click_ok("link=Unclassified", undef, "Choose Unclassified");
-    $sel->wait_for_page_to_load(30000);
-}
-elsif ($title eq "Select product") {
-    ok(1, "Classifications are disabled, page displayed is Select product");
-}
-else {
-    ok(0, "Unexpected page reached: $title");
-}
-$sel->click_ok("link=TestProduct", undef, "Choose TestProduct");
-$sel->wait_for_page_to_load(30000);
-$sel->title_is("Edit Product 'TestProduct'", "Display properties of TestProduct");
+edit_product($sel, "TestProduct");
 $sel->click_ok("link=Edit milestones:", undef, "Go to the Edit milestones page");
 $sel->wait_for_page_to_load(30000);
 $sel->title_is("Select milestone of product 'TestProduct'", "Display milestones");
