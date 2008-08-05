@@ -1,7 +1,11 @@
 use strict;
 use warnings;
+use lib qw(lib);
+
 use Test::WWW::Selenium;
 use Test::More "no_plan";
+
+use QA::Util;
 
 my $conf_file = "../config/selenium_test.conf";
 
@@ -15,11 +19,7 @@ my $sel = Test::WWW::Selenium->new(
     browser_url => $config->{browser_url}
 );
 
-$sel->open_ok("/$config->{bugzilla_installation}/");
-$sel->type_ok("Bugzilla_login", $config->{admin_user_login}, "Enter admin login name");
-$sel->type_ok("Bugzilla_password", $config->{admin_user_passwd}, "Enter admin password");
-$sel->click_ok("log_in", undef, "Submit credentials");
-$sel->wait_for_page_to_load(30000);
+log_in($sel, $config, 'admin');
 $sel->click_ok("link=Administration", undef, "Go to the Admin page");
 $sel->wait_for_page_to_load(30000);
 $sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
@@ -60,3 +60,4 @@ $sel->is_text_present_ok("Sanity check completed.", undef, "Page displayed corre
 $sel->open_ok("/$config->{bugzilla_installation}/sanitycheck.cgi?repair_bugs_fulltext=1");
 $sel->title_is("Sanity Check", "Call sanitycheck.cgi with repair_bugs_fulltext=1");
 $sel->is_text_present_ok("Sanity check completed.", undef, "Page displayed correctly");
+$sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi", undef, "Logout");
