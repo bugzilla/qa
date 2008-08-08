@@ -258,4 +258,43 @@ eval {
         CONTROLMAPMANDATORY, 0 ) );
 };
 
+##########################################################################
+# Create custom fields
+##########################################################################
+my @fields = (
+    { name        => 'cf_QA_status',
+      description => 'QA Status',
+      type        => FIELD_TYPE_MULTI_SELECT,
+      sortkey     => 100,
+      mailhead    => 0,
+      enter_bug   => 1,
+      obsolete    => 0,
+      custom      => 1,
+      values      => ['verified', 'in progress', 'untested']
+    }
+);
+
+print "creating custom fields...\n";
+foreach my $f (@fields) {
+    # Skip existing custom fields.
+    next if Bugzilla::Field->new({ name => $f->{name} });
+
+    my @values;
+    if (exists $f->{values}) {
+        @values = @{$f->{values}};
+        # We have to delete this key, else create() will complain
+        # that 'values' is not an existing column name.
+        delete $f->{values};
+    }
+    my $field = Bugzilla::Field->create($f);
+
+    # Now populate the table with valid values, if necessary.
+    next unless scalar @values;
+
+    my $sth = $dbh->prepare('INSERT INTO ' . $field->name . ' (value) VALUES (?)');
+    foreach my $value (@values) {
+        $sth->execute($value);
+    }
+}
+
 print "installation and configuration complete!\n";
