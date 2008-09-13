@@ -1,19 +1,10 @@
 use strict;
 use warnings;
-use Test::WWW::Selenium;
+use lib qw(lib);
+use QA::Util;
 use Test::More "no_plan";
 
-my $conf_file = "../config/selenium_test.conf";
-
-# read the test configuration file
-my $config = do "$conf_file"
-    or die "can't read configuration '$conf_file': $!$@";
-
-my $sel = Test::WWW::Selenium->new(
-    host        => $config->{host},
-    browser     => $config->{browser},
-    browser_url => $config->{browser_url}
-);
+my ($sel, $config) = get_selenium();
 
 # TODO: This test really needs improvement. There is by far much more stuff
 # to test in this area.

@@ -1,19 +1,10 @@
 use strict;
 use warnings;
-use Test::WWW::Selenium;
+use lib qw(lib);
 use Test::More "no_plan";
+use QA::Util;
 
-my $conf_file = "../config/selenium_test.conf";
-
-# read the test configuration file
-my $config = do "$conf_file"
-    or die "can't read configuration '$conf_file': $!$@";
-
-my $sel = Test::WWW::Selenium->new(
-    host        => $config->{host},
-    browser     => $config->{browser},
-    browser_url => $config->{browser_url}
-);
+my ($sel, $config) = get_selenium();
 
 $sel->open_ok("/$config->{bugzilla_installation}/long_list.cgi?id=1");
 $sel->title_is("Full Text Bug Listing", "Display bug as format for printing");
