@@ -40,7 +40,8 @@ $group->update();
 my @usernames = (
     'admin',            'no-privs',
     'QA-Selenium-TEST', 'canconfirm',
-    'tweakparams',      'permanent_user'
+    'tweakparams',      'permanent_user',
+    'editbugs',
 );
 
 print "creating user accounts...\n";
@@ -224,6 +225,7 @@ my @users_groups = (
     { user => $config->{QA_Selenium_TEST_user_login}, group => 'QA-Selenium-TEST' },
     { user => $config->{tweakparams_user_login},      group => 'tweakparams' },
     { user => $config->{canconfirm_user_login},       group => 'canconfirm' },
+    { user => $config->{editbugs_user_login},         group => 'editbugs' },
 );
 
 print "adding users to groups...\n";

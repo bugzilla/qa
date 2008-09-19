@@ -4,38 +4,32 @@
 
 use strict;
 use warnings;
+use lib qw(lib);
+use Test::More tests => 53;
+use QA::Util;
 
-use XMLRPC::Lite;
-use HTTP::Cookies;
+my ($rpc, $config) = get_xmlrpc_client();
 
-use Test::More tests => 26;
-
-my $username = 'editbugs@bugzilla.jp';
-my $password = shift;
-
-my $installation = shift;
-my $xmlrpc_url   = "http://landfill.bugzilla.org/${installation}/xmlrpc.cgi";
-
-###################################################################
-# Bug.create() testing
-###################################################################
+########################
+# Bug.create() testing #
+########################
 
 my $bug_fields = {
     'priority'     => 'P1',
     'bug_status'   => 'NEW',
     'version'      => 'unspecified',
-    'reporter'     => "$username",
+    'reporter'     => $config->{editbugs_user_login},
     'bug_file_loc' => '',
-    'comment'      => 'please ignore this bug',
-    'cc'           => ['no-privs@bugzilla.jp'],
-    'component'    => 'TestComp',
+    'comment'      => '-- Comment Created By Bugzilla XML-RPC Tests --',
+    'cc'           => [$config->{unprivileged_user_login}],
+    'component'    => 'TestComponent',
     'rep_platform' => 'All',
-    'assigned_to'  => "$username",
-    'short_desc'   => 'This is a testing bug only',
+    'assigned_to'  => $config->{editbugs_user_login},
+    'short_desc'   => 'XML-RPC Test Bug',
     'product'      => 'TestProduct',
     'op_sys'       => 'Linux',
     'bug_severity' => 'normal',
-    'qa_contact'   => 'canconfirm@bugzilla.jp',
+    'qa_contact'   => $config->{canconfirm_user_login},
 };
 
 # hash to contain all the possible $bug_fields values that
@@ -158,22 +152,14 @@ my $fields = {
         }
 
 };
-my $cookie_jar = new HTTP::Cookies( file => "/tmp/lwp_cookies.dat" );
-my $rpc        = new XMLRPC::Lite( proxy => $xmlrpc_url );
 
 # test calling Bug.create without logging into bugzilla
-my $call = $rpc->call( 'Bug.create', $bug_fields );
-cmp_ok( $call->faultstring, '=~', 'Login Required',
+my $create_call = xmlrpc_call_fail($rpc, 'Bug.create', $bug_fields);
+cmp_ok( $create_call->faultstring, '=~', 'Login Required',
     'calling the function without loggin in first returns error "Login Required"'
 );
 
-$rpc->transport->cookie_jar($cookie_jar);
-
-$call = $rpc->call('User.login', { login => $username, password => $password });
-
-# Save the cookies in the cookie file
-$rpc->transport->cookie_jar->extract_cookies($rpc->transport->http_response);
-$rpc->transport->cookie_jar->save;
+xmlrpc_log_in($rpc, $config, 'editbugs');
 
 # run the tests for all the invalid values that can be passed to Bug.create()
 foreach my $f (sort keys %{$fields}) {
@@ -183,8 +169,8 @@ foreach my $f (sort keys %{$fields}) {
         $bug_fields_copy->{$f} = $fields->{$f}->{$val}->{value};
         my $expected_faultstring = $fields->{$f}->{$val}->{faultstring};
 
-        $call = $rpc->call('Bug.create', $bug_fields_copy);
-        cmp_ok( $call->faultstring, '=~', $expected_faultstring,
+        my $fail_call = xmlrpc_call_fail($rpc, 'Bug.create', $bug_fields_copy);
+        cmp_ok( $fail_call->faultstring, '=~', $expected_faultstring,
                 "attempt to set $f to $val value got faultstring '$expected_faultstring'"
         );
     }
@@ -193,13 +179,7 @@ foreach my $f (sort keys %{$fields}) {
 # after the loop ends all the $bug_fields value will be set to valid
 # this is done by the sort so call create bug with the valid $bug_fields
 # to run the test for the successful creation of the bug
-$call = $rpc->call( 'Bug.create', $bug_fields );
-
-my $result = $call->result;
-
-is( $call->faultstring, undef,
-    'Bug.create() produced no faults when called with all valid required bug fields'
-);
-cmp_ok( $result->{id}, 'gt', 0, "new bug has been created and got a new id $result->{id}" );
-
-$rpc->call('User.logout');
+my $success_create = xmlrpc_call_success($rpc, 'Bug.create', $bug_fields);
+cmp_ok($success_create->result->{id}, 'gt', 0,
+       "Created new bug with id " . $success_create->result->{id});
+xmlrpc_call_success($rpc, 'User.logout');

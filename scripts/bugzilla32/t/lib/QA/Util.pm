@@ -3,12 +3,28 @@
 package QA::Util;
 
 use strict;
+use Data::Dumper;
+use HTTP::Cookies;
+use Test::More;
 use Test::WWW::Selenium;
 use WWW::Selenium::Util qw(server_is_running);
+use XMLRPC::Lite;
 
 use base qw(Exporter);
-@QA::Util::EXPORT = qw(trim log_in file_bug_in_product edit_product
-                       get_selenium WAIT_TIME);
+@QA::Util::EXPORT = qw(
+    trim
+    log_in
+    file_bug_in_product
+    edit_product
+    get_selenium
+    get_xmlrpc_client
+
+    xmlrpc_log_in
+    xmlrpc_call_success
+    xmlrpc_call_fail
+
+    WAIT_TIME
+);
 
 # How long we wait for pages to load.
 use constant WAIT_TIME => 30000;
@@ -29,11 +45,15 @@ sub trim {
 # Setup Functions #
 ###################
 
-sub get_selenium {
+sub get_config {
     # read the test configuration file
     my $conf_file = CONF_FILE;
     my $config = do($conf_file)
         or die "can't read configuration '$conf_file': $!$@";
+}
+
+sub get_selenium {
+    my $config = get_config();
 
     if (!server_is_running) {
         die "Selenium Server isn't running!";
@@ -48,9 +68,58 @@ sub get_selenium {
     return ($sel, $config);
 }
 
-############################################################
-# Below are helpers to perform common actions more easily. #
-############################################################
+sub get_xmlrpc_client {
+    my $config = get_config();
+    my $xmlrpc_url = $config->{browser_url} . "/"
+                    . $config->{bugzilla_installation} . "/xmlrpc.cgi";
+
+
+    # A temporary cookie jar that isn't saved after the script closes.
+    my $cookie_jar = new HTTP::Cookies({});
+    my $rpc        = new XMLRPC::Lite(proxy => $xmlrpc_url);
+    $rpc->transport->cookie_jar($cookie_jar);
+    return ($rpc, $config);
+}
+
+###############################
+# Helpers for XML-RPC scripts #
+###############################
+
+sub xmlrpc_log_in {
+    my ($rpc, $config, $user) = @_;
+    my $username = $config->{"${user}_user_login"};
+    my $password = $config->{"${user}_user_passwd"};
+
+    my $call = xmlrpc_call_success($rpc, 'User.login', 
+                                { login => $username, password => $password });
+    cmp_ok($call->result->{id}, 'gt', 0,
+           'Logged in with an id greater than 0.');
+
+    # Save the cookies in the cookie file
+    $rpc->transport->cookie_jar->extract_cookies(
+        $rpc->transport->http_response);
+    $rpc->transport->cookie_jar->save;
+}
+
+sub xmlrpc_call_success {
+    my ($rpc, $method, $args) = @_;
+    my $call = $rpc->call($method, $args);
+    ok(!defined $call->fault, "$method returned successfully")
+        or diag($call->faultstring);
+    return $call;
+}
+
+sub xmlrpc_call_fail {
+    my ($rpc, $method, $args) = @_;
+    my $call = $rpc->call($method, $args);
+    ok(defined $call->fault, "$method failed (as intended)")
+        or diag("Returned: " . Dumper($call->result));
+    return $call;
+}
+
+################################
+# Helpers for Selenium Scripts #
+################################
 
 # Go to the home/login page and log in.
 sub log_in {
