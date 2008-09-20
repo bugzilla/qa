@@ -135,15 +135,7 @@ $sel->is_text_present_ok("Changes submitted");
 
 # Now make sure these bugs correctly appear in buglists.
 
-$sel->click_ok("link=Search");
-$sel->wait_for_page_to_load(30000);
-my $title = $sel->get_title();
-if ($title eq "Find a Specific Bug") {
-    ok(1, "Display the basic search form");
-    $sel->click_ok("link=Advanced Search");
-    $sel->wait_for_page_to_load(30000);
-}
-$sel->title_is("Search for bugs", "Display the Advanced search form");
+open_advanced_search_page($sel);
 $sel->remove_all_selections("product");
 $sel->remove_all_selections("bug_status");
 $sel->type_ok("keywords", "key-selenium-kone");

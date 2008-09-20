@@ -16,6 +16,8 @@ use base qw(Exporter);
     log_in
     file_bug_in_product
     edit_product
+    open_advanced_search_page
+
     get_selenium
     get_xmlrpc_client
 
@@ -160,22 +162,36 @@ sub edit_product {
 
     $classification ||= "Unclassified";
     $sel->click_ok("link=Administration", undef, "Go to the Admin page");
-    $sel->wait_for_page_to_load(30000);
+    $sel->wait_for_page_to_load(WAIT_TIME);
     $sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
     $sel->click_ok("link=Products", undef, "Go to the Products page");
-    $sel->wait_for_page_to_load(30000);
+    $sel->wait_for_page_to_load(WAIT_TIME);
     my $title = $sel->get_title();
     if ($title eq "Select Classification") {
         ok(1, "More than one enterable classification available. Display them in a list");
         $sel->click_ok("link=$classification", undef, "Choose $classification");
-        $sel->wait_for_page_to_load(30000);
+        $sel->wait_for_page_to_load(WAIT_TIME);
     }
     else {
         $sel->title_is("Select product", "Display the list of enterable products");
     }
     $sel->click_ok("link=$product", undef, "Choose $product");
-    $sel->wait_for_page_to_load(30000);
+    $sel->wait_for_page_to_load(WAIT_TIME);
     $sel->title_is("Edit Product '$product'", "Display properties of $product");
+}
+
+sub open_advanced_search_page {
+    my $sel = shift;
+
+    $sel->click_ok("link=Search");
+    $sel->wait_for_page_to_load(WAIT_TIME);
+    my $title = $sel->get_title();
+    if ($title eq "Find a Specific Bug") {
+        ok(1, "Display the basic search form");
+        $sel->click_ok("link=Advanced Search");
+        $sel->wait_for_page_to_load(WAIT_TIME);
+    }
+    $sel->title_is("Search for bugs", "Display the Advanced search form");
 }
 
 1;

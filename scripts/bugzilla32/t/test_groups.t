@@ -55,14 +55,7 @@ $sel->value_is("bit-${group_id}", "on"); # Must be ON
 
 # Look for this new bug and add it to the new "Selenium bugs" saved search.
 
-$sel->click_ok("link=Search");
-$sel->wait_for_page_to_load(30000);
-my $title = $sel->get_title();
-if ($title eq "Find a Specific Bug") {
-    $sel->click_ok("link=Advanced Search");
-    $sel->wait_for_page_to_load(30000);
-}
-$sel->title_is("Search for bugs");
+open_advanced_search_page($sel);
 $sel->remove_all_selections_ok("product");
 $sel->add_selection_ok("product", "TestProduct");
 $sel->remove_all_selections("bug_status");
