@@ -11,23 +11,10 @@ my ($sel, $config) = get_selenium();
 my $test_bug_1 = $config->{test_bug_1};
 my $test_bug_2 = $config->{test_bug_2};
 
-log_in($sel, $config, 'admin');
-
 # Turn on usestatuswhiteboard
 
-$sel->click_ok("link=Administration", undef, "Go to the Admin page");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
-$sel->click_ok("link=Parameters", undef, "Go to the Config Parameters page");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("Configuration: Required Settings");
-$sel->click_ok("link=Bug Fields");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Configuration: Bug Fields");
-$sel->click_ok("usestatuswhiteboard-on");
-$sel->click_ok('//input[@type="submit" and @value="Save Changes"]', undef, "Save Changes");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Parameters Updated");
+log_in($sel, $config, 'admin');
+set_parameters($sel, {'Bug Fields' => {'usestatuswhiteboard-on' => undef}});
 
 # Make sure the status whiteboard is displayed and add stuff to it.
 
@@ -70,30 +57,15 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug List: sw-x77v");
 $sel->is_text_present_ok("2 bugs found");
 
-# Turn off usestatuswhiteboard.
-
-$sel->click_ok("link=Administration", undef, "Go to the Admin page");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
-$sel->click_ok("link=Parameters", undef, "Go to the Config Parameters page");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("Configuration: Required Settings");
-$sel->click_ok("link=Bug Fields");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Configuration: Bug Fields");
-$sel->click_ok("usestatuswhiteboard-off");
-$sel->click_ok('//input[@type="submit" and @value="Save Changes"]', undef, "Save Changes");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Parameters Updated");
-
 # The status whiteboard should no longer be displayed in both the query
-# and bug view pages (query.cgi and show_bug.cgi).
+# and bug view pages (query.cgi and show_bug.cgi) when usestatuswhiteboard
+# is off.
 
+set_parameters($sel, {'Bug Fields' => {'usestatuswhiteboard-off' => undef}});
 $sel->click_ok("link=Search");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Search for bugs");
 ok(!$sel->is_text_present("Whiteboard:"), "Whiteboard label no longer displayed");
-
 $sel->open_ok("/$config->{bugzilla_installation}/show_bug.cgi?id=$test_bug_1");
 $sel->title_like(qr/^Bug $test_bug_1\b/);
 ok(!$sel->is_text_present("Whiteboard:"), "Whiteboard label no longer displayed");
@@ -110,19 +82,8 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Search is gone");
 $sel->is_text_present_ok("OK, the sw-x77v search is gone.");
 
-# Restore the usestatuswhiteboard parameter to on.
+# Turn on usestatuswhiteboard again as some other scripts may expect the status
+# whiteboard to be available by default.
 
-$sel->click_ok("link=Administration", undef, "Go to the Admin page");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
-$sel->click_ok("link=Parameters", undef, "Go to the Config Parameters page");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("Configuration: Required Settings");
-$sel->click_ok("link=Bug Fields");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Configuration: Bug Fields");
-$sel->click_ok("usestatuswhiteboard-on");
-$sel->click_ok('//input[@type="submit" and @value="Save Changes"]', undef, "Save Changes");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Parameters Updated");
+set_parameters($sel, {'Bug Fields' => {'usestatuswhiteboard-on' => undef}});
 $sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi", undef, "Logout");

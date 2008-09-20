@@ -8,34 +8,14 @@ use QA::Util;
 
 my ($sel, $config) = get_selenium();
 
-# 1st step: set the following parameters:
-# - usetargetmilestone to ON
-# - musthavemilestoneonaccept to ON
-# - letsubmitterchoosemilestone to ON
+# 1st step: turn on usetargetmilestone, musthavemilestoneonaccept and letsubmitterchoosemilestone.
 
 log_in($sel, $config, 'admin');
-$sel->click_ok("link=Administration", undef, "Go to the Admin page");
-$sel->wait_for_page_to_load(30000);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
-$sel->click_ok("link=Parameters", undef, "Go to the Config Parameters page");
-$sel->wait_for_page_to_load(30000);
-$sel->title_is("Configuration: Required Settings", "Display the Required Settings page");
-$sel->click_ok("link=Bug Fields", undef, "Go to the Bug Fields page");
-$sel->wait_for_page_to_load(30000);
-$sel->title_is("Configuration: Bug Fields", "Display the Bug Fields page");
-# Very important step! That's the topic of this test.
-$sel->click_ok("usetargetmilestone-on", undef, "Turn on milestones");
-$sel->click_ok('//input[@type="submit" and @value="Save Changes"]', undef, "Save Changes");
-$sel->wait_for_page_to_load(30000);
-$sel->title_is("Parameters Updated", "Parameters Updated");
-$sel->click_ok("link=Bug Change Policies", undef, "Go to the Bug Change Policies page");
-$sel->wait_for_page_to_load(30000);
-$sel->title_is("Configuration: Bug Change Policies", "Display the Bug Change Policies page");
-$sel->click_ok("musthavemilestoneonaccept-on", undef, "Turn on musthavemilestoneonaccept");
-$sel->click_ok("letsubmitterchoosemilestone-on", undef, "Turn on letsubmitterchoosemilestone");
-$sel->click_ok('//input[@type="submit" and @value="Save Changes"]', undef, "Save Changes");
-$sel->wait_for_page_to_load(30000);
-$sel->title_is("Parameters Updated", "Parameters Updated");
+set_parameters($sel, {'Bug Fields'          => {'usetargetmilestone-on'          => undef},
+                      'Bug Change Policies' => {'musthavemilestoneonaccept-on'   => undef,
+                                                'letsubmitterchoosemilestone-on' => undef},
+                     }
+              );
 
 # 2nd step: Add the milestone "2.0" (with sortkey = 10) to the TestProduct product.
 
@@ -181,16 +161,5 @@ $sel->title_is("Bug $bug3_id processed");
 
 # 11th step: turn musthavemilestoneonaccept back to OFF.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load(30000);
-$sel->click_ok("link=Parameters");
-$sel->wait_for_page_to_load(30000);
-$sel->title_is("Configuration: Required Settings");
-$sel->click_ok("link=Bug Change Policies");
-$sel->wait_for_page_to_load(30000);
-$sel->title_is("Configuration: Bug Change Policies");
-$sel->click_ok("musthavemilestoneonaccept-off");
-$sel->click_ok('//input[@type="submit" and @value="Save Changes"]', undef, "Save Changes");
-$sel->wait_for_page_to_load(30000);
-$sel->title_is("Parameters Updated");
+set_parameters($sel, {'Bug Change Policies' => {'musthavemilestoneonaccept-off' => undef}});
 $sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi", undef, "Logout");

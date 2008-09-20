@@ -17,6 +17,7 @@ use base qw(Exporter);
     file_bug_in_product
     edit_product
     open_advanced_search_page
+    set_parameters
 
     get_selenium
     get_xmlrpc_client
@@ -192,6 +193,65 @@ sub open_advanced_search_page {
         $sel->wait_for_page_to_load(WAIT_TIME);
     }
     $sel->title_is("Search for bugs", "Display the Advanced search form");
+}
+
+# $params is a hashref of the form:
+# {section1 => { param1 => {type => '(text|select)', value => 'foo'},
+#                param2 => {type => '(text|select)', value => 'bar'},
+#                param3 => undef },
+#  section2 => { param4 => ...},
+# }
+# section1, section2, ... is the name of the section
+# param1, param2, ... is the name of the parameter (which must belong to the given section)
+# type => 'text' is for text fields
+# type => 'select' is for drop-down select fields
+# undef is for radio buttons (in which case the parameter must be the ID of the radio button)
+# value => 'foo' is the value of the parameter (either text or label)
+sub set_parameters {
+    my ($sel, $params) = @_;
+
+    $sel->click_ok("link=Administration", undef, "Go to the Admin page");
+    $sel->wait_for_page_to_load(WAIT_TIME);
+    $sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+    $sel->click_ok("link=Parameters", undef, "Go to the Config Parameters page");
+    $sel->wait_for_page_to_load(WAIT_TIME);
+    $sel->title_is("Configuration: Required Settings");
+    my $last_section = "Required Settings";
+
+    foreach my $section (keys %$params) {
+        if ($section ne $last_section) {
+            $sel->click_ok("link=$section");
+            $sel->wait_for_page_to_load_ok(WAIT_TIME);
+            $sel->title_is("Configuration: $section");
+            $last_section = $section;
+        }
+        my $param_list = $params->{$section};
+        foreach my $param (keys %$param_list) {
+            my $data = $param_list->{$param};
+            if (defined $data) {
+                my $type = $data->{type};
+                my $value = $data->{value};
+
+                if ($type eq 'text') {
+                    $sel->type_ok($param, $value);
+                }
+                elsif ($type eq 'select') {
+                    $sel->select_ok($param, "label=$value");
+                }
+                else {
+                    ok(0, "Unknown parameter type: $type");
+                }
+            }
+            else {
+                # If the value is undefined, then the param name is
+                # the ID of the radio button.
+                $sel->click_ok($param);
+            }
+        }
+        $sel->click_ok('//input[@type="submit" and @value="Save Changes"]', undef, "Save Changes");
+        $sel->wait_for_page_to_load_ok(WAIT_TIME);
+        $sel->title_is("Parameters Updated");
+    }
 }
 
 1;
