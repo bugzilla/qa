@@ -13,6 +13,7 @@ use XMLRPC::Lite;
 use base qw(Exporter);
 @QA::Util::EXPORT = qw(
     trim
+    url_quote
     log_in
     file_bug_in_product
     edit_product
@@ -42,6 +43,13 @@ sub trim {
       $str =~ s/\s+$//g;
     }
     return $str;
+}
+
+# This originally came from CGI.pm, by Lincoln D. Stein
+sub url_quote {
+    my ($toencode) = (@_);
+    $toencode =~ s/([^a-zA-Z0-9_\-.])/uc sprintf("%%%02x",ord($1))/eg;
+    return $toencode;
 }
 
 ###################
