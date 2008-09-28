@@ -162,4 +162,4 @@ $sel->title_is("Bug $bug3_id processed");
 # 11th step: turn musthavemilestoneonaccept back to OFF.
 
 set_parameters($sel, {'Bug Change Policies' => {'musthavemilestoneonaccept-off' => undef}});
-$sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi", undef, "Logout");
+logout($sel);

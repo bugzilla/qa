@@ -187,4 +187,4 @@ $sel->wait_for_page_to_load(30000);
 $sel->title_is("Bug List");
 $sel->is_element_present_ok("link=$test_bug_2");
 $sel->is_text_present_ok("One bug found");
-$sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi", undef, "Logout");
+logout($sel);

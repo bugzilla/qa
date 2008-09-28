@@ -320,4 +320,4 @@ $sel->click_ok("link=Forget Search 'Selenium bugs'");
 $sel->wait_for_page_to_load(30000);
 $sel->title_is("Search is gone");
 $sel->is_text_present_ok("OK, the Selenium bugs search is gone.");
-$sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi", undef, "Logout");
+logout($sel);

@@ -15,6 +15,7 @@ use base qw(Exporter);
     trim
     url_quote
     log_in
+    logout
     file_bug_in_product
     edit_product
     open_advanced_search_page
@@ -142,6 +143,15 @@ sub log_in {
     $sel->click_ok("log_in", undef, "Submit credentials");
     $sel->wait_for_page_to_load(WAIT_TIME);
     $sel->title_is("Bugzilla Main Page", "User is logged in");
+}
+
+# Log out. Will fail if you are not logged in.
+sub logout {
+    my $sel = shift;
+
+    $sel->click_ok("link=Log out", undef, "Logout");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Logged Out");
 }
 
 # Display the bug form to enter a bug in the given product.

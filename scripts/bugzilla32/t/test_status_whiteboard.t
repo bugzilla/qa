@@ -86,4 +86,4 @@ $sel->is_text_present_ok("OK, the sw-x77v search is gone.");
 # whiteboard to be available by default.
 
 set_parameters($sel, {'Bug Fields' => {'usestatuswhiteboard-on' => undef}});
-$sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi", undef, "Logout");
+logout($sel);

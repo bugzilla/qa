@@ -282,6 +282,4 @@ ok($text =~ /Do you really want to delete this product\?/, "Confirmation request
 $sel->click_ok("delete");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Product Deleted");
-$sel->click_ok("link=Log out", undef, "Logout");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Logged Out");
+logout($sel);

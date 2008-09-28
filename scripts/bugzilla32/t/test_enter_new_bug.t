@@ -24,6 +24,5 @@ foreach my $user (qw(admin unprivileged canconfirm)) {
     $sel->click_ok("commit", undef, "Submit bug data to post_bug.cgi");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
-    $sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi", undef, 
-                  "Logout");
+    logout($sel);
 }

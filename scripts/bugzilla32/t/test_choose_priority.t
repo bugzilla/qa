@@ -17,4 +17,4 @@ set_parameters($sel, { "Bug Change Policies" => {"letsubmitterchoosepriority-on"
 file_bug_in_product($sel, "TestProduct");
 $sel->is_text_present_ok("Priority");
 $sel->is_element_present_ok("//select[\@name='priority']");
-$sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi", undef, "Logout");
+logout($sel);
