@@ -166,12 +166,16 @@ sub file_bug_in_product {
         ok(1, "More than one enterable classification available. Display them in a list");
         $sel->click_ok("link=$classification", undef, "Choose $classification");
         $sel->wait_for_page_to_load(WAIT_TIME);
+        $title = $sel->get_title();
+    }
+    if ($title eq "Enter Bug") {
+        ok(1, "Display the list of enterable products");
+        $sel->click_ok("link=$product", undef, "Choose $product");
+        $sel->wait_for_page_to_load(WAIT_TIME);
     }
     else {
-        $sel->title_is("Enter Bug", "Display the list of enterable products");
+        ok(1, "Only one product available in $classification. Skipping the 'Choose product' page.")
     }
-    $sel->click_ok("link=$product", undef, "Choose $product");
-    $sel->wait_for_page_to_load(WAIT_TIME);
     $sel->title_is("Enter Bug: $product", "Display form to enter bug data");
 }
 
