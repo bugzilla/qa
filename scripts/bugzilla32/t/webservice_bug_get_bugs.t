@@ -4,116 +4,82 @@
 
 use strict;
 use warnings;
+use lib qw(lib);
+use QA::Util;
+use Test::More tests => 34;
+my ($rpc, $config) = get_xmlrpc_client();
 
-use XMLRPC::Lite;
-use HTTP::Cookies;
-
-use Test::More tests => 10;
-
-my $privileged_username = 'admin@bugzilla.jp';
-my $non_privs_username  = 'no-privs@bugzilla.jp';
-
-my $password     = shift;
-my $installation = shift;
-my $xmlrpc_url   = "http://landfill.bugzilla.org/${installation}/xmlrpc.cgi";
-
-my $private_bug       = 32;
-my $public_bug        = 1;
-my $bug_alias         = 'aliasaliasalias';
-my $invalid_bug_id    = -1;
-my $invalid_bug_alias = 'hjgh';
-my $undefined_bug     = undef;
+use constant INVALID_BUG_ID => -1;
+use constant INVALID_BUG_ALIAS => 'aaaaaaa12345';
+use constant PRIVS_USER => 'QA_Selenium_TEST';
 
 my @tests = (
-    [   $non_privs_username,
-        $password,
-        { ids => [$private_bug] },
-        "You are not authorized to access bug #$private_bug",
-        'trying to get private bug information with logged in unprivileged user returns error "Access Denied"',
-    ],
-    [   $privileged_username,
-        $password,
-        { ids => [$undefined_bug], },
-        "You must enter a valid bug number",
-        'passing undefined bug id param returns error "Invalid Bug ID"',
-    ],
-    [   $privileged_username,
-        $password,
-        { ids => [$invalid_bug_id], },
-        "not a valid bug number",
-        'passing invalid bug id returns error "Invalid Bug ID"',
-    ],
-    [   $privileged_username,
-        $password,
-        { ids => [$invalid_bug_alias], },
-        "nor an alias to a bug",
-        'passing invalid bug alias returns error "Invalid Bug Alias"',
-    ],
-    [   $privileged_username,
-        $password,
-        { ids => [ $private_bug, $bug_alias, $public_bug ], },
-        'privileged logged in user can successfully access private and public bug information',
-    ],
+    { args  => { ids => ['private_bug'] },
+      error => "You are not authorized to access",
+      test  => 'Logged-out user cannot access a private bug',
+    },
+    { args => { ids => ['public_bug'] },
+      test => 'Logged-out user can access a public bug.',
+    },
+    { args  =>  { ids => [INVALID_BUG_ID] },
+      error =>  "not a valid bug number",
+      test  =>  'Passing invalid bug id returns error "Invalid Bug ID"',
+    },
+    { args  =>  { ids => [undef] },
+      error => "You must enter a valid bug number",
+      test  =>  'Passing undef as bug id param returns error "Invalid Bug ID"',
+    },
+    { args  => { ids => [INVALID_BUG_ALIAS] },
+      error =>  "nor an alias to a bug",
+      test  => 'Passing invalid bug alias returns error "Invalid Bug Alias"',
+    },
 
+    { user  =>  'unprivileged',
+      args  =>  { ids => ['private_bug'] },
+      error =>  "You are not authorized to access",
+      test  => 'Access to a private bug is denied to a user without privs',
+    },
+    { user => 'unprivileged',
+      args => { ids => ['public_bug'] },
+      test => 'User without privs can access a public bug by alias.',
+    },
+    { user => 'admin',
+      args => { ids => ['public_bug'] },
+      test => 'Admin can access a public bug.',
+    },
+    { user => PRIVS_USER,
+      args =>  { ids => ['private_bug'] },
+      test =>  'User with privs can successfully access a private bug',
+    },
 );
-
-my $cookie_jar = new HTTP::Cookies( file => "/tmp/lwp_cookies.dat" );
-my $rpc        = new XMLRPC::Lite( proxy => $xmlrpc_url );
-
-my $call;
-
-# test calling Bug.get_bugs without logging into bugzilla to get private bug
-$call = $rpc->call( 'Bug.get_bugs', { ids => [$private_bug], }, );
-cmp_ok(
-    $call->faultstring,
-    '=~',
-    "You are not authorized to access bug #$private_bug",
-    'trying to get private bug information without logging in returns error "Access Denied"'
-);
-
-# test calling Bug.get_bugs without logging into bugzilla to get public bug
-$call = $rpc->call( 'Bug.get_bugs', { ids => [$public_bug], }, );
-
-cmp_ok( $call->result->{bugs}->[0]->{id}, '==', $public_bug,
-    'trying to get public bug information without logging in returns the bug information successfully'
-);
-ok( (   !defined $call->result->{bugs}->[0]->{internals}{estimated_time}
-            && !defined $call->result->{bugs}->[0]->{internals}{remaining_time}
-            && !defined $call->result->{bugs}->[0]->{internals}{deadline}
-    ),
-    'timetracking fields are not returned to non privileged/logged-in users'
-);
-
-$rpc->transport->cookie_jar($cookie_jar);
 
 for my $t (@tests) {
-    $call = $rpc->call( 'User.login',
-        { login => $t->[0], password => $t->[1] } );
+    if ($t->{user}) {
+        xmlrpc_log_in($rpc, $config, $t->{user});
+    }
 
-    # Save the cookies in the cookie file
-    $rpc->transport->cookie_jar->extract_cookies(
-        $rpc->transport->http_response );
-    $rpc->transport->cookie_jar->save;
-
-    $call = $rpc->call( 'Bug.get_bugs', $t->[2] );
-    my $result = $call->result;
-
-    if ( $t->[4] ) {
-        cmp_ok( $call->faultstring, '=~', $t->[3], $t->[4] );
+    if ($t->{error}) {
+        xmlrpc_call_fail($rpc, 'Bug.get', $t->{args}, $t->{error}, $t->{test});
     }
     else {
-        ok( !defined $call->faultstring, $t->[3] );
-        cmp_ok( scalar @{ $result->{bugs} }, '==', '3',
-            "information for all requested bugs have been returned successfully to privileged user"
-        );
-        ok( (   defined $result->{bugs}->[0]->{internals}{estimated_time}
-                    && defined $result->{bugs}->[0]->{internals}{remaining_time}
-                    && defined $result->{bugs}->[0]->{internals}{deadline}
-            ),
-            'timetracking fields are returned successfully to the privileged user'
-        );
+        my $call = xmlrpc_call_success($rpc, 'Bug.get', $t->{args}, $t->{test});
+        is(scalar @{ $call->result->{bugs} }, 1, "Got exactly one bug");
+        if ($t->{user} && $t->{user} eq 'admin') {
+            ok(exists $call->result->{bugs}->[0]->{internals}{estimated_time}
+               && exists $call->result->{bugs}->[0]->{internals}{remaining_time}
+               && exists $call->result->{bugs}->[0]->{internals}{deadline},
+               'Admin correctly gets time-tracking fields');
+        }
+        else {
+            ok(!exists $call->result->{bugs}->[0]->{internals}{estimated_time}
+              && !exists $call->result->{bugs}->[0]->{internals}{remaining_time}
+              && !exists $call->result->{bugs}->[0]->{internals}{deadline},
+              'Time-tracking fields are not returned to logged-out users');
+        }
     }
 
-    $call = $rpc->call('User.logout');
+    if ($t->{user}) {
+        xmlrpc_call_success($rpc, 'User.logout');
+    }
 }
 

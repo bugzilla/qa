@@ -104,8 +104,7 @@ sub xmlrpc_log_in {
 
     my $call = xmlrpc_call_success($rpc, 'User.login', 
                                 { login => $username, password => $password });
-    cmp_ok($call->result->{id}, 'gt', 0,
-           'Logged in with an id greater than 0.');
+    cmp_ok($call->result->{id}, 'gt', 0,  "Logged in as $user");
 
     # Save the cookies in the cookie file
     $rpc->transport->cookie_jar->extract_cookies(
@@ -114,18 +113,23 @@ sub xmlrpc_log_in {
 }
 
 sub xmlrpc_call_success {
-    my ($rpc, $method, $args) = @_;
+    my ($rpc, $method, $args, $test_name) = @_;
     my $call = $rpc->call($method, $args);
-    ok(!defined $call->fault, "$method returned successfully")
-        or diag($call->faultstring);
+    $test_name ||= "$method returned successfully";
+    ok(!defined $call->fault, $test_name) or diag($call->faultstring);
     return $call;
 }
 
 sub xmlrpc_call_fail {
-    my ($rpc, $method, $args) = @_;
+    my ($rpc, $method, $args, $faultstring, $test_name) = @_;
     my $call = $rpc->call($method, $args);
-    ok(defined $call->fault, "$method failed (as intended)")
+    $test_name ||= "$method failed (as intended)";
+    ok(defined $call->fault, $test_name)
         or diag("Returned: " . Dumper($call->result));
+    if (defined $faultstring) {
+        cmp_ok($call->faultstring, '=~', $faultstring, 
+               "Got correct fault for $method");
+    }
     return $call;
 }
 

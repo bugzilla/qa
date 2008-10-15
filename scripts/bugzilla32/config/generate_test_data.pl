@@ -109,7 +109,9 @@ my %field_values = (
 
 print "creating bugs...\n";
 Bugzilla::Bug->create( \%field_values );
-Bugzilla::Bug->create( \%field_values );
+if (Bugzilla::Bug->new('public_bug')->{error}) {
+    Bugzilla::Bug->create({ %field_values, alias => 'public_bug' });
+}
 
 ##########################################################################
 # Create Products
@@ -297,6 +299,20 @@ foreach my $f (@fields) {
     foreach my $value (@values) {
         $sth->execute($value);
     }
+}
+
+Bugzilla->logout;
+$cgi->param( 'Bugzilla_login',    $config->{QA_Selenium_TEST_user_login} );
+$cgi->param( 'Bugzilla_password', $config->{QA_Selenium_TEST_user_passwd} );
+Bugzilla->login(LOGIN_REQUIRED);
+
+print "Creating private bug(s)...\n";
+if (Bugzilla::Bug->new('private_bug')->{error}) {
+    my %priv_values = %field_values;
+    $priv_values{alias} = 'private_bug';
+    $priv_values{product} = 'QA-Selenium-TEST';
+    $priv_values{component} = 'QA-Selenium-TEST';
+    my $bug = Bugzilla::Bug->create(\%priv_values);
 }
 
 print "installation and configuration complete!\n";
