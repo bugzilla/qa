@@ -10,10 +10,10 @@ my ($sel, $config) = get_selenium();
 
 log_in($sel, $config, 'admin');
 $sel->click_ok("link=Administration", undef, "Go to the Admin page");
-$sel->wait_for_page_to_load(30000);
+$sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
 $sel->click_ok("link=Sanity Check", undef, "Go to Sanity Check (no parameter)");
-$sel->wait_for_page_to_load(30000);
+$sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Sanity Check", "Display sanitycheck.cgi");
 $sel->is_text_present_ok("Sanity check completed.", undef, "Page displayed correctly");
 $sel->open_ok("/$config->{bugzilla_installation}/sanitycheck.cgi?rebuildvotecache=1");
