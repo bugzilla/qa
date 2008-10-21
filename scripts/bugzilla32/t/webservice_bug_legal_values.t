@@ -4,160 +4,111 @@
 
 use strict;
 use warnings;
+use lib qw(lib);
+use Test::More tests => 94;
+use QA::Util;
+my ($rpc, $config) = get_xmlrpc_client();
 
-use XMLRPC::Lite;
-use HTTP::Cookies;
+use constant INVALID_PRODUCT_ID => -1;
+use constant INVALID_FIELD_NAME => 'invalid_field';
+use constant GLOBAL_FIELDS => 
+    qw(bug_severity bug_status op_sys priority rep_platform resolution
+       cf_qa_status cf_single_select);
+use constant PRODUCT_FIELDS => qw(version target_milestone component);
 
-use Test::More tests => 32;
-
-my $qa_username        = 'qa@bugzilla.jp';
-my $non_privs_username = 'no-privs@bugzilla.jp';
-
-my $password     = shift;
-my $installation = shift;
-my $xmlrpc_url   = "http://landfill.bugzilla.org/${installation}/xmlrpc.cgi";
-
-my $cookie_jar = new HTTP::Cookies( file => "/tmp/lwp_cookies.dat" );
-my $rpc        = new XMLRPC::Lite( proxy => $xmlrpc_url );
-$rpc->transport->cookie_jar($cookie_jar);
-
-my $call = $rpc->call( 'User.login',
-    { login => $qa_username, password => $password } );
-
-# Save the cookies in the cookie file
-$rpc->transport->cookie_jar->extract_cookies(
-    $rpc->transport->http_response );
-$rpc->transport->cookie_jar->save;
+xmlrpc_log_in($rpc, $config, 'QA_Selenium_TEST');
 
 # get product ids from their names
-$call = $rpc->call( 'Tools.product_names_to_ids',
-    [ 'TestProduct', 'PrivateProduct' ] );
-my $product_ids = $call->result;
+my $accessible = xmlrpc_call_success($rpc, 'Product.get_accessible_products');
+my $prod_call = xmlrpc_call_success($rpc, 'Product.get', $accessible->result);
+my %products;
+foreach my $prod (@{ $prod_call->result->{products} }) {
+    $products{$prod->{name}} = $prod->{id};
+}
 
-my $private_product_id = $product_ids->{PrivateProduct};
-my $public_product_id  = $product_ids->{TestProduct};
-my $invalid_product_id = -1;
+my $public_product = $products{'Another Product'};
+my $private_product = $products{'QA-Selenium-TEST'};
 
-$call = $rpc->call('User.logout');
-
-my @global_fields
-    = qw(bug_severity bug_status op_sys priority rep_platform resolution);
-my @product_specific_fields = qw(version target_milestone component);
-my $invalid_field           = 'hkjh';
+xmlrpc_call_success($rpc, 'User.logout');
 
 my @all_tests;
 
-for my $global_field (@global_fields) {
-    my $test = [
-        $non_privs_username,
-        $password,
-        { field => $global_field },
-        "field values returned successfully for global field $global_field to a non privileged user",
-    ];
-
-    push( @all_tests, $test );
+for my $field (GLOBAL_FIELDS) {
+    push(@all_tests, 
+         { args => { field => $field },
+           test => "Logged-out user can get $field values" });
 }
 
-for my $product_specific_field (@product_specific_fields) {
+for my $field (PRODUCT_FIELDS) {
     my @tests = (
-        [   $non_privs_username,
-            $password,
-            {   product_id => $private_product_id,
-                field      => => $product_specific_field,
-            },
-            "you don't have access",
-            "trying to get values of a private product specific field $product_specific_field with unprivileged user returns error \"Invalid Product\"",
-        ],
-        [   $qa_username,
-            $password,
-            { field => $product_specific_field, },
-            "argument was not set",
-            "not passing product id param with product specific field $product_specific_field returns error \"Param Required\"",
-        ],
-        [   $qa_username,
-            $password,
-            {   product_id => $invalid_product_id,
-                field      => $product_specific_field,
-            },
-            "does not exist",
-            "passing invalid product id with product specific field $product_specific_field returns error \"Param Required\"",
-        ],
-        [   $qa_username,
-            $password,
-            {   product_id => $private_product_id,
-                field      => $product_specific_field,
-            },
-            "field values returned successfully for private product specific field $product_specific_field to a privileged user",
-        ],
-        [   $non_privs_username,
-            $password,
-            {   product_id => $public_product_id,
-                field      => $product_specific_field,
-            },
-            "field values returned successfully for public product specific field $product_specific_field to a non privileged user",
-        ],
+        { args  => { field => $field },
+          error => "argument was not set",
+          test  => "$field can't be accessed without a value for 'product'",
+        },
+        { args  => { product_id => INVALID_PRODUCT_ID, field => $field },
+          error => "does not exist",
+          test  => "$field cannot be accessed with an invalid product id",
+        },
+
+        { args  => { product_id => $private_product, field => $field },
+          error => "you don't have access",
+          test => "Logged-out user cannot access $field in private product"
+        },
+        { args  => { product_id => $public_product, field => $field },
+          test  => "Logged-out user can access $field in a public product",
+        },
+
+        { user  => 'unprivileged',
+          args  => { product_id => $private_product, field => $field },
+          error => "you don't have access",
+          test  => "Unprivileged user cannot access $field in private product",
+        },
+        { user => 'unprivileged',
+          args => { product_id => $public_product, field => $field },
+          test => "Logged-in user can access $field in public product",
+        },
+
+        { user => 'QA_Selenium_TEST',
+          args => { product_id => $private_product, field  => $field },
+          test => "Privileged user can access $field in a private product",
+        },
     );
 
-    push( @all_tests, @tests );
+    push(@all_tests, @tests);
 }
 
 my @extra_tests = (
-    [   $qa_username,
-        $password,
-        { product_id => $private_product_id, },
-        "Can't use  as a field name",
-        'not passing field param returns error "Invalid Field Name"',
-    ],
-    [   $qa_username,
-        $password,
-        {   field      => $invalid_field,
-            product_id => $private_product_id,
-        },
-        "Can't use $invalid_field as a field name",
-        'passing invalid field name returns error "Invalid Field Name"',
-    ],
+    { args  => { product_id => $private_product, },
+      error => "Can't use  as a field name",
+      test  =>  "Passing product_id without 'field' throws an error",
+    },
+    { args  => { field => INVALID_FIELD_NAME },
+      error => "Can't use " . INVALID_FIELD_NAME . " as a field name",
+      test  => 'Invalid field name'
+    },
 );
 
-push( @all_tests, @extra_tests );
-
-# test calling Bug.legal_values without logging into Bugzilla
-for my $global_field (@global_fields) {
-    $call = $rpc->call('Bug.legal_values', { field => $global_field });
-
-    cmp_ok( scalar @{ $call->result->{values} }, 'gt', '0', "trying to get values of the global field $global_field for a logged out user" );
-}
-for my $product_specific_field (@product_specific_fields) {
-    $call = $rpc->call(
-        'Bug.legal_values',
-        {   product_id => $private_product_id,
-            field      => $product_specific_field,
-        },
-    );
-
-    cmp_ok( $call->faultstring, '=~', "you don't have access",
-        "trying to get values of a private product specific field $product_specific_field without logging in returns error \"Invalid Product\""
-    );
-}
+push(@all_tests, @extra_tests);
 
 for my $t (@all_tests) {
-    $call = $rpc->call( 'User.login',
-        { login => $t->[0], password => $t->[1] } );
+    if ($t->{user}) {
+        xmlrpc_log_in($rpc, $config, $t->{user});
+    }
 
-    # Save the cookies in the cookie file
-    $rpc->transport->cookie_jar->extract_cookies(
-        $rpc->transport->http_response );
-    $rpc->transport->cookie_jar->save;
-
-    $call = $rpc->call( 'Bug.legal_values', $t->[2] );
-    my $result = $call->result;
-
-    if ( $t->[4] ) {
-        cmp_ok( $call->faultstring, '=~', $t->[3], $t->[4] );
+    if ($t->{error}) {
+        xmlrpc_call_fail($rpc, 'Bug.legal_values', $t->{args}, $t->{error}, 
+                         $t->{test});
     }
     else {
-        cmp_ok( scalar @{ $result->{values} }, 'gt', '0', $t->[3] );
+        my $response = xmlrpc_call_success($rpc, 'Bug.legal_values', $t->{args},
+                                         $t->{test});
+        if ($response->result) {
+            cmp_ok(scalar @{ $response->result->{'values'} }, '>', 0, 
+                   'Got one or more values');
+        }
     }
 
-    $call = $rpc->call('User.logout');
+    if ($t->{user}) {
+        xmlrpc_call_success($rpc, 'User.logout');
+    }
 }
-

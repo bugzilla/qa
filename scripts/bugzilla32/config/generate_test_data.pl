@@ -19,9 +19,11 @@ use Bugzilla;
 use Bugzilla::Bug;
 use Bugzilla::User;
 use Bugzilla::Install;
+use Bugzilla::Milestone;
 use Bugzilla::Product;
 use Bugzilla::Component;
 use Bugzilla::Group;
+use Bugzilla::Version;
 use Bugzilla::Constants;
 
 my $dbh = Bugzilla->dbh;
@@ -119,7 +121,8 @@ if (Bugzilla::Bug->new('public_bug')->{error}) {
 my @products = (
     {product_name     => 'QA-Selenium-TEST',
         description      => "used by Selenium test.. DON'T DELETE",
-        version          => 'unspecified',
+        versions         => ['unspecified', 'QAVersion'],
+        milestones       => ['QAMilestone'],
         defaultmilestone => '---',
         components       => [
             {   name             => "QA-Selenium-TEST",
@@ -135,8 +138,10 @@ my @products = (
     {   product_name => 'Another Product',
         description =>
             "Alternate product used by Selenium. <b>Do not edit!</b>",
-        version          => 'unspecified',
+        versions         => ['unspecified', 'Another1', 'Another2'],
+        milestones       => ['AnotherMS1', 'AnotherMS2', 'Milestone'],
         defaultmilestone => '---',
+        
         components       => [
             {   name             => "c1",
                 description      => "c1",
@@ -158,16 +163,14 @@ my @products = (
 
 print "creating products...\n";
 for my $product (@products) {
-    if ( !Bugzilla::Product->new( { name => $product->{product_name} } ) ) {
-
+    my $new_product = 
+        Bugzilla::Product->new({ name => $product->{product_name} });
+    if (!$new_product) {
         $dbh->do('INSERT INTO products (name, description) VALUES (?, ?)',
             undef, ( $product->{product_name}, $product->{description} ) );
 
-        my $new_product
+        $new_product
             = new Bugzilla::Product( { name => $product->{product_name} } );
-
-        $dbh->do( 'INSERT INTO versions (value, product_id) VALUES (?, ?)',
-            undef, ( $product->{version}, $new_product->id ) );
 
         $dbh->do( 'INSERT INTO milestones (product_id, value) VALUES (?, ?)',
             undef, ( $new_product->id, $product->{defaultmilestone} ) );
@@ -187,6 +190,25 @@ for my $product (@products) {
 
                 }
             );
+        }
+    }
+
+    foreach my $version (@{ $product->{versions} }) {
+        if (!new Bugzilla::Version({ name    => $version, 
+                                     product => $new_product })) 
+        {
+            Bugzilla::Version::create($version, $new_product);
+        }
+    }
+
+    foreach my $milestone (@{ $product->{milestones} }) {
+        if (!new Bugzilla::Milestone({ name    => $milestone,
+                                       product => $new_product }))
+        {
+            # We don't use Bugzilla::Milestone->create because we want to
+            # bypass security checks.
+            $dbh->do('INSERT INTO milestones (product_id, value) VALUES (?,?)',
+                     undef, $new_product->id, $milestone);
         }
     }
 }
@@ -275,7 +297,15 @@ my @fields = (
       obsolete    => 0,
       custom      => 1,
       values      => ['verified', 'in progress', 'untested']
-    }
+    },
+    { name        => 'cf_single_select',
+      description => 'SingSel',
+      type        => FIELD_TYPE_SINGLE_SELECT,
+      mailhead    => 0,
+      enter_bug   => 1,
+      custom      => 1,
+      values      => [qw(one two three)],
+    },
 );
 
 print "creating custom fields...\n";
