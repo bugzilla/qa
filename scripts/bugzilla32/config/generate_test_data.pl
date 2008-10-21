@@ -1,3 +1,6 @@
+#!/usr/bin/perl -w
+# -*- Mode: perl; indent-tabs-mode: nil -*-
+
 use strict;
 use warnings;
 
@@ -116,10 +119,25 @@ if (Bugzilla::Bug->new('public_bug')->{error}) {
 }
 
 ##########################################################################
+# Create Classifications
+##########################################################################
+my @classifications = ({ name        => "Class2_QA",
+                         description => "required by Selenium... DON'T DELETE" },
+);
+
+print "creating classifications...\n";
+for my $class (@classifications) {
+    my $new_class = Bugzilla::Classification->new({ name => $class->{name} });
+    if (!$new_class) {
+        $dbh->do('INSERT INTO classifications (name, description) VALUES (?, ?)',
+                 undef, ( $class->{name}, $class->{description} ));
+    }
+}
+##########################################################################
 # Create Products
 ##########################################################################
 my @products = (
-    {product_name     => 'QA-Selenium-TEST',
+    {   product_name     => 'QA-Selenium-TEST',
         description      => "used by Selenium test.. DON'T DELETE",
         versions         => ['unspecified', 'QAVersion'],
         milestones       => ['QAMilestone'],
@@ -159,6 +177,24 @@ my @products = (
             },
         ],
     },
+
+    {   product_name     => 'C2 Forever',
+        description      => 'I must remain in the Class2_QA classification ' .
+                            'in all cases! Do not edit!',
+        classification   => 'Class2_QA',
+        versions         => ['unspecified', 'C2Ver'],
+        milestones       => ['C2Mil'],
+        defaultmilestone => '---',
+        components       => [
+            {   name             => "Helium",
+                description      => "Feel free to add bugs to me",
+                initialowner     => $config->{permanent_user},
+                initialqacontact => '',
+                initial_cc       => [],
+
+            }
+        ],
+    },
 );
 
 print "creating products...\n";
@@ -166,8 +202,12 @@ for my $product (@products) {
     my $new_product = 
         Bugzilla::Product->new({ name => $product->{product_name} });
     if (!$new_product) {
-        $dbh->do('INSERT INTO products (name, description) VALUES (?, ?)',
-            undef, ( $product->{product_name}, $product->{description} ) );
+        my $class_id = 1;
+        if ($product->{classification}) {
+            $class_id = Bugzilla::Classification->new({ name => $product->{classification} })->id;
+        }
+        $dbh->do('INSERT INTO products (name, description, classification_id) VALUES (?, ?, ?)',
+            undef, ( $product->{product_name}, $product->{description}, $class_id ));
 
         $new_product
             = new Bugzilla::Product( { name => $product->{product_name} } );
