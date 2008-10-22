@@ -1,34 +1,23 @@
-###################################################
-# Test for xmlrpc call functions in Bugzilla.pm:  #
-# Bugzilla.version()                              #
-# Bugzilla.timezone()                             #
-###################################################
+##################################################
+# Test for xmlrpc call functions in Bugzilla.pm  #
+##################################################
 
 use strict;
 use warnings;
+use lib qw(lib);
+use Test::More tests => 7;
+use QA::Util;
+my ($rpc, $config) = get_xmlrpc_client();
 
-use XMLRPC::Lite;
+my $vers_call = xmlrpc_call_success($rpc, 'Bugzilla.version');
+my $version = $vers_call->result->{version};
+ok($version, "Bugzilla.version returns $version");
 
-use Test::More tests => 4;
+my $tz_call = xmlrpc_call_success($rpc, 'Bugzilla.timezone');
+my $tz = $tz_call->result->{timezone};
+ok($tz, "Bugzilla.timezone retuns $tz");
 
-my $installation = shift;
-my $xmlrpc_url   = "http://landfill.bugzilla.org/${installation}/xmlrpc.cgi";
-
-my $rpc = new XMLRPC::Lite( proxy => $xmlrpc_url );
-
-my $call   = $rpc->call('Bugzilla.version');
-my $result = $call->result;
-ok( !defined $call->faultstring,
-    'call to Bugzilla.version returns no errors' );
-ok( defined $result->{version},
-    "Bugzilla.version returns the Bugzilla version sucessfully which is $result->{version}"
-);
-
-$call = $rpc->call('Bugzilla.timezone');
-$result = $call->result;
-ok( !defined $call->faultstring,
-    'call to Bugzilla.timezone returns no errors' );
-ok( defined $result->{timezone},
-    "Bugzilla.timezone returns the timezone of the server Bugzilla is running on sucessfully which is $result->{timezone}"
-);
-
+my $ext_call = xmlrpc_call_success($rpc, 'Bugzilla.extensions');
+my $extensions = $ext_call->result->{extensions};
+isa_ok($extensions, 'HASH', 'extensions');
+is(scalar keys %$extensions, 0, 'No extensions returned.');
