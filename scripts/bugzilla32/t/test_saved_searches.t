@@ -104,3 +104,4 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Search is gone");
 $text = trim($sel->get_text("message"));
 ok($text =~ /OK, the SavedSearchTEST1 search is gone./, "The SavedSearchTEST1 search is gone.");
+logout($sel);
