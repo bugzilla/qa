@@ -16,20 +16,10 @@ use constant GLOBAL_FIELDS =>
        cf_qa_status cf_single_select);
 use constant PRODUCT_FIELDS => qw(version target_milestone component);
 
-xmlrpc_log_in($rpc, $config, 'QA_Selenium_TEST');
 
-# get product ids from their names
-my $accessible = xmlrpc_call_success($rpc, 'Product.get_accessible_products');
-my $prod_call = xmlrpc_call_success($rpc, 'Product.get', $accessible->result);
-my %products;
-foreach my $prod (@{ $prod_call->result->{products} }) {
-    $products{$prod->{name}} = $prod->{id};
-}
-
-my $public_product = $products{'Another Product'};
-my $private_product = $products{'QA-Selenium-TEST'};
-
-xmlrpc_call_success($rpc, 'User.logout');
+my $products = xmlrpc_get_product_ids($rpc, $config);
+my $public_product = $products->{'Another Product'};
+my $private_product = $products->{'QA-Selenium-TEST'};
 
 my @all_tests;
 

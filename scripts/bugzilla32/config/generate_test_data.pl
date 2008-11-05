@@ -195,6 +195,36 @@ my @products = (
             }
         ],
     },
+
+    {   product_name     => 'QA Entry Only',
+        description      => 'Only the QA group may enter bugs here.',
+        versions         => ['unspecified'],
+        milestones       => [],
+        defaultmilestone => '---',
+        components       => [
+            {   name             => "c1",
+                description      => "Same name as Another Product's component",
+                initialowner     => $config->{QA_Selenium_TEST_user_login},
+                initialqacontact => '',
+                initial_cc       => [],
+            }
+        ],
+    },
+
+    {   product_name     => 'QA Search Only',
+        description      => 'Only the QA group may search for bugs here.',
+        versions         => ['unspecified'],
+        milestones       => [],
+        defaultmilestone => '---',
+        components       => [
+            {   name             => "c1",
+                description      => "Still same name as the Another component",
+                initialowner     => $config->{QA_Selenium_TEST_user_login},
+                initialqacontact => '',
+                initial_cc       => [],
+            }
+        ],
+    },
 );
 
 print "creating products...\n";
@@ -312,16 +342,29 @@ for my $user_group (@users_groups) {
 ##########################################################################
 # Associate the QA-Selenium-TEST group with the QA-Selenium-TEST.
 my $created_group   = new Bugzilla::Group(   { name => 'QA-Selenium-TEST' } );
-my $created_product = new Bugzilla::Product( { name => 'QA-Selenium-TEST' } );
+my $secret_product = new Bugzilla::Product( { name => 'QA-Selenium-TEST' } );
+my $no_entry = new Bugzilla::Product({ name => 'QA Entry Only' });
+my $no_search = new Bugzilla::Product({ name => 'QA Search Only' });
 
 print "restricting products to groups...\n";
-# Don't crash if the entry already exists.
+# Don't crash if the entries already exist.
 eval {
     $dbh->do('INSERT INTO group_control_map
-              (group_id, product_id, entry, membercontrol, othercontrol, canedit)
-              VALUES (?, ?, ?, ?, ?, ?)',
-        undef, ( $created_group->id, $created_product->id, 1, CONTROLMAPMANDATORY,
-        CONTROLMAPMANDATORY, 0 ) );
+              (group_id, product_id, entry, membercontrol, othercontrol)
+              VALUES (?, ?, ?, ?, ?)',
+        undef, ( $created_group->id, $secret_product->id, 1, CONTROLMAPMANDATORY,
+        CONTROLMAPMANDATORY) );
+};
+eval {
+    $dbh->do('INSERT INTO group_control_map (group_id, product_id, entry)
+                   VALUES (?,?,1)', undef, $created_group->id, $no_entry->id);
+};
+eval {
+    $dbh->do('INSERT INTO group_control_map 
+              (group_id, product_id, membercontrol, othercontrol)
+              VALUES (?,?,?,?)', undef,
+              $created_group->id, $no_search->id, CONTROLMAPMANDATORY,
+              CONTROLMAPMANDATORY);
 };
 
 ##########################################################################

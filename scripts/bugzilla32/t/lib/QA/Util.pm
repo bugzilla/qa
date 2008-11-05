@@ -27,6 +27,7 @@ use base qw(Exporter);
     xmlrpc_log_in
     xmlrpc_call_success
     xmlrpc_call_fail
+    xmlrpc_get_product_ids
 
     WAIT_TIME
 );
@@ -131,6 +132,24 @@ sub xmlrpc_call_fail {
                "Got correct fault for $method");
     }
     return $call;
+}
+
+sub xmlrpc_get_product_ids {
+    my ($rpc, $config) = @_;
+    xmlrpc_log_in($rpc, $config, 'QA_Selenium_TEST');
+
+    my $accessible = xmlrpc_call_success($rpc, 
+                                         'Product.get_accessible_products');
+    my $prod_call = xmlrpc_call_success($rpc, 'Product.get', 
+                                        $accessible->result);
+    my %products;
+    foreach my $prod (@{ $prod_call->result->{products} }) {
+        $products{$prod->{name}} = $prod->{id};
+    }
+
+    xmlrpc_call_success($rpc, 'User.logout');
+
+    return \%products;
 }
 
 ################################
