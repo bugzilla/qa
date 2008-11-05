@@ -71,7 +71,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug List");
 # As we said, this saved search should no longer be displayed in the page footer.
 ok(!$sel->is_text_present("SavedSearchTEST1"), "SavedSearchTEST1 is not present in the page footer");
-$sel->type_ok("newqueryname", "SavedSearchTEST1");
+$sel->type_ok("save_newqueryname", "SavedSearchTEST1");
 $sel->click_ok("remember");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bugzilla Message");
