@@ -88,7 +88,7 @@ sub get_xmlrpc_client {
 
 
     # A temporary cookie jar that isn't saved after the script closes.
-    my $cookie_jar = new HTTP::Cookies({});
+    my $cookie_jar = new HTTP::Cookies();
     my $rpc        = new XMLRPC::Lite(proxy => $xmlrpc_url);
     $rpc->transport->cookie_jar($cookie_jar);
     return ($rpc, $config);
