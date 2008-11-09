@@ -138,7 +138,7 @@ my $fields = {
         },
         existing => {
             faultstring => 'already taken the alias',
-            value       => 'testtesttest'
+            value       => 'public_bug'
         },
         numeric => {
             faultstring => 'aliases cannot be merely numbers',
