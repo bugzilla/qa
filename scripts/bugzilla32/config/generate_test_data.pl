@@ -348,23 +348,19 @@ my $no_search = new Bugzilla::Product({ name => 'QA Search Only' });
 
 print "restricting products to groups...\n";
 # Don't crash if the entries already exist.
+my $sth = $dbh->prepare('INSERT INTO group_control_map
+                         (group_id, product_id, entry, membercontrol, othercontrol, canedit)
+                         VALUES (?, ?, ?, ?, ?, ?)');
 eval {
-    $dbh->do('INSERT INTO group_control_map
-              (group_id, product_id, entry, membercontrol, othercontrol)
-              VALUES (?, ?, ?, ?, ?)',
-        undef, ( $created_group->id, $secret_product->id, 1, CONTROLMAPMANDATORY,
-        CONTROLMAPMANDATORY) );
+    $sth->execute($created_group->id, $secret_product->id, 1, CONTROLMAPMANDATORY,
+                  CONTROLMAPMANDATORY, 0);
 };
 eval {
-    $dbh->do('INSERT INTO group_control_map (group_id, product_id, entry)
-                   VALUES (?,?,1)', undef, $created_group->id, $no_entry->id);
+    $sth->execute($created_group->id, $no_entry->id, 1, CONTROLMAPNA, CONTROLMAPNA, 0);
 };
 eval {
-    $dbh->do('INSERT INTO group_control_map 
-              (group_id, product_id, membercontrol, othercontrol)
-              VALUES (?,?,?,?)', undef,
-              $created_group->id, $no_search->id, CONTROLMAPMANDATORY,
-              CONTROLMAPMANDATORY);
+    $sth->execute($created_group->id, $no_search->id, 0, CONTROLMAPMANDATORY,
+                  CONTROLMAPMANDATORY, 0);
 };
 
 ##########################################################################
