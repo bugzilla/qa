@@ -130,9 +130,19 @@ $sel->title_is("Illegal Vote");
 $text = trim($sel->get_text("error_msg"));
 ok($text =~ /You may only use at most 5 votes for a single bug in the Eureka product, but you are trying to use 15/,
    "Too many votes per bug");
-$sel->go_back_ok();
-# XXX - Firefox seems to loose its cache at this point. I have to manually click "OK". :(
+
+# XXX - We cannot use go_back_ok() here, because Firefox complains about
+# POST data not being stored in its cache. As a workaround, we go to
+# the bug we just visited and click the 'vote' link again.
+
+$sel->type_ok("quicksearch_top", $bug3_id);
+$sel->click_ok("find_top");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/^Bug $bug3_id /);
+$sel->click_ok("link=vote");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Change Votes");
+
 # Illegal change: max is 10 votes for this product!
 $sel->type_ok("bug_$bug2_id", 5);
 $sel->type_ok("bug_$bug1_id", 5);
