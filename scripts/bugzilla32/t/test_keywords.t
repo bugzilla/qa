@@ -15,9 +15,7 @@ my $test_bug_2 = $config->{test_bug_2};
 # Create keywords. Do some cleanup first if necessary.
 
 log_in($sel, $config, 'admin');
-$sel->click_ok("link=Administration", undef, "Go to the Admin page");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Keywords");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Select keyword");
@@ -48,9 +46,7 @@ $sel->is_text_present_ok("Sanity check completed.", undef, "Page displayed corre
 
 # Now let's create our first keyword.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Keywords");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Select keyword");

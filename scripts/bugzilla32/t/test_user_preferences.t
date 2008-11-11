@@ -11,9 +11,7 @@ my ($sel, $config) = get_selenium();
 # Update default user preferences.
 
 log_in($sel, $config, 'admin');
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Default Preferences");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Default Preferences");

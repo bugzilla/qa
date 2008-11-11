@@ -20,9 +20,7 @@ set_parameters($sel, { "Bug Fields"              => {"useclassification-off" => 
 # Create a product and add components to it. Do some cleanup first
 # if the script failed during a previous run.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Products");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 # No risk to get the "Select classification" page. We turned off useclassification.
@@ -267,9 +265,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 
 # Now delete the product.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Products");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Select product");

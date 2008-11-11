@@ -15,9 +15,7 @@ set_parameters($sel, { "Bug Fields" => {"useclassification-on" => undef} });
 
 # Create a new classification.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Classifications");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Select classification");
@@ -73,9 +71,7 @@ my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
 # then to 'ctwo', which is not yet in use. Should work fine, even with products
 # already in it.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Classifications");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Select classification");
@@ -105,9 +101,7 @@ $sel->title_is("Classification Updated");
 # Now try to delete the 'ctwo' classification. It should fail as there are
 # products in it.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Classifications");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Select classification");

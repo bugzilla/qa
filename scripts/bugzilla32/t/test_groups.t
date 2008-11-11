@@ -81,9 +81,7 @@ $sel->is_text_present_ok($bug1_id);
 
 # No longer use Selenium-test as a bug group.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Groups");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Edit Groups");
@@ -122,9 +120,7 @@ ok(!$sel->is_text_present($bug2_id), "Bug $bug2_id isn't listed as being restric
 # Re-enable the Selenium-test group as bug group. This doesn't affect
 # already filed bugs as this group is not mandatory.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Groups");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Edit Groups");
@@ -195,9 +191,7 @@ $sel->is_text_present_ok($bug3_id);
 
 # Turn off the Selenium-test group again.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Groups");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Edit Groups");
@@ -236,9 +230,7 @@ ok(!$sel->is_text_present($bug4_id), "Bug $bug4_id not restricted to the bug gro
 
 # Re-enable the mandatory group. All bugs should be restricted to this bug group automatically.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Groups");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Edit Groups");
@@ -280,9 +272,7 @@ $sel->is_text_present_ok("the group is no longer applicable and will be removed"
 
 # Delete the Selenium-test group.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Groups");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Edit Groups");

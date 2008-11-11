@@ -9,9 +9,7 @@ use QA::Util;
 my ($sel, $config) = get_selenium();
 
 log_in($sel, $config, 'admin');
-$sel->click_ok("link=Administration", undef, "Go to the Admin page");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Sanity Check", undef, "Go to Sanity Check (no parameter)");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Sanity Check", "Display sanitycheck.cgi");

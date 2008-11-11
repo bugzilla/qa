@@ -16,15 +16,7 @@ set_parameters($sel, { "Bug Fields"              => {"usevotes-on"           => 
 
 # Create a new product, so that we can safely play with vote settings.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
-$sel->click_ok("link=Products");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Select product");
-$sel->click_ok("link=Add");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Add Product");
+add_product($sel);
 $sel->type_ok("product", "Eureka");
 $sel->type_ok("description", "A great new product");
 $sel->type_ok("votesperuser", 10);
@@ -231,9 +223,7 @@ my $bug4_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
 
 # Now delete the 'Eureka' product.
 
-$sel->click_ok("link=Administration");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+go_to_admin($sel);
 $sel->click_ok("link=Products");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Select product");

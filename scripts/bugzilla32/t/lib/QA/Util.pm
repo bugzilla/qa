@@ -202,14 +202,21 @@ sub file_bug_in_product {
     $sel->title_is("Enter Bug: $product", "Display form to enter bug data");
 }
 
+# Go to admin.cgi.
+sub go_to_admin {
+    my $sel = shift;
+
+    $sel->click_ok("link=Administration", undef, "Go to the Admin page");
+    $sel->wait_for_page_to_load(WAIT_TIME);
+    $sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+}
+
 # Go to editproducts.cgi and display the given product.
 sub edit_product {
     my ($sel, $product, $classification) = @_;
 
     $classification ||= "Unclassified";
-    $sel->click_ok("link=Administration", undef, "Go to the Admin page");
-    $sel->wait_for_page_to_load(WAIT_TIME);
-    $sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+    go_to_admin($sel);
     $sel->click_ok("link=Products", undef, "Go to the Products page");
     $sel->wait_for_page_to_load(WAIT_TIME);
     my $title = $sel->get_title();
@@ -224,6 +231,27 @@ sub edit_product {
     $sel->click_ok("link=$product", undef, "Choose $product");
     $sel->wait_for_page_to_load(WAIT_TIME);
     $sel->title_is("Edit Product '$product'", "Display properties of $product");
+}
+
+sub add_product {
+    my ($sel, $classification) = @_;
+
+    $classification ||= "Unclassified";
+    go_to_admin($sel);
+    $sel->click_ok("link=Products", undef, "Go to the Products page");
+    $sel->wait_for_page_to_load(WAIT_TIME);
+    my $title = $sel->get_title();
+    if ($title eq "Select Classification") {
+        ok(1, "More than one enterable classification available. Display them in a list");
+        $sel->click_ok("//a[contains(\@href, 'editproducts.cgi?action=add&amp;classification=$classification')]",
+                       undef, "Add product to $classification");
+    }
+    else {
+        $sel->title_is("Select product", "Display the list of enterable products");
+        $sel->click_ok("link=Add", undef, "Add a new product");
+    }
+    $sel->wait_for_page_to_load(WAIT_TIME);
+    $sel->title_is("Add Product", "Display the new product form");
 }
 
 sub open_advanced_search_page {
@@ -255,9 +283,7 @@ sub open_advanced_search_page {
 sub set_parameters {
     my ($sel, $params) = @_;
 
-    $sel->click_ok("link=Administration", undef, "Go to the Admin page");
-    $sel->wait_for_page_to_load(WAIT_TIME);
-    $sel->title_like(qr/^Administer your installation/, "Display admin.cgi");
+    go_to_admin($sel);
     $sel->click_ok("link=Parameters", undef, "Go to the Config Parameters page");
     $sel->wait_for_page_to_load(WAIT_TIME);
     $sel->title_is("Configuration: Required Settings");
