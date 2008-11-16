@@ -43,7 +43,7 @@ my @tests = (
       error => "!!This is the text!!",
       test  => "Can't log in with a disabled account",
     },
-    { args  => { login => $config->{disabled_user_login}, password => undef },
+    { args  => { login => $config->{disabled_user_login}, password => '*' },
       error => $error,
       test  => "Logging in with invalid password doesn't show disabledtext",
     },
