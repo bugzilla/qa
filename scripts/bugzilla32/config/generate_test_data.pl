@@ -46,7 +46,7 @@ my @usernames = (
     'admin',            'no-privs',
     'QA-Selenium-TEST', 'canconfirm',
     'tweakparams',      'permanent_user',
-    'editbugs',
+    'editbugs',         'disabled',
 );
 
 print "creating user accounts...\n";
@@ -73,10 +73,16 @@ for my $username (@usernames) {
     }
 
     if ( is_available_username($login) ) {
+       my %extra_args;
+       if ($username eq 'disabled') {
+           $extra_args{disabledtext} = '!!This is the text!!';
+       }
+
         Bugzilla::User->create(
             {   login_name    => $login,
                 realname      => $username,
                 cryptpassword => $password,
+                %extra_args,
             }
         );
 
