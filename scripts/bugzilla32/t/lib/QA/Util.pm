@@ -17,7 +17,9 @@ use base qw(Exporter);
     log_in
     logout
     file_bug_in_product
+    go_to_admin
     edit_product
+    add_product
     open_advanced_search_page
     set_parameters
 
