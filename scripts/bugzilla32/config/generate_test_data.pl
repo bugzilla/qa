@@ -370,6 +370,51 @@ eval {
 };
 
 ##########################################################################
+# Create flag types
+##########################################################################
+my @flagtypes = (
+    {name => 'spec_multi_flag', desc => 'Specifically requestable and multiplicable bug flag',
+     is_requestable => 1, is_requesteeble => 1, is_multiplicable => 1, grant_group => 'editbugs',
+     target_type => 'b', inclusions => ['Another Product:c1']},
+);
+
+print "creating flag types...\n";
+foreach my $flag (@flagtypes) {
+    # The name is not unique, even within a single product/component, so there is NO WAY
+    # to know if the existing flag type is the one we want or not.
+    # As our Selenium scripts would be confused anyway if there is already such a flag name,
+    # we simply skip it and assume the existing flag type is the one we want.
+    next if new Bugzilla::FlagType({ name => $flag->{name} });
+
+    my $grant_group_id = $flag->{grant_group} ? Bugzilla::Group->new({ name => $flag->{grant_group} })->id : undef;
+    my $request_group_id = $flag->{request_group} ? Bugzilla::Group->new({ name => $flag->{request_group} })->id : undef;
+
+    $dbh->do('INSERT INTO flagtypes (name, description, cc_list, target_type, is_requestable,
+                                     is_requesteeble, is_multiplicable, grant_group_id, request_group_id)
+                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+             undef, ($flag->{name}, $flag->{desc}, $flag->{cc_list}, $flag->{target_type},
+                     $flag->{is_requestable}, $flag->{is_requesteeble}, $flag->{is_multiplicable},
+                     $grant_group_id, $request_group_id));
+
+    my $type_id = $dbh->bz_last_key('flagtypes', 'id');
+
+    foreach my $inclusion (@{$flag->{inclusions}}) {
+        my ($product, $component) = split(':', $inclusion);
+        my ($prod_id, $comp_id);
+        if ($product) {
+            my $prod_obj = Bugzilla::Product->new({ name => $product });
+            $prod_id = $prod_obj->id;
+            if ($component) {
+                $comp_id = Bugzilla::Component->new({ name => $component, product => $prod_obj})->id;
+            }
+        }
+        $dbh->do('INSERT INTO flaginclusions (type_id, product_id, component_id)
+                  VALUES (?, ?, ?)',
+                 undef, ($type_id, $prod_id, $comp_id));
+    }
+}
+
+##########################################################################
 # Create custom fields
 ##########################################################################
 my @fields = (
@@ -431,3 +476,4 @@ if (Bugzilla::Bug->new('private_bug')->{error}) {
 }
 
 print "installation and configuration complete!\n";
+Bugzilla->logout;
