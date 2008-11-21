@@ -4,116 +4,111 @@
 
 use strict;
 use warnings;
+use lib qw(lib);
+use QA::Util;
+use Test::More tests => 28;
+my ($rpc, $config) = get_xmlrpc_client();
 
-use XMLRPC::Lite;
-use HTTP::Cookies;
+use constant NEW_PASSWORD => 'password';
+use constant NEW_FULLNAME => 'WebService Created User';
 
-use Test::More tests => 7;
+use constant PASSWORD_TOO_SHORT => 'a';
+use constant PASSWORD_TOO_LONG  => random_string(500);
 
-my $editusers_username = 'editusers@bugzilla.jp';
-my $non_privs_username = 'no-privs@bugzilla.jp';
+# These are the characters that are actually invalid per RFC.
+use constant INVALID_EMAIL => '()[]\;:,<>@webservice.test';
 
-my $password     = shift;
-my $installation = shift;
-my $xmlrpc_url   = "http://landfill.bugzilla.org/${installation}/xmlrpc.cgi";
-
-my $undefined_email = undef;
-my $invalid_email   = 'invalidemailATbugzillaDOTcom';
-my $existing_email  = 'editbugs@bugzilla.jp';
-my $user_no         = int( rand(1000) );
-my $new_email       = "xmlrpc_createduser_${user_no}\@bugzilla.jp";
-
-my $new_realname = 'xmlrpc_createduser';
-my $new_password = 'password';
-
-my @tests = (
-    [   $non_privs_username,
-        $password,
-        {   email     => $new_email,
-            full_name => $new_realname,
-            password  => $new_password
-        },
-        "you are not authorized",
-        'calling the function with unprivileged user returns error "Authorization Failure"',
-    ],
-    [   $editusers_username,
-        $password,
-        {   email     => $undefined_email,
-            full_name => $new_realname,
-            password  => $new_password
-        },
-        "argument was not set",
-        'passing undefined email param returns error "Param Required"',
-    ],
-    [   $editusers_username,
-        $password,
-        {   email     => $invalid_email,
-            full_name => $new_realname,
-            password  => $new_password
-        },
-        "didn't pass our syntax checking for a legal email address",
-        'passing invalid email address returns error "Illegal Email Address"',
-    ],
-    [   $editusers_username,
-        $password,
-        {   email     => $existing_email,
-            full_name => $new_realname,
-            password  => $new_password
-        },
-        "There is already an account",
-        'passing an existing email adddress returns error "Account Already Exists"',
-    ],
-    [   $editusers_username,
-        $password,
-        {   email     => $new_email,
-            full_name => $new_realname,
-            password  => $new_password
-        },
-        'calling function with privileged user and valid email address passes successfuly',
-    ],
-
-);
-
-my $cookie_jar = new HTTP::Cookies( file => "/tmp/lwp_cookies.dat" );
-my $rpc        = new XMLRPC::Lite( proxy => $xmlrpc_url );
-
-my $call;
-
-# test calling User.create without logging into bugzilla
-$call = $rpc->call(
-    'User.create',
-    {   email     => $new_email,
-        full_name => $new_realname,
-        password  => $new_password
-    },
-);
-cmp_ok( $call->faultstring, '=~', 'you are not authorized',
-    'calling the function without loggin in first returns error "Authorization Failure"'
-);
-
-$rpc->transport->cookie_jar($cookie_jar);
-
-for my $t (@tests) {
-    $call = $rpc->call( 'User.login',
-        { login => $t->[0], password => $t->[1] } );
-
-    # Save the cookies in the cookie file
-    $rpc->transport->cookie_jar->extract_cookies(
-        $rpc->transport->http_response );
-    $rpc->transport->cookie_jar->save;
-
-    $call = $rpc->call( 'User.create', $t->[2] );
-    my $result = $call->result;
-
-    if ( $t->[4] ) {
-        cmp_ok( $call->faultstring, '=~', $t->[3], $t->[4] );
-    }
-    else {
-        ok( !defined $call->faultstring, $t->[3] );
-        cmp_ok( $result->{id}, 'gt', '0',
-            "New user has been created successfully with id $result->{id}" );
-    }
-
-    $call = $rpc->call('User.logout');
+sub new_login {
+    return 'created_' . random_string() . '@webservice.test';
 }
 
+my @tests = (
+    # Permissions checks
+    { args  => { email    => new_login(), full_name => NEW_FULLNAME,
+                 password => NEW_PASSWORD },
+      error => "you are not authorized",
+      test  => 'Logged-out user cannot call User.create',
+    },
+    { user  => 'unprivileged',
+      args  => { email    => new_login(), full_name => NEW_FULLNAME,
+                 password => NEW_PASSWORD },
+      error => "you are not authorized",
+      test  => 'Unprivileged user cannot call User.create',
+    },
+
+    # Login name checks.
+    { user  => 'admin',
+      args  => { full_name => NEW_FULLNAME, password => NEW_PASSWORD },
+      error => "argument was not set",
+      test  => 'Leaving out email argument fails',
+    },
+    { user  => 'admin',
+      args  => { email    => '', full_name => NEW_FULLNAME,
+                 password => NEW_PASSWORD },
+      error => "argument was not set",
+      test  => "Passing an empty email argument fails",
+    },
+    { user  => 'admin',
+      args  => { email    => INVALID_EMAIL, full_name => NEW_FULLNAME,
+                 password => NEW_PASSWORD },
+      error =>  "didn't pass our syntax checking",
+      test  => 'Invalid email address fails',
+    },
+    { user  => 'admin',
+      args  => { email     => $config->{unprivileged_user_login},
+                 full_name => NEW_FULLNAME, password => NEW_PASSWORD },
+      error =>  "There is already an account",
+      test  => 'Trying to use an existing login name fails',
+    },
+
+    { user  => 'admin',
+      args  => { email    => new_login(), full_name => NEW_FULLNAME,
+                 password => PASSWORD_TOO_SHORT },
+      error => 'password must be at least',
+      test  => 'Password Too Short fails',
+    },
+    { user  => 'admin',
+      args  => { email    => new_login(), full_name => NEW_FULLNAME,
+                 password => PASSWORD_TOO_LONG },
+      error => 'password must be no more than',
+      test  => 'Password Too Long fails',
+    },
+
+    { user => 'admin',
+      args => { email    => new_login(), full_name => NEW_FULLNAME,
+                password => NEW_PASSWORD },
+      test => 'Creating a user with all arguments and correct privileges',
+    },
+    { user => 'admin',
+      args => { email => new_login(), password => NEW_PASSWORD },
+      test => 'Leaving out fullname works',
+    },
+    { user => 'admin',
+      args => { email => new_login(), full_name => NEW_FULLNAME },
+      test => 'Leaving out password works',
+    },
+);
+
+my $former_user = '';
+foreach my $t (@tests) {
+    # Only logout/login if the user has changed since the last test
+    # (this saves us LOTS of needless logins).
+    my $user = $t->{user} || '';
+    if ($former_user ne $user) {
+        xmlrpc_call_success($rpc, 'User.logout') if $former_user;
+        xmlrpc_log_in($rpc, $config, $user) if $user;
+        $former_user = $user;
+    }
+
+    if ($t->{error}) {
+        xmlrpc_call_fail($rpc, 'User.create', $t->{args}, $t->{error}, 
+                         $t->{test});
+    }
+    else {
+        my $call = xmlrpc_call_success($rpc, 'User.create', $t->{args}, 
+                                       $t->{test});
+        ok($call->result->{id}, "Got a non-zero user id");
+    }
+}
+
+xmlrpc_call_success($rpc, 'User.logout') if $former_user;

@@ -14,6 +14,8 @@ use base qw(Exporter);
 @QA::Util::EXPORT = qw(
     trim
     url_quote
+    random_string
+
     log_in
     logout
     file_bug_in_product
@@ -37,6 +39,15 @@ use base qw(Exporter);
 # How long we wait for pages to load.
 use constant WAIT_TIME => 30000;
 use constant CONF_FILE =>  "../config/selenium_test.conf";
+
+#####################
+# Utility Functions #
+#####################
+
+sub random_string {
+    my $size = shift || 30; # default to 30 chars if nothing specified
+    return join("", map{ ('0'..'9','a'..'z','A'..'Z')[rand 62] } (1..$size));
+}
 
 # Remove consecutive as well as leading and trailing whitespaces.
 sub trim {
