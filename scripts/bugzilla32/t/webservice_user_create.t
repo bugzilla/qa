@@ -89,26 +89,10 @@ my @tests = (
     },
 );
 
-my $former_user = '';
-foreach my $t (@tests) {
-    # Only logout/login if the user has changed since the last test
-    # (this saves us LOTS of needless logins).
-    my $user = $t->{user} || '';
-    if ($former_user ne $user) {
-        xmlrpc_call_success($rpc, 'User.logout') if $former_user;
-        xmlrpc_log_in($rpc, $config, $user) if $user;
-        $former_user = $user;
-    }
-
-    if ($t->{error}) {
-        xmlrpc_call_fail($rpc, 'User.create', $t->{args}, $t->{error}, 
-                         $t->{test});
-    }
-    else {
-        my $call = xmlrpc_call_success($rpc, 'User.create', $t->{args}, 
-                                       $t->{test});
-        ok($call->result->{id}, "Got a non-zero user id");
-    }
+sub post_success {
+    my ($call) = @_;
+    ok($call->result->{id}, "Got a non-zero user id");
 }
 
-xmlrpc_call_success($rpc, 'User.logout') if $former_user;
+xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@tests,
+                 method => 'User.create', post_success => \&post_success);

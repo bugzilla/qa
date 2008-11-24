@@ -32,6 +32,7 @@ use base qw(Exporter);
     xmlrpc_call_success
     xmlrpc_call_fail
     xmlrpc_get_product_ids
+    xmlrpc_run_tests
 
     WAIT_TIME
 );
@@ -163,6 +164,44 @@ sub xmlrpc_get_product_ids {
     xmlrpc_call_success($rpc, 'User.logout');
 
     return \%products;
+}
+
+sub xmlrpc_run_tests {
+    my %params = @_;
+    # Required params
+    my $rpc    = $params{rpc};
+    my $config = $params{config};
+    my $tests  = $params{tests};
+    my $method = $params{method};
+
+    # Optional params
+    my $post_success = $params{post_success};
+
+    my $former_user = '';
+    foreach my $t (@$tests) {
+        # Only logout/login if the user has changed since the last test
+        # (this saves us LOTS of needless logins).
+        my $user = $t->{user} || '';
+        if ($former_user ne $user) {
+            xmlrpc_call_success($rpc, 'User.logout') if $former_user;
+            xmlrpc_log_in($rpc, $config, $user) if $user;
+            $former_user = $user;
+        }
+
+        if ($t->{error}) {
+            xmlrpc_call_fail($rpc, $method, $t->{args}, $t->{error},
+                             $t->{test});
+        }
+        else {
+            my $call = xmlrpc_call_success($rpc, $method, $t->{args},
+                                           $t->{test});
+            if ($call->result && $post_success) {
+                $post_success->($call, $t);
+            }
+        }
+    }
+
+    xmlrpc_call_success($rpc, 'User.logout') if $former_user;
 }
 
 ################################

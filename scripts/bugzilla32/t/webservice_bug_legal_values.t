@@ -5,7 +5,7 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 94;
+use Test::More tests => 85;
 use QA::Util;
 my ($rpc, $config) = get_xmlrpc_client();
 
@@ -80,25 +80,12 @@ my @extra_tests = (
 
 push(@all_tests, @extra_tests);
 
-for my $t (@all_tests) {
-    if ($t->{user}) {
-        xmlrpc_log_in($rpc, $config, $t->{user});
-    }
+sub post_success {
+    my ($call) = @_;
 
-    if ($t->{error}) {
-        xmlrpc_call_fail($rpc, 'Bug.legal_values', $t->{args}, $t->{error}, 
-                         $t->{test});
-    }
-    else {
-        my $response = xmlrpc_call_success($rpc, 'Bug.legal_values', $t->{args},
-                                         $t->{test});
-        if ($response->result) {
-            cmp_ok(scalar @{ $response->result->{'values'} }, '>', 0, 
-                   'Got one or more values');
-        }
-    }
-
-    if ($t->{user}) {
-        xmlrpc_call_success($rpc, 'User.logout');
-    }
+    cmp_ok(scalar @{ $call->result->{'values'} }, '>', 0, 
+           'Got one or more values');
 }
+
+xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@all_tests,
+                 method => 'Bug.legal_values', post_success => \&post_success);

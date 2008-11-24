@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 34;
+use Test::More tests => 31;
 my ($rpc, $config) = get_xmlrpc_client();
 
 use constant INVALID_BUG_ID => -1;
@@ -53,33 +53,23 @@ my @tests = (
     },
 );
 
-for my $t (@tests) {
-    if ($t->{user}) {
-        xmlrpc_log_in($rpc, $config, $t->{user});
-    }
+sub post_success {
+    my ($call, $t) = @_;
 
-    if ($t->{error}) {
-        xmlrpc_call_fail($rpc, 'Bug.get', $t->{args}, $t->{error}, $t->{test});
+    is(scalar @{ $call->result->{bugs} }, 1, "Got exactly one bug");
+    if ($t->{user} && $t->{user} eq 'admin') {
+        ok(exists $call->result->{bugs}->[0]->{internals}{estimated_time}
+           && exists $call->result->{bugs}->[0]->{internals}{remaining_time}
+           && exists $call->result->{bugs}->[0]->{internals}{deadline},
+           'Admin correctly gets time-tracking fields');
     }
     else {
-        my $call = xmlrpc_call_success($rpc, 'Bug.get', $t->{args}, $t->{test});
-        is(scalar @{ $call->result->{bugs} }, 1, "Got exactly one bug");
-        if ($t->{user} && $t->{user} eq 'admin') {
-            ok(exists $call->result->{bugs}->[0]->{internals}{estimated_time}
-               && exists $call->result->{bugs}->[0]->{internals}{remaining_time}
-               && exists $call->result->{bugs}->[0]->{internals}{deadline},
-               'Admin correctly gets time-tracking fields');
-        }
-        else {
-            ok(!exists $call->result->{bugs}->[0]->{internals}{estimated_time}
-              && !exists $call->result->{bugs}->[0]->{internals}{remaining_time}
-              && !exists $call->result->{bugs}->[0]->{internals}{deadline},
-              'Time-tracking fields are not returned to logged-out users');
-        }
-    }
-
-    if ($t->{user}) {
-        xmlrpc_call_success($rpc, 'User.logout');
+        ok(!exists $call->result->{bugs}->[0]->{internals}{estimated_time}
+           && !exists $call->result->{bugs}->[0]->{internals}{remaining_time}
+           && !exists $call->result->{bugs}->[0]->{internals}{deadline},
+           'Time-tracking fields are not returned to logged-out users');
     }
 }
 
+xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@tests,
+                 method => 'Bug.get', post_success => \&post_success);
