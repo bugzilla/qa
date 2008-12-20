@@ -88,6 +88,7 @@ sub get_selenium {
 
     my $sel = Test::WWW::Selenium->new(
         host        => $config->{host},
+        port        => $config->{port},
         browser     => $config->{browser},
         browser_url => $config->{browser_url}
     );
