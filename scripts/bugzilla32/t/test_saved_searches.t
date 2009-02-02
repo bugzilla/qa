@@ -20,7 +20,7 @@ $sel->title_is("User Preferences");
 
 if($sel->is_text_present("SavedSearchTEST1")) {
     # There is no other way to identify this link (as they are all named "Forget").
-    $sel->click_ok('//a[@href="buglist.cgi?cmdtype=dorem&remaction=forget&namedcmd=SavedSearchTEST1"]');
+    $sel->click_ok('//a[contains(@href,"buglist.cgi?cmdtype=dorem&remaction=forget&namedcmd=SavedSearchTEST1")]');
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Search is gone");
     $sel->is_text_present_ok("OK, the SavedSearchTEST1 search is gone.");
