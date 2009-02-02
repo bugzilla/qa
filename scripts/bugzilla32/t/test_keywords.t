@@ -27,17 +27,15 @@ my @keywords = $page =~ m/(key-selenium-\w+)/gi;
 
 foreach my $keyword (@keywords) {
     my $url = $sel->get_attribute("link=$keyword\@href");
-    $url =~ s/action=edit/action=delete/;
+    $url =~ s/action=edit/action=del/;
     $sel->click_ok("//a[\@href='$url']");
     $sel->wait_for_page_to_load(WAIT_TIME);
-    my $title = $sel->get_title();
-    if ($title eq 'Delete Keyword') {
-        ok(1, "Keywords used in bugs; asking for keyword deletion");
-        $sel->click_ok("delete");
-        $sel->wait_for_page_to_load(WAIT_TIME);
-    }
+    $sel->title_is("Delete Keyword");
+    $sel->click_ok("delete");
+    $sel->wait_for_page_to_load(WAIT_TIME);
     $sel->title_is("Keyword Deleted");
 }
+
 # Even if no keyword has been deleted, make sure the cache is right.
 $sel->open_ok("/$config->{bugzilla_installation}/sanitycheck.cgi?rebuildkeywordcache=1");
 $sel->wait_for_page_to_load(WAIT_TIME);
