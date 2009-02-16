@@ -13,7 +13,7 @@ my $test_bug_1 = $config->{test_bug_1};
 # Set the timetracking group to "admin".
 
 log_in($sel, $config, 'admin');
-set_parameters($sel, { "Group Security" => {"timetrackinggroup" => {type => "text", value => "admin"}} });
+set_parameters($sel, { "Group Security" => {"timetrackinggroup" => {type => "select", value => "admin"}} });
 
 # Add some Hours Worked to a bug so that we are sure at least one bug
 # will be present in our buglist below.
@@ -96,5 +96,5 @@ $sel->title_is("Time Summary for Bug $test_bug_1");
 
 # Reset the timetracking group.
 
-set_parameters($sel, { "Group Security" => {"timetrackinggroup" => {type => "text", value => ""}} });
+set_parameters($sel, { "Group Security" => {"timetrackinggroup" => {type => "select", value => ""}} });
 logout($sel);
