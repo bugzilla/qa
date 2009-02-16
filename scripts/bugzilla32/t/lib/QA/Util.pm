@@ -35,11 +35,13 @@ use base qw(Exporter);
     xmlrpc_run_tests
 
     WAIT_TIME
+    CHROME_MODE
 );
 
 # How long we wait for pages to load.
 use constant WAIT_TIME => 30000;
 use constant CONF_FILE =>  "../config/selenium_test.conf";
+use constant CHROME_MODE => 1;
 
 #####################
 # Utility Functions #
@@ -80,6 +82,7 @@ sub get_config {
 }
 
 sub get_selenium {
+    my $chrome_mode = shift;
     my $config = get_config();
 
     if (!server_is_running) {
@@ -89,7 +92,7 @@ sub get_selenium {
     my $sel = Test::WWW::Selenium->new(
         host        => $config->{host},
         port        => $config->{port},
-        browser     => $config->{browser},
+        browser     => $chrome_mode ? $config->{experimental_browser_launcher} : $config->{browser},
         browser_url => $config->{browser_url}
     );
 
