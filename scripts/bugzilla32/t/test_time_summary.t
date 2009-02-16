@@ -26,8 +26,11 @@ $sel->type_ok("work_time", 2.6);
 $sel->type_ok("comment", "I did some work");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Bug $test_bug_1 processed");
 # Make sure the correct bug is redisplayed.
 $sel->click_ok("link=bug $test_bug_1");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/^Bug $test_bug_1/, "Display bug $test_bug_1");
 $sel->is_text_present_ok("I did some work");
 $sel->is_text_present_ok("Additional hours worked: 2.6");
 
