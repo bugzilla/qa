@@ -54,7 +54,7 @@ $sel->selected_label_is("membercontrol_$group1_id", "Default");
 $sel->selected_label_is("othercontrol_$group1_id", "NA");
 
 edit_product($sel, "ready_to_die");
-$sel->go_back();
+$sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->click_ok('//a[contains(@href, "editproducts.cgi?action=del&product=ready_to_die")]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -117,7 +117,7 @@ $sel->selected_label_is("membercontrol_$group2_id", "Default");
 $sel->selected_label_is("othercontrol_$group2_id", "NA");
 
 edit_product($sel, "ready_to_die");
-$sel->go_back();
+$sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->click_ok('//a[contains(@href, "editproducts.cgi?action=del&product=ready_to_die")]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -185,7 +185,7 @@ $text = trim($sel->get_text("message"));
 ok($text =~ qr/The group ready_to_die_ has been deleted/, "Group ready_to_die_ has been deleted");
 
 edit_product($sel, "ready_to_die");
-$sel->go_back();
+$sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->click_ok('//a[contains(@href, "editproducts.cgi?action=del&product=ready_to_die")]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);

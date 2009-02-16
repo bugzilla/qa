@@ -97,7 +97,7 @@ $sel->click_ok("link=Edit Search");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Search for bugs");
 $sel->value_is("short_desc", "bilboa");
-$sel->go_back();
+$sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->click_ok("link=Forget Search 'SavedSearchTEST1'");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
