@@ -126,12 +126,9 @@ $sel->click_ok("delete");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Product Deleted");
 
-# Set the makeproductgroups parameter to off and the useentrygroupdefault
-# parameter to on.
+# Reset the makeproductgroups parameter.
 
-set_parameters($sel, { "Group Security" => {"makeproductgroups-off"    => undef,
-                                            "useentrygroupdefault-on"  => undef}
-                     });
+set_parameters($sel, { "Group Security" => {"makeproductgroups-off" => undef} });
 add_product($sel);
 $sel->type_ok("product", "ready_to_die");
 $sel->type_ok("description", "will die");
