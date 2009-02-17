@@ -10,10 +10,10 @@ my ($sel, $config) = get_selenium();
 
 my $test_bug_1 = $config->{test_bug_1};
 
-# Set the timetracking group to "admin".
+# Set the timetracking group to "editbugs", which is the default value for this parameter.
 
 log_in($sel, $config, 'admin');
-set_parameters($sel, { "Group Security" => {"timetrackinggroup" => {type => "select", value => "admin"}} });
+set_parameters($sel, { "Group Security" => {"timetrackinggroup" => {type => "select", value => "editbugs"}} });
 
 # Add some Hours Worked to a bug so that we are sure at least one bug
 # will be present in our buglist below.
@@ -96,8 +96,4 @@ $sel->check_ok("owner");
 $sel->click_ok("summarize");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Time Summary for Bug $test_bug_1");
-
-# Reset the timetracking group.
-
-set_parameters($sel, { "Group Security" => {"timetrackinggroup" => {type => "select", value => ""}} });
 logout($sel);
