@@ -39,7 +39,7 @@ use base qw(Exporter);
 );
 
 # How long we wait for pages to load.
-use constant WAIT_TIME => 30000;
+use constant WAIT_TIME => 60000;
 use constant CONF_FILE =>  "../config/selenium_test.conf";
 use constant CHROME_MODE => 1;
 
