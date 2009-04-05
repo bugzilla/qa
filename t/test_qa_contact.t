@@ -52,7 +52,7 @@ $sel->type_ok("value0-0-0", $config->{unprivileged_user_login}, "Look for the po
 $sel->click_ok("Search");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug List");
-$sel->is_text_present_ok($bug1_id);
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id is on the list");
 $sel->is_text_present_ok("Test for QA contact");
 $sel->type_ok("save_newqueryname", "My QA query");
 $sel->click_ok("remember");
@@ -63,7 +63,7 @@ ok($text =~ /OK, you have a new search named My QA query/, "New saved search 'My
 $sel->click_ok("link=My QA query");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug List: My QA query");
-$sel->is_text_present_ok($bug1_id);
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id is on the list");
 $sel->is_text_present_ok("Test for QA contact");
 
 # The saved search should still work, even with the QA contact field disabled.
@@ -75,7 +75,7 @@ $sel->click_ok("link=My QA query");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug List: My QA query");
 $sel->is_text_present_ok("One bug found");
-$sel->is_text_present_ok($bug1_id);
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id is on the list");
 $sel->click_ok("link=$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $bug1_id /);
@@ -139,7 +139,7 @@ $sel->click_ok("Search");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug List");
 $sel->is_text_present_ok("One bug found");
-$sel->is_text_present_ok($bug1_id);
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id is on the list");
 $sel->is_text_present_ok("Test for QA contact");
 $sel->click_ok("link=$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
