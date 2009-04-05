@@ -77,7 +77,7 @@ $sel->click_ok("link=Selenium bugs");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug List: Selenium bugs");
 $sel->is_text_present_ok("One bug found");
-$sel->is_text_present_ok($bug1_id);
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id restricted to the bug group");
 
 # No longer use Selenium-test as a bug group.
 
@@ -114,8 +114,8 @@ $sel->click_ok("link=Selenium bugs");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug List: Selenium bugs");
 $sel->is_text_present_ok("One bug found");
-$sel->is_text_present_ok($bug1_id);
-ok(!$sel->is_text_present($bug2_id), "Bug $bug2_id isn't listed as being restricted to a group");
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id restricted to the bug group");
+ok(!$sel->is_element_present("b$bug2_id"), "Bug $bug2_id NOT restricted to the bug group");
 
 # Re-enable the Selenium-test group as bug group. This doesn't affect
 # already filed bugs as this group is not mandatory.
@@ -140,8 +140,8 @@ $sel->click_ok("link=Selenium bugs");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug List: Selenium bugs");
 $sel->is_text_present_ok("One bug found");
-$sel->is_text_present_ok($bug1_id);
-ok(!$sel->is_text_present($bug2_id), "Bug $bug2_id not restricted to the bug group");
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id restricted to the bug group");
+ok(!$sel->is_element_present("b$bug2_id"), "Bug $bug2_id NOT restricted to the bug group");
 
 # Make the Selenium-test group mandatory for TestProduct.
 
@@ -164,8 +164,8 @@ $sel->is_text_present_ok('regexp:Adding bugs to group \'Selenium-test\' which is
 $sel->click_ok("link=Selenium bugs");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug List: Selenium bugs");
-$sel->is_text_present_ok($bug1_id);
-$sel->is_text_present_ok($bug2_id);
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id restricted to the bug group");
+$sel->is_element_present_ok("b$bug2_id", undef, "Bug $bug2_id restricted to the bug group");
 
 # File a new bug, which must automatically be restricted to the bug group.
 
@@ -185,9 +185,9 @@ $sel->title_is("Bug $bug3_id Submitted", "Bug $bug3_id created");
 $sel->click_ok("link=Selenium bugs");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug List: Selenium bugs");
-$sel->is_text_present_ok($bug1_id);
-$sel->is_text_present_ok($bug2_id);
-$sel->is_text_present_ok($bug3_id);
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id restricted to the bug group");
+$sel->is_element_present_ok("b$bug2_id", undef, "Bug $bug2_id restricted to the bug group");
+$sel->is_element_present_ok("b$bug3_id", undef, "Bug $bug3_id restricted to the bug group");
 
 # Turn off the Selenium-test group again.
 
@@ -223,10 +223,10 @@ $sel->title_is("Bug $bug4_id Submitted", "Bug $bug4_id created");
 $sel->click_ok("link=Selenium bugs");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug List: Selenium bugs");
-$sel->is_text_present_ok($bug1_id);
-$sel->is_text_present_ok($bug2_id);
-$sel->is_text_present_ok($bug3_id);
-ok(!$sel->is_text_present($bug4_id), "Bug $bug4_id not restricted to the bug group");
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id restricted to the bug group");
+$sel->is_element_present_ok("b$bug2_id", undef, "Bug $bug2_id restricted to the bug group");
+$sel->is_element_present_ok("b$bug3_id", undef, "Bug $bug3_id restricted to the bug group");
+ok(!$sel->is_element_present("b$bug4_id"), "Bug $bug4_id NOT restricted to the bug group");
 
 # Re-enable the mandatory group. All bugs should be restricted to this bug group automatically.
 
@@ -249,10 +249,10 @@ $sel->is_text_present_ok("The group will now be used for bugs");
 $sel->click_ok("link=Selenium bugs");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug List: Selenium bugs");
-$sel->is_text_present_ok($bug1_id);
-$sel->is_text_present_ok($bug2_id);
-$sel->is_text_present_ok($bug3_id);
-$sel->is_text_present_ok($bug4_id);
+$sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id restricted to the bug group");
+$sel->is_element_present_ok("b$bug2_id", undef, "Bug $bug2_id restricted to the bug group");
+$sel->is_element_present_ok("b$bug3_id", undef, "Bug $bug3_id restricted to the bug group");
+$sel->is_element_present_ok("b$bug4_id", undef, "Bug $bug4_id restricted to the bug group");
 
 # Try to remove the Selenium-test group from TestProduct, but DON'T do it!
 # We just want to make sure a warning is displayed about this removal.
