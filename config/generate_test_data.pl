@@ -28,11 +28,25 @@ use Bugzilla::Component;
 use Bugzilla::Group;
 use Bugzilla::Version;
 use Bugzilla::Constants;
+use Bugzilla::Config qw(:admin);
+
 
 my $dbh = Bugzilla->dbh;
 
 # set Bugzilla usage mode to USAGE_MODE_CMDLINE
 Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
+
+##########################################################################
+# Set Parameters
+##########################################################################
+# 'usebugaliases' must be turned on to create bugs with an alias.
+# It's also expected to be turned on by some webservice_*.t scripts.
+if (!Bugzilla->params->{usebugaliases}) {
+    SetParam('usebugaliases', 1);
+    write_params();
+    print "** Parameters have been modified by this script. Please re-run\n";
+    print "** checksetup.pl to set file permissions on data/params correctly.\n\n";
+}
 
 ##########################################################################
 # Create Users
