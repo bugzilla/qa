@@ -45,7 +45,7 @@ $sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept
 $sel->click_ok("commit", undef, "Commit bug data to post_bug.cgi");
 $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug1_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_is("Bug $bug1_id Submitted", "Bug $bug1_id created");
+$sel->title_like(qr/Bug $bug1_id Submitted/, "Bug $bug1_id created");
 
 # 4th step: edit the bug (test musthavemilestoneonaccept ON).
 
@@ -75,7 +75,7 @@ $sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept
 $sel->click_ok("commit", undef, "Commit bug data to post_bug.cgi");
 $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug2_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_is("Bug $bug2_id Submitted", "Bug $bug2_id created");
+$sel->title_like(qr/Bug $bug2_id Submitted/, "Bug $bug2_id created");
 
 # 6th step: edit the bug (test musthavemilestoneonaccept ON).
 
@@ -149,7 +149,7 @@ $sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept
 $sel->click_ok("commit", undef, "Commit bug data to post_bug.cgi");
 $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug3_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_is("Bug $bug3_id Submitted");
+$sel->title_like(qr/Bug $bug3_id Submitted/);
 
 # 10th step: musthavemilestoneonaccept must have no effect as there is
 #            no other milestone available besides the default one.

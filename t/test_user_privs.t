@@ -11,7 +11,7 @@ my $test_bug_1 = $config->{test_bug_1};
 
 # When being logged out, the 'Commit' button should not be displayed.
 
-$sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi", undef, "Log out (if required)");
+$sel->open_ok("/$config->{bugzilla_installation}/index.cgi?logout=1", undef, "Log out (if required)");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Logged Out");
 $sel->type_ok("quicksearch_top", $test_bug_1);

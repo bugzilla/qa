@@ -162,7 +162,7 @@ $sel->type_ok("votestoconfirm", "0");
 $sel->click_ok("submit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Updating Product 'Kill me nicely'");
-$sel->is_text_present_ok("Updated product name from 'Kill me!' to Kill me nicely");
+$sel->is_text_present_ok("Updated product name from 'Kill me!' to 'Kill me nicely'");
 $sel->is_text_present_ok("Updated description");
 $sel->is_text_present_ok("Updated default milestone");
 $sel->is_text_present_ok("Updated votes per user");

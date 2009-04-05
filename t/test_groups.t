@@ -49,7 +49,7 @@ $sel->selected_label_is("component", "TestComponent");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
-$sel->title_is("Bug $bug1_id Submitted", "Bug $bug1_id created");
+$sel->title_like(qr/Bug $bug1_id Submitted/, "Bug $bug1_id created");
 $sel->is_text_present_ok("Test group for Selenium");
 $sel->value_is("bit-${group_id}", "on"); # Must be ON
 
@@ -106,7 +106,7 @@ ok(!$sel->is_element_present("bit-${group_id}"), "Selenium-test checkbox not pre
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug2_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_is("Bug $bug2_id Submitted", "Bug $bug2_id created");
+$sel->title_like(qr/Bug $bug2_id Submitted/, "Bug $bug2_id created");
 
 # Make sure the new bug doesn't appear in the "Selenium bugs" saved search.
 
@@ -178,7 +178,7 @@ ok(!$sel->is_element_present("bit-${group_id}"), "Selenium-test checkbox not pre
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug3_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_is("Bug $bug3_id Submitted", "Bug $bug3_id created");
+$sel->title_like(qr/Bug $bug3_id Submitted/, "Bug $bug3_id created");
 
 # Make sure all three bugs are listed as being restricted to the bug group.
 
@@ -216,7 +216,7 @@ ok(!$sel->is_element_present("bit-${group_id}"), "Selenium-test checkbox not pre
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug4_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_is("Bug $bug4_id Submitted", "Bug $bug4_id created");
+$sel->title_like(qr/Bug $bug4_id Submitted/, "Bug $bug4_id created");
 
 # The last bug must not be in the list.
 

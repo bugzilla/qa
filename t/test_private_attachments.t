@@ -34,7 +34,7 @@ $sel->title_like(qr/Bug \d+ Submitted/);
 my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
 $sel->is_text_present_ok("private attachment, v1 (");
 $sel->is_text_present_ok("and some attachments too, like this one.");
-$sel->is_checked_ok('//a[@id="comment_link_0"]/../..//i//input[@type="checkbox"]');
+$sel->is_checked_ok('//a[@id="comment_link_0"]/../..//div//input[@type="checkbox"]');
 
 # Now attach a public patch to the existing bug.
 
@@ -65,7 +65,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $bug1_id/);
 $sel->is_text_present_ok("public attachment, v2");
 $sel->is_text_present_ok("this patch is public. Everyone can see it.");
-ok(!$sel->is_checked('//a[@id="comment_link_1"]/../..//i//input[@type="checkbox"]'), "Public attachment is visible");
+ok(!$sel->is_checked('//a[@id="comment_link_1"]/../..//div//input[@type="checkbox"]'), "Public attachment is visible");
 logout($sel);
 
 # A logged out user cannot see the private attachment, only the public one.
@@ -127,7 +127,7 @@ $sel->click_ok("link=bug $bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $bug1_id/);
 $sel->is_text_present_ok("My patch, which I should see, always (");
-$sel->is_checked_ok('//a[@id="comment_link_3"]/../..//i//input[@type="checkbox"]');
+$sel->is_checked_ok('//a[@id="comment_link_3"]/../..//div//input[@type="checkbox"]');
 $sel->is_text_present_ok("Making the powerless user's patch private.");
 logout($sel);
 

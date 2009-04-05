@@ -217,9 +217,9 @@ sub log_in {
     my ($sel, $config, $user) = @_;
 
     $sel->open_ok("/$config->{bugzilla_installation}/", undef, "Go to the login page");
-    $sel->type_ok("Bugzilla_login", $config->{"${user}_user_login"}, "Enter $user login name");
-    $sel->type_ok("Bugzilla_password", $config->{"${user}_user_passwd"}, "Enter $user password");
-    $sel->click_ok("log_in", undef, "Submit credentials");
+    $sel->type_ok("Bugzilla_login_top", $config->{"${user}_user_login"}, "Enter $user login name");
+    $sel->type_ok("Bugzilla_password_top", $config->{"${user}_user_passwd"}, "Enter $user password");
+    $sel->click_ok("log_in_top", undef, "Submit credentials");
     $sel->wait_for_page_to_load(WAIT_TIME);
     $sel->title_is("Bugzilla Main Page", "User is logged in");
 }
