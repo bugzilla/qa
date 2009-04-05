@@ -170,7 +170,7 @@ foreach my $f (sort keys %{$fields}) {
         my $expected_faultstring = $fields->{$f}->{$val}->{faultstring};
 
         my $fail_call = xmlrpc_call_fail($rpc, 'Bug.create', $bug_fields_copy);
-        cmp_ok( $fail_call->faultstring, '=~', $expected_faultstring,
+        cmp_ok(trim($fail_call->faultstring), '=~', $expected_faultstring,
                 "attempt to set $f to $val value got faultstring '$expected_faultstring'"
         );
     }

@@ -146,7 +146,7 @@ sub xmlrpc_call_fail {
     ok(defined $call->fault, $test_name)
         or diag("Returned: " . Dumper($call->result));
     if (defined $faultstring) {
-        cmp_ok($call->faultstring, '=~', $faultstring, 
+        cmp_ok(trim($call->faultstring), '=~', $faultstring, 
                "Got correct fault for $method");
     }
     return $call;
