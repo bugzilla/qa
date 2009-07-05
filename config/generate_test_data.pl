@@ -135,7 +135,9 @@ my %field_values = (
 print "creating bugs...\n";
 Bugzilla::Bug->create( \%field_values );
 if (Bugzilla::Bug->new('public_bug')->{error}) {
-    Bugzilla::Bug->create({ %field_values, alias => 'public_bug' });
+    # The deadline must be set so that this bug can be used to test
+    # timetracking fields using WebServices.
+    Bugzilla::Bug->create({ %field_values, alias => 'public_bug', deadline => '2010-01-01' });
 }
 
 ##########################################################################
