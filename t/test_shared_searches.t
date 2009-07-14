@@ -22,7 +22,7 @@ $sel->title_is("Bug List");
 $sel->type_ok("save_newqueryname", "Shared Selenium buglist");
 $sel->click_ok("remember");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bugzilla Message");
+$sel->title_is("Search created");
 my $text = trim($sel->get_text("message"));
 ok($text =~ /OK, you have a new search named Shared Selenium buglist./, "New search named 'Shared Selenium buglist' has been created");
 
@@ -93,7 +93,7 @@ $sel->title_is("Bug List");
 $sel->type_ok("save_newqueryname", "helpwanted");
 $sel->click_ok("remember");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bugzilla Message");
+$sel->title_is("Search created");
 $text = trim($sel->get_text("message"));
 ok($text =~ /OK, you have a new search named helpwanted./, "New search named helpwanted has been created");
 

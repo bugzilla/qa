@@ -36,7 +36,7 @@ $sel->title_is("Bug List");
 $sel->type_ok("save_newqueryname", "SavedSearchTEST1");
 $sel->click_ok("remember");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bugzilla Message");
+$sel->title_is("Search created");
 my $text = trim($sel->get_text("message"));
 ok($text =~ /OK, you have a new search named SavedSearchTEST1./, "New search named SavedSearchTEST1 has been created");
 $sel->click_ok("link=SavedSearchTEST1");
@@ -74,7 +74,7 @@ ok(!$sel->is_text_present("SavedSearchTEST1"), "SavedSearchTEST1 is not present 
 $sel->type_ok("save_newqueryname", "SavedSearchTEST1");
 $sel->click_ok("remember");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bugzilla Message");
+$sel->title_is("Search updated");
 $text = trim($sel->get_text("message"));
 ok($text =~ /Your search named SavedSearchTEST1 has been updated./, "Saved searche SavedSearchTEST1 has been updated.");
 
