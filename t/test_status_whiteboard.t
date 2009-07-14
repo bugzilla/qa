@@ -46,7 +46,7 @@ $sel->is_text_present_ok("2 bugs found");
 $sel->type_ok("save_newqueryname", "sw-x77v");
 $sel->click_ok("remember");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bugzilla Message");
+$sel->title_is("Search created");
 my $text = trim($sel->get_text("message"));
 ok($text =~ /you have a new search named sw-x77v/, 'Saved search correctly saved');
 

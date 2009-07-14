@@ -57,7 +57,7 @@ $sel->is_text_present_ok("Test for QA contact");
 $sel->type_ok("save_newqueryname", "My QA query");
 $sel->click_ok("remember");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bugzilla Message");
+$sel->title_is("Search created");
 my $text = trim($sel->get_text("message"));
 ok($text =~ /OK, you have a new search named My QA query/, "New saved search 'My QA query'");
 $sel->click_ok("link=My QA query");

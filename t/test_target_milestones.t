@@ -56,7 +56,7 @@ $sel->is_text_present_ok("One bug found");
 $sel->type_ok("save_newqueryname", "selenium_m0");
 $sel->click_ok("remember");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bugzilla Message");
+$sel->title_is("Search created");
 my $text = trim($sel->get_text("message"));
 ok($text =~ /OK, you have a new search named selenium_m0./, "New search named selenium_m0 has been created");
 
