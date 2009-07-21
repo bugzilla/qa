@@ -39,13 +39,14 @@ Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
 ##########################################################################
 # Set Parameters
 ##########################################################################
+
+my $params_modified;
 # 'usebugaliases' must be turned on to create bugs with an alias.
 # It's also expected to be turned on by some webservice_*.t scripts.
 if (!Bugzilla->params->{usebugaliases}) {
     SetParam('usebugaliases', 1);
     write_params();
-    print "** Parameters have been modified by this script. Please re-run\n";
-    print "** checksetup.pl to set file permissions on data/params correctly.\n\n";
+    $params_modified = 1;
 }
 
 ##########################################################################
@@ -476,6 +477,28 @@ foreach my $f (@fields) {
         $sth->execute($value);
     }
 }
+
+####################################################################
+# Set Parameters That Require Other Things To Have Been Done First #
+####################################################################
+
+if (Bugzilla->params->{insidergroup} ne 'QA-Selenium-TEST') {
+    SetParam('insidergroup', 'QA-Selenium-TEST');
+    write_params();
+    $params_modified = 1;
+}
+
+if ($params_modified) {
+    print <<EOT
+** Parameters have been modified by this script. Please re-run
+** checksetup.pl to set file permissions on data/params correctly.
+
+EOT
+}
+
+########################
+# Create a Private Bug #
+########################
 
 Bugzilla->logout;
 $cgi->param( 'Bugzilla_login',    $config->{QA_Selenium_TEST_user_login} );

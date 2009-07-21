@@ -82,9 +82,7 @@ my @tests = (
       test  => "Passing a comment that's too long fails",
     },
 
-    # XXX Should test permissions on the "private" parameter, but we 
-    # have no way to verify if the comment added was private or not,
-    # and there's no error thrown if you lack perms.
+    # Testing the "private" parameter happens in the tests for Bug.comments
 
     # Test work_time parameter
     # XXX Should be testing permissions on the work_time parameter,

@@ -157,3 +157,9 @@ $sel->title_is("");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 logout($sel);
+login($sel, $config, 'admin');
+set_parameters($sel, { 
+    "Group Security" => {"insidergroup" => { type => "select", 
+                                             value => "QA-Selenium-TEST" }},
+});
+logout($sel);
