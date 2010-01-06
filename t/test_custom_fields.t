@@ -182,10 +182,9 @@ $sel->click_ok("delete");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Field Value Deleted");
 
-# There is only one such link left, for 'storage'.
 # This value cannot be deleted as it's in use.
 
-$sel->click_ok("link=Delete");
+$sel->click_ok("//a[contains(\@href, 'editvalues.cgi?action=del&field=cf_qa_list_$bug1_id&value=storage')]");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Delete Value \'storage\' from the \'List$bug1_id\' (cf_qa_list_$bug1_id) field");
 $sel->is_text_present_ok("There is 1 bug with this field value");
