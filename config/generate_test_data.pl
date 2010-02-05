@@ -120,7 +120,7 @@ $cgi->param( 'Bugzilla_password', $config->{admin_user_passwd} );
 Bugzilla->login(LOGIN_REQUIRED);
 
 my %field_values = (
-    'priority'     => 'P1',
+    'priority'     => 'Highest',
     'bug_status'   => 'NEW',
     'version'      => 'unspecified',
     'bug_file_loc' => '',
@@ -290,7 +290,7 @@ for my $product (@products) {
         if (!new Bugzilla::Version({ name    => $version, 
                                      product => $new_product })) 
         {
-            Bugzilla::Version::create($version, $new_product);
+            Bugzilla::Version->create({name => $version, product => $new_product});
         }
     }
 
