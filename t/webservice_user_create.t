@@ -6,14 +6,13 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 28;
+use Test::More tests => 26;
 my ($rpc, $config) = get_xmlrpc_client();
 
 use constant NEW_PASSWORD => 'password';
 use constant NEW_FULLNAME => 'WebService Created User';
 
 use constant PASSWORD_TOO_SHORT => 'a';
-use constant PASSWORD_TOO_LONG  => random_string(500);
 
 # These are the characters that are actually invalid per RFC.
 use constant INVALID_EMAIL => '()[]\;:,<>@webservice.test';
@@ -67,13 +66,6 @@ my @tests = (
       error => 'password must be at least',
       test  => 'Password Too Short fails',
     },
-    { user  => 'admin',
-      args  => { email    => new_login(), full_name => NEW_FULLNAME,
-                 password => PASSWORD_TOO_LONG },
-      error => 'password must be no more than',
-      test  => 'Password Too Long fails',
-    },
-
     { user => 'admin',
       args => { email    => new_login(), full_name => NEW_FULLNAME,
                 password => NEW_PASSWORD },
