@@ -40,15 +40,18 @@ Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
 # Set Parameters
 ##########################################################################
 
-my $params_modified;
-# 'usebugaliases' must be turned on to create bugs with an alias.
-# It's also expected to be turned on by some webservice_*.t scripts.
+my $params_modified = 0;
+# Some parameters must be turned on to create bugs requiring them.
+# They are also expected to be turned on by some webservice_*.t scripts.
 if (!Bugzilla->params->{usebugaliases}) {
     SetParam('usebugaliases', 1);
-    write_params();
     $params_modified = 1;
 }
-
+if (!Bugzilla->params->{useqacontact}) {
+    SetParam('useqacontact', 1);
+    $params_modified = 1;
+}
+write_params() if $params_modified;
 ##########################################################################
 # Create Users
 ##########################################################################
@@ -484,11 +487,11 @@ foreach my $f (@fields) {
 
 if (Bugzilla->params->{insidergroup} ne 'QA-Selenium-TEST') {
     SetParam('insidergroup', 'QA-Selenium-TEST');
-    write_params();
     $params_modified = 1;
 }
 
 if ($params_modified) {
+    write_params();
     print <<EOT
 ** Parameters have been modified by this script. Please re-run
 ** checksetup.pl to set file permissions on data/params correctly.

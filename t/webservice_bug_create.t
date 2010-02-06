@@ -15,7 +15,7 @@ my ($rpc, $config) = get_xmlrpc_client();
 ########################
 
 my $bug_fields = {
-    'priority'     => 'P1',
+    'priority'     => 'Highest',
     'bug_status'   => 'NEW',
     'version'      => 'unspecified',
     'reporter'     => $config->{editbugs_user_login},
@@ -43,7 +43,7 @@ my $fields = {
     },
 
     product => {
-        undefined => { faultstring => 'does not exist', value => undef },
+        undefined => { faultstring => 'You must select/enter a product.', value => undef },
         invalid =>
             { faultstring => 'does not exist', value => 'does-not-exist' },
     },
@@ -61,17 +61,17 @@ my $fields = {
 
     version => {
         undefined =>
-            { faultstring => 'A legal Version was not set', value => undef },
+            { faultstring => 'You must select/enter a version.', value => undef },
         invalid => {
-            faultstring => 'A legal Version was not set',
+            faultstring => "There is no version named 'does-not-exist' in the 'TestProduct' product.",
             value       => 'does-not-exist'
         },
     },
     rep_platform => {
         undefined =>
-            { faultstring => 'A legal Platform was not set', value => undef },
+            { faultstring => 'You must select/enter a Hardware.', value => undef },
         invalid => {
-            faultstring => 'A legal Platform was not set',
+            faultstring => "There is no Hardware named 'does-not-exist'.",
             value       => 'does-not-exist'
         },
     },
@@ -85,29 +85,29 @@ my $fields = {
 
     bug_severity => {
         undefined =>
-            { faultstring => 'A legal Severity was not set', value => undef },
+            { faultstring => 'You must select/enter a Severity.', value => undef },
         invalid => {
-            faultstring => 'A legal Severity was not set',
+            faultstring => "There is no Severity named 'does-not-exist'.",
             value       => 'does-not-exist'
         },
     },
 
     priority => {
         undefined =>
-            { faultstring => 'A legal Priority was not set', value => undef },
+            { faultstring => 'You must select/enter a Priority.', value => undef },
         invalid => {
-            faultstring => 'A legal Priority was not set',
+            faultstring => "There is no Priority named 'does-not-exist'.",
             value       => 'does-not-exist'
         },
     },
 
     op_sys => {
         undefined => {
-            faultstring => 'A legal OS/Version was not set',
+            faultstring => 'You must select/enter a OS.',
             value       => undef
         },
         invalid => {
-            faultstring => 'A legal OS/Version was not set',
+            faultstring => "There is no OS named 'does-not-exist'.",
             value       => 'does-not-exist'
         },
     },
