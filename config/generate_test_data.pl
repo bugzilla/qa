@@ -51,6 +51,12 @@ if (!Bugzilla->params->{useqacontact}) {
     SetParam('useqacontact', 1);
     $params_modified = 1;
 }
+# Do not try to send emails for real!
+if (Bugzilla->params->{mail_delivery_method} ne 'Test') {
+    SetParam('mail_delivery_method', 'Test');
+    $params_modified = 1;
+}
+
 write_params() if $params_modified;
 ##########################################################################
 # Create Users

@@ -316,8 +316,8 @@ sub open_advanced_search_page {
     $sel->click_ok("link=Search");
     $sel->wait_for_page_to_load(WAIT_TIME);
     my $title = $sel->get_title();
-    if ($title eq "Find a Specific Bug") {
-        ok(1, "Display the basic search form");
+    if ($title eq "Simple Search") {
+        ok(1, "Display the simple search form");
         $sel->click_ok("link=Advanced Search");
         $sel->wait_for_page_to_load(WAIT_TIME);
     }
