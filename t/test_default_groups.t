@@ -149,8 +149,8 @@ $sel->value_is("canedit_$group1_id", "off");
 $sel->value_is("canedit_$group2_id", "off");
 $sel->selected_label_is("membercontrol_$group1_id", "NA");
 $sel->selected_label_is("othercontrol_$group1_id", "NA");
-$sel->selected_label_is("membercontrol_$group1_id", "NA");
-$sel->selected_label_is("othercontrol_$group1_id", "NA");
+$sel->selected_label_is("membercontrol_$group2_id", "NA");
+$sel->selected_label_is("othercontrol_$group2_id", "NA");
 
 # Delete all created groups and products.
 
