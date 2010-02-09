@@ -13,7 +13,8 @@ my $unprivileged_user_login = $config->{unprivileged_user_login};
 
 log_in($sel, $config, 'admin');
 set_parameters($sel, { "Bug Fields"              => {"useclassification-off" => undef,
-                                                     "usetargetmilestone-on" => undef},
+                                                     "usetargetmilestone-on" => undef,
+                                                     "usevotes-on"           => undef},
                        "Administrative Policies" => {"allowbugdeletion-on"   => undef}
                      });
 
@@ -44,6 +45,7 @@ $sel->title_is("Add Product");
 $sel->type_ok("product", "Kill me!");
 $sel->type_ok("description", "I will disappear very soon. Do not add bugs to it.");
 $sel->type_ok("defaultmilestone", "0.1a");
+$sel->click_ok("allows_unconfirmed");
 $sel->type_ok("votesperuser", "1");
 $sel->type_ok("maxvotesperbug", "1");
 $sel->type_ok("votestoconfirm", "10");
@@ -151,13 +153,15 @@ $sel->title_like(qr/^Bug \d+ Submitted/);
 my $bug1_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
 
 # Edit product properties and set votes_to_confirm to 0, which has
-# the side-effect to confirm the UNCONFIRMED bug above.
+# the side-effect to disable auto-confirmation (new behavior compared
+# to Bugzilla 3.4 and older).
 
 edit_product($sel, "Kill me!");
 $sel->type_ok("product", "Kill me nicely");
 $sel->type_ok("description", "I will disappear very soon. Do not add bugs to it (except for testing).");
 $sel->select_ok("defaultmilestone", "label=0.2");
 $sel->type_ok("votesperuser", "2");
+$sel->type_ok("maxvotesperbug", 5);
 $sel->type_ok("votestoconfirm", "0");
 $sel->click_ok("submit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -166,11 +170,46 @@ $sel->is_text_present_ok("Updated product name from 'Kill me!' to 'Kill me nicel
 $sel->is_text_present_ok("Updated description");
 $sel->is_text_present_ok("Updated default milestone");
 $sel->is_text_present_ok("Updated votes per user");
+$sel->is_text_present_ok("Updated maximum votes per bug");
 $sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
 $text = trim($sel->get_text("bugzilla-body"));
-ok($text =~ /Checking unconfirmed bugs in this product for any which now have sufficient votes/,
-   "Checking for UNCO bugs with now enough votes");
-ok($text =~ /Bug $bug1_id confirmed by number of votes/, "One bug confirmed by popular votes");
+# We use .{1} in place of the right arrow character, which fails otherwise.
+ok($text =~ /Checking unconfirmed bugs in this product for any which now have sufficient votes\.{3} .{1}there were none/,
+   "No bugs confirmed by popular votes (votestoconfirm = 0 disables auto-confirmation)");
+
+# Now set votestoconfirm to 2, vote for a bug, and then set
+# this attribute back to 1, to trigger auto-confirmation.
+
+$sel->click_ok("link=Kill me nicely");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit Product 'Kill me nicely'", "Display properties of Kill me nicely");
+$sel->type_ok("votestoconfirm", 2);
+$sel->click_ok("submit");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Updating Product 'Kill me nicely'");
+$sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
+
+$sel->type_ok("quicksearch_top", $bug1_id);
+$sel->click_ok("find_top");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/^Bug $bug1_id /);
+$sel->click_ok("link=vote");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Change Votes");
+$sel->type_ok("bug_$bug1_id", 1);
+$sel->click_ok("change");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Change Votes");
+$sel->is_text_present_ok("The changes to your votes have been saved");
+
+edit_product($sel, "Kill me nicely");
+$sel->type_ok("votestoconfirm", 1);
+$sel->click_ok("submit");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Updating Product 'Kill me nicely'");
+$sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
+$text = trim($sel->get_text("bugzilla-body"));
+ok($text =~ /Bug $bug1_id confirmed by number of votes/, "Bug $bug1_id is confirmed by popular votes");
 
 # Edit the bug.
 
