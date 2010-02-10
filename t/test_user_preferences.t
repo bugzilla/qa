@@ -151,7 +151,7 @@ open_advanced_search_page($sel);
 $sel->remove_all_selections_ok("product");
 $sel->add_selection_ok("product", "TestProduct");
 $sel->remove_all_selections_ok("bug_status");
-$sel->select_ok("bugidtype", "label=Only include");
+$sel->select_ok("bug_id_type", "label=Only include");
 $sel->type_ok("bug_id", "$bug1_id , $bug2_id");
 $sel->select_ok("order", "label=Bug Number");
 $sel->click_ok("Search");
