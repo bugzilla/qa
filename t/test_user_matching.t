@@ -13,7 +13,6 @@ my $test_bug_1 = $config->{test_bug_1};
 
 log_in($sel, $config, 'tweakparams');
 set_parameters($sel, { "User Matching"  => {"usemenuforusers-off" => undef,
-                                            "usermatchmode"       => {type => 'select', value => 'off'},
                                             "maxusermatches"      => {type => 'text', value => '0'},
                                             "confirmuniqueusermatch-on" => undef},
                        "Group Security" => {"usevisibilitygroups-off" => undef}
@@ -25,13 +24,14 @@ $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_like(qr/^Bug $test_bug_1/);
 $sel->click_ok("cc_edit_area_showhide");
 
-# We enter an incomplete email address, and user matching is off. process_bug.cgi must complain.
+# We enter an incomplete email address. process_bug.cgi must ask
+# for confirmation as confirmuniqueusermatch is turned on.
 
 $sel->type_ok("newcc", $config->{unprivileged_user_login_truncated});
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Match Failed");
-$sel->is_text_present_ok("$config->{unprivileged_user_login_truncated} did not match anything");
+$sel->title_is("Confirm Match");
+$sel->is_text_present_ok("$config->{unprivileged_user_login_truncated} matched");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $test_bug_1/);
@@ -46,51 +46,20 @@ $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug $test_bug_1 processed");
 
-# Now test wildcards ("*").
-
-set_parameters($sel, { "User Matching" => {"usermatchmode" => {type => 'select', value => 'wildcard'}} });
+# Now test wildcards ("*"). Due to confirmuniqueusermatch being turned on,
+# a confirmation page must be displayed.
 
 $sel->type_ok("quicksearch_top", $test_bug_1);
 $sel->click_ok("find_top");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_like(qr/^Bug $test_bug_1/);
 $sel->click_ok("cc_edit_area_showhide");
-
-# There is no wildcard character ("*") and it's an incomplete email address.
-# It must be rejected.
-
-$sel->type_ok("newcc", $config->{unprivileged_user_login_truncated});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Match Failed");
-$sel->is_text_present_ok("$config->{unprivileged_user_login_truncated} did not match anything");
-$sel->go_back_ok();
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/);
-$sel->click_ok("cc_edit_area_showhide");
-
-# We now append "*". Due to confirmuniqueusermatch = 1, a confirmation page
-# must be displayed.
-
 $sel->type_ok("newcc", "$config->{unprivileged_user_login_truncated}*");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Confirm Match");
 $sel->is_text_present_ok("<$config->{unprivileged_user_login}>");
 $sel->go_back_ok();
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/);
-$sel->click_ok("cc_edit_area_showhide");
-
-# We now type a complete and valid email address. The confirmation should not
-# be displayed, despite confirmuniqueusermatch = 1.
-
-$sel->type_ok("newcc", $config->{unprivileged_user_login});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $test_bug_1 processed");
-
-$sel->click_ok("link=bug $test_bug_1");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $test_bug_1/);
 $sel->click_ok("cc_edit_area_showhide");
@@ -103,27 +72,13 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Confirm Match");
 $sel->is_text_present_ok("*$config->{common_email} matched:");
 
-# Now enable the 'search' mode, with a restrictive value for 'maxusermatches'.
+# Now restrict 'maxusermatches'.
 
-set_parameters($sel, { "User Matching" => {"usermatchmode"  => {type => 'select', value => 'search'},
-                                           "maxusermatches" => {type => 'text', value => '1'}}
-                     });
+set_parameters($sel, { "User Matching" => {"maxusermatches" => {type => 'text', value => '1'}} });
 
 $sel->type_ok("quicksearch_top", $test_bug_1);
 $sel->click_ok("find_top");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/);
-$sel->click_ok("cc_edit_area_showhide");
-
-# We type an incomplete email address, with no wildcard, but this should work.
-
-$sel->type_ok("newcc", $config->{unprivileged_user_login_truncated});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Confirm Match");
-$sel->is_text_present_ok("<$config->{unprivileged_user_login}>");
-$sel->go_back_ok();
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $test_bug_1/);
 $sel->click_ok("cc_edit_area_showhide");
 
