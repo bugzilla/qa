@@ -19,6 +19,7 @@ set_parameters($sel, { "Bug Fields"              => {"usevotes-on"           => 
 add_product($sel);
 $sel->type_ok("product", "Eureka");
 $sel->type_ok("description", "A great new product");
+$sel->click_ok("allows_unconfirmed");
 $sel->type_ok("votesperuser", 10);
 $sel->type_ok("maxvotesperbug", 5);
 $sel->type_ok("votestoconfirm", 3);
@@ -199,16 +200,15 @@ $sel->title_like(qr/Bug $bug3_id /);
 $text = trim($sel->get_text("votes_container"));
 ok($text =~ /2 votes/, "2 votes remaining");
 
-# Now set the number of votes to confirm to 0. This disables UNCONFIRMED.
+# Now disable UNCONFIRMED.
 
 edit_product($sel, "Eureka");
-$sel->type_ok("votestoconfirm", 0);
+$sel->click_ok("allows_unconfirmed");
 $sel->click_ok("submit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Updating Product 'Eureka'");
 $full_text = trim($sel->get_body_text());
-ok($full_text =~ /Updated number of votes needed to confirm a bug from 2 to 0/,
-   "Confirming the new number of votes per bug");
+ok($full_text =~ /The product no longer allows the UNCONFIRMED status/, "Disable UNCONFIRMED");
 
 # File a new bug. UNCONFIRMED must not be listed as a valid bug status.
 
