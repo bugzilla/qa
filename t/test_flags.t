@@ -412,17 +412,11 @@ ok(grep($_ eq '?', @flag_states), "Flag state '?' available");
 $sel->click_ok("//a[\@href='attachment.cgi?id=$attachment2_id&action=edit']");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Attachment $attachment2_id Details for Bug $bug1_id");
-$sel->select_ok('//select[@title="attachmentflag2"]', "label=+");
-$sel->click_ok("update");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Unauthorized Action");
-$sel->is_text_present_ok("You are not authorized to edit attachment");
+ok(!$sel->is_element_present('//select[@title="attachmentflag2"]'),
+   "Attachment flags are not editable by a powerless user");
 
 # Add an attachment and set flags on it.
 
-$sel->go_back_ok();
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Attachment $attachment2_id Details for Bug $bug1_id");
 $sel->click_ok("link=Bug $bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $bug1_id/);
