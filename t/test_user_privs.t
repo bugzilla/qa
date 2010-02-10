@@ -41,7 +41,7 @@ $sel->click_ok("find_top");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $bug1_id/, "Display bug $bug1_id");
 ok(!$sel->is_element_present("commit"), "Button 'Commit' not available");
-my $text = trim($sel->get_text("//fieldset/p"));
+my $text = trim($sel->get_text("//fieldset"));
 ok($text =~ /You need to log in before you can comment on or make changes to this bug./,
    "Addl. comment box not displayed");
 
