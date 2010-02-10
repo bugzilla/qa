@@ -9,9 +9,9 @@ use QA::Util;
 my ($sel, $config) = get_selenium();
 
 log_in($sel, $config, 'admin');
-set_parameters($sel, { "Required Settings" => {shutdownhtml => {type => "text",
-                                                                value => "I'm down (set by test_shutdown.t)" }
-                                              } });
+set_parameters($sel, { "General" => {shutdownhtml => {type  => "text",
+                                                      value => "I'm down (set by test_shutdown.t)" }
+                                    } });
 
 # None of the following pages should be accessible when Bugzilla is down.
 
@@ -52,6 +52,9 @@ $sel->type_ok("Bugzilla_password", $config->{admin_user_passwd}, "Enter admin pa
 $sel->click_ok("log_in");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Configuration: Required Settings");
+$sel->click_ok("link=General");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Configuration: General");
 $sel->type_ok("shutdownhtml", "");
 $sel->click_ok('//input[@type="submit" and @value="Save Changes"]', undef, "Save Changes");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
