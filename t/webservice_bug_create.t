@@ -5,7 +5,7 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 53;
+use Test::More tests => 62;
 use QA::Util;
 
 my ($rpc, $config) = get_xmlrpc_client();
@@ -16,26 +16,26 @@ my ($rpc, $config) = get_xmlrpc_client();
 
 my $bug_fields = {
     'priority'     => 'Highest',
-    'bug_status'   => 'NEW',
+    'status'       => 'NEW',
     'version'      => 'unspecified',
     'reporter'     => $config->{editbugs_user_login},
     'bug_file_loc' => '',
-    'comment'      => '-- Comment Created By Bugzilla XML-RPC Tests --',
+    'description'  => '-- Comment Created By Bugzilla XML-RPC Tests --',
     'cc'           => [$config->{unprivileged_user_login}],
     'component'    => 'TestComponent',
-    'rep_platform' => 'All',
+    'platform'     => 'All',
     'assigned_to'  => $config->{editbugs_user_login},
-    'short_desc'   => 'XML-RPC Test Bug',
+    'summary'      => 'XML-RPC Test Bug',
     'product'      => 'TestProduct',
     'op_sys'       => 'Linux',
-    'bug_severity' => 'normal',
+    'severity'     => 'normal',
     'qa_contact'   => $config->{canconfirm_user_login},
 };
 
 # hash to contain all the possible $bug_fields values that
 # can be passed to createBug()
 my $fields = {
-    short_desc => {
+    summary => {
         undefined => {
             faultstring => 'You must enter a summary for this bug',
             value       => undef
@@ -67,7 +67,7 @@ my $fields = {
             value       => 'does-not-exist'
         },
     },
-    rep_platform => {
+    platform => {
         undefined =>
             { faultstring => 'You must select/enter a Hardware.', value => undef },
         invalid => {
@@ -76,14 +76,14 @@ my $fields = {
         },
     },
 
-    bug_status => {
+    status => {
         invalid => {
             faultstring => "There is no status named 'does-not-exist'",
             value       => 'does-not-exist'
         },
     },
 
-    bug_severity => {
+    severity => {
         undefined =>
             { faultstring => 'You must select/enter a Severity.', value => undef },
         invalid => {
@@ -149,15 +149,12 @@ my $fields = {
             value       => 'Bug 12345'
         },
 
-        }
-
+    },
 };
 
 # test calling Bug.create without logging into bugzilla
-my $create_call = xmlrpc_call_fail($rpc, 'Bug.create', $bug_fields);
-cmp_ok( $create_call->faultstring, '=~', 'Login Required',
-    'calling the function without loggin in first returns error "Login Required"'
-);
+my $create_call = xmlrpc_call_fail($rpc, 'Bug.create', $bug_fields,
+    'Login Required', 'Cannot file bugs as logged-out user');
 
 xmlrpc_log_in($rpc, $config, 'editbugs');
 
@@ -169,10 +166,8 @@ foreach my $f (sort keys %{$fields}) {
         $bug_fields_copy->{$f} = $fields->{$f}->{$val}->{value};
         my $expected_faultstring = $fields->{$f}->{$val}->{faultstring};
 
-        my $fail_call = xmlrpc_call_fail($rpc, 'Bug.create', $bug_fields_copy);
-        cmp_ok(trim($fail_call->faultstring), '=~', $expected_faultstring,
-                "attempt to set $f to $val value got faultstring '$expected_faultstring'"
-        );
+        my $fail_call = xmlrpc_call_fail($rpc, 'Bug.create', $bug_fields_copy, 
+            $expected_faultstring, "Specifying $val $f fails");
     }
 }
 
@@ -180,6 +175,20 @@ foreach my $f (sort keys %{$fields}) {
 # this is done by the sort so call create bug with the valid $bug_fields
 # to run the test for the successful creation of the bug
 my $success_create = xmlrpc_call_success($rpc, 'Bug.create', $bug_fields);
-cmp_ok($success_create->result->{id}, 'gt', 0,
+my $bug_id = $success_create->result->{id};
+cmp_ok($bug_id, 'gt', 0,
        "Created new bug with id " . $success_create->result->{id});
+
+# Make sure that the bug that we created has the field values we specified.
+my $bug_result = xmlrpc_call_success($rpc, 'Bug.get', { ids => [$bug_id] });
+my $bug = $bug_result->result->{bugs}->[0];
+isa_ok($bug, 'HASH', "Bug $bug_id");
+# We have to limit the fields checked because Bug.get only returns certain 
+# fields.
+foreach my $field (qw(assigned_to component priority product severity 
+                      status summary)) 
+{
+    is($bug->{$field}, $bug_fields->{$field}, "$field has the right value");
+};
+
 xmlrpc_call_success($rpc, 'User.logout');
