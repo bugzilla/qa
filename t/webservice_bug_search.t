@@ -45,7 +45,7 @@ foreach my $field (keys %$public_bug) {
     my $test = { args => { $field => $public_bug->{$field} },
                  test => "Search by $field" };
     if ( grep($_ eq $field, qw(alias whiteboard summary)) ) {
-        $test->{exactly} = 1;
+        $test->{exactly} = 1; $test->{bugs} = 1;
     }
     push(@tests, $test);
 }
