@@ -6,11 +6,42 @@ use base qw(Exporter);
 our @EXPORT_OK = qw(
     PRIVATE_BUG_USER
     STANDARD_BUG_TESTS
+    create_bug_fields
 );
 
 use constant INVALID_BUG_ID => -1;
 use constant INVALID_BUG_ALIAS => 'aaaaaaa12345';
 use constant PRIVATE_BUG_USER => 'QA_Selenium_TEST';
+
+use constant CREATE_BUG => {
+    'priority'     => 'Highest',
+    'status'       => 'NEW',
+    'version'      => 'unspecified',
+    'reporter'     => 'editbugs',
+    'bug_file_loc' => '',
+    'description'  => '-- Comment Created By Bugzilla XML-RPC Tests --',
+    'cc'           => ['unprivileged'],
+    'component'    => 'TestComponent',
+    'platform'     => 'All',
+    'assigned_to'  => 'editbugs',
+    'summary'      => 'XML-RPC Test Bug',
+    'product'      => 'TestProduct',
+    'op_sys'       => 'Linux',
+    'severity'     => 'normal',
+    'qa_contact'   => 'canconfirm',
+     url           => 'http://www.bugzilla.org/',
+};
+
+sub create_bug_fields {
+    my ($config) = @_;
+    my %bug = %{ CREATE_BUG() };
+    foreach my $field (qw(reporter assigned_to qa_contact)) {
+        my $value = $bug{$field};
+        $bug{$field} = $config->{"${value}_user_login"};
+    }
+    $bug{cc} = [map { $config->{$_ . "_user_login"} } @{ $bug{cc} }];
+    return \%bug;
+}
 
 use constant STANDARD_BUG_TESTS => [
     { args  => { ids => ['private_bug'] },

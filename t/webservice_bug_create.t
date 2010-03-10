@@ -7,6 +7,7 @@ use warnings;
 use lib qw(lib);
 use Test::More tests => 62;
 use QA::Util;
+use QA::Tests qw(create_bug_fields);
 
 my ($rpc, $config) = get_xmlrpc_client();
 
@@ -14,23 +15,7 @@ my ($rpc, $config) = get_xmlrpc_client();
 # Bug.create() testing #
 ########################
 
-my $bug_fields = {
-    'priority'     => 'Highest',
-    'status'       => 'NEW',
-    'version'      => 'unspecified',
-    'reporter'     => $config->{editbugs_user_login},
-    'bug_file_loc' => '',
-    'description'  => '-- Comment Created By Bugzilla XML-RPC Tests --',
-    'cc'           => [$config->{unprivileged_user_login}],
-    'component'    => 'TestComponent',
-    'platform'     => 'All',
-    'assigned_to'  => $config->{editbugs_user_login},
-    'summary'      => 'XML-RPC Test Bug',
-    'product'      => 'TestProduct',
-    'op_sys'       => 'Linux',
-    'severity'     => 'normal',
-    'qa_contact'   => $config->{canconfirm_user_login},
-};
+my $bug_fields = create_bug_fields($config);
 
 # hash to contain all the possible $bug_fields values that
 # can be passed to createBug()
