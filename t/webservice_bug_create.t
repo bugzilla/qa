@@ -139,7 +139,7 @@ my $fields = {
 
 # test calling Bug.create without logging into bugzilla
 my $create_call = xmlrpc_call_fail($rpc, 'Bug.create', $bug_fields,
-    'Login Required', 'Cannot file bugs as logged-out user');
+    'You must log in', 'Cannot file bugs as logged-out user');
 
 xmlrpc_log_in($rpc, $config, 'editbugs');
 

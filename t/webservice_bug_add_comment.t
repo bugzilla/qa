@@ -20,11 +20,11 @@ use constant TOO_LONG_COMMENT => 'a' x 500000;
 my @tests = (
     # Permissions
     { args  => { id => 'public_bug', comment => TEST_COMMENT },
-      error => 'Login Required',
+      error => 'You must log in',
       test  => 'Logged-out user cannot comment on a public bug',
     },
     { args  => { id => 'private_bug', comment => TEST_COMMENT },
-      error => "Login Required",
+      error => "You must log in",
       test  => 'Logged-out user cannot comment on a private bug',
     },
     { user  => 'unprivileged',
