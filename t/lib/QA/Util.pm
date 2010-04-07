@@ -26,6 +26,7 @@ use base qw(Exporter);
 
     get_selenium
     get_xmlrpc_client
+    get_rpc_clients
 
     WAIT_TIME
     CHROME_MODE
@@ -97,12 +98,28 @@ sub get_xmlrpc_client {
     my $xmlrpc_url = $config->{browser_url} . "/"
                     . $config->{bugzilla_installation} . "/xmlrpc.cgi";
 
-    require QA::RPC;
+    require QA::RPC::XMLRPC;
     # A temporary cookie jar that isn't saved after the script closes.
     my $cookie_jar = new HTTP::Cookies();
-    my $rpc        = new QA::RPC(proxy => $xmlrpc_url);
+    my $rpc        = new QA::RPC::XMLRPC(proxy => $xmlrpc_url);
     $rpc->transport->cookie_jar($cookie_jar);
     return ($rpc, $config);
+}
+
+sub get_jsonrpc_client {
+    require QA::RPC::JSONRPC;
+    # A temporary cookie jar that isn't saved after the script closes.
+    my $cookie_jar = new HTTP::Cookies();
+    my $rpc = new QA::RPC::JSONRPC();
+    $rpc->transport->cookie_jar($cookie_jar);
+    $rpc->version('1.0');
+    return $rpc;
+}
+
+sub get_rpc_clients {
+    my ($xmlrpc, $config) = get_xmlrpc_client();
+    my $jsonrpc = get_jsonrpc_client();
+    return ($xmlrpc, $jsonrpc, $config);
 }
 
 ################################

@@ -2,7 +2,6 @@
 
 package QA::RPC;
 use strict;
-use base qw(XMLRPC::Lite);
 use QA::Util;
 use Test::More;
 
@@ -23,7 +22,7 @@ sub bz_log_in {
 
     my $call = $self->bz_call_success(
         'User.login', { login => $username, password => $password });
-    cmp_ok($call->result->{id}, 'gt', 0,  "Logged in as $user");
+    cmp_ok($call->result->{id}, 'gt', 0, $self->TYPE . ": Logged in as $user");
 
     # Save the cookies in the cookie file
     $self->transport->cookie_jar->extract_cookies(
@@ -35,7 +34,8 @@ sub bz_call_success {
     my ($self, $method, $args, $test_name) = @_;
     my $call = $self->call($method, $args);
     $test_name ||= "$method returned successfully";
-    ok(!defined $call->fault, $test_name) or diag($call->faultstring);
+    ok(!$call->fault, $self->TYPE . ": $test_name")
+        or diag($call->faultstring);
     return $call;
 }
 
@@ -43,11 +43,11 @@ sub bz_call_fail {
     my ($self, $method, $args, $faultstring, $test_name) = @_;
     my $call = $self->call($method, $args);
     $test_name ||= "$method failed (as intended)";
-    ok(defined $call->fault, $test_name)
+    ok(defined $call->fault, $self->TYPE . ": $test_name")
         or diag("Returned: " . Dumper($call->result));
     if (defined $faultstring) {
         cmp_ok(trim($call->faultstring), '=~', $faultstring, 
-               "Got correct fault for $method");
+               $self->TYPE . ": Got correct fault for $method");
     }
     return $call;
 }
