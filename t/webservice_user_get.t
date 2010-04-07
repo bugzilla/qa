@@ -72,40 +72,40 @@ sub post_success {
     }
 }
 
-xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@tests,
+$rpc->bz_run_tests(tests => \@tests,
                  method => 'User.get', post_success => \&post_success);
 
 #############################
 # Include and Exclude Tests #
 #############################
 
-xmlrpc_call_success($rpc, 'User.logout');
+$rpc->bz_call_success('User.logout');
 
-my $include_nothing = xmlrpc_call_success($rpc, 'User.get', {
+my $include_nothing = $rpc->bz_call_success('User.get', {
     names => [$get_user], include_fields => ['asdfasdfsdf'],
 }, 'User.get including only invalid fields'); 
 is(scalar keys %{ $include_nothing->result->{users}->[0] }, 0, 
    'No fields returned for user');
 
-my $include_one = xmlrpc_call_success($rpc, 'User.get', {
+my $include_one = $rpc->bz_call_success('User.get', {
     names => [$get_user], include_fields => ['id'],
 }, 'User.get including only id');
 is(scalar keys %{ $include_one->result->{users}->[0] }, 1,
    'Only one field returned for user');
 
-my $exclude_none = xmlrpc_call_success($rpc, 'User.get', {
+my $exclude_none = $rpc->bz_call_success('User.get', {
     names => [$get_user], exclude_fields => ['asdfasdfsdf'],
 }, 'User.get excluding only invalid fields');
 is(scalar keys %{ $exclude_none->result->{users}->[0] }, 3,
    'All fields returned for user');
 
-my $exclude_one = xmlrpc_call_success($rpc, 'User.get', {
+my $exclude_one = $rpc->bz_call_success('User.get', {
     names => [$get_user], exclude_fields => ['id'],
 }, 'User.get excluding id');
 is(scalar keys %{ $exclude_one->result->{users}->[0] }, 2,
    'Only two fields returned for user');
 
-my $override = xmlrpc_call_success($rpc, 'User.get', {
+my $override = $rpc->bz_call_success('User.get', {
     names => [$get_user], include_fields => ['id', 'name'],
     exclude_fields => ['id']
 }, 'User.get with both include and exclude');

@@ -17,7 +17,7 @@ use constant GLOBAL_FIELDS =>
 use constant PRODUCT_FIELDS => qw(version target_milestone component);
 
 
-my $products = xmlrpc_get_product_ids($rpc, $config);
+my $products = $rpc->bz_get_products();
 my $public_product = $products->{'Another Product'};
 my $private_product = $products->{'QA-Selenium-TEST'};
 
@@ -87,5 +87,5 @@ sub post_success {
            'Got one or more values');
 }
 
-xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@all_tests,
+$rpc->bz_run_tests(tests => \@all_tests,
                  method => 'Bug.legal_values', post_success => \&post_success);

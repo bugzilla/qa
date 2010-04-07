@@ -40,5 +40,5 @@ my @tests = (
     },
 );
 
-xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@tests,
+$rpc->bz_run_tests(tests => \@tests,
                  method => 'User.offer_account_by_email');

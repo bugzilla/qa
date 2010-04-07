@@ -28,5 +28,5 @@ sub post_success {
     }
 }
 
-xmlrpc_run_tests(rpc => $rpc, config => $config, tests => STANDARD_BUG_TESTS,
+$rpc->bz_run_tests(tests => STANDARD_BUG_TESTS,
                  method => 'Bug.get', post_success => \&post_success);

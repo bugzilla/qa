@@ -51,11 +51,10 @@ my @tests = (
 
 for my $t (@tests) {
     if ($t->{user}) {
-        xmlrpc_log_in($rpc, $config, $t->{user});
-        xmlrpc_call_success($rpc, 'User.logout');
+        $rpc->bz_log_in($t->{user});
+        $rpc->bz_call_success('User.logout');
     }
     else {
-        xmlrpc_call_fail($rpc, 'User.login', $t->{args}, $t->{error}, 
-                         $t->{test});
+        $rpc->bz_call_fail('User.login', $t->{args}, $t->{error}, $t->{test});
     }
 }
