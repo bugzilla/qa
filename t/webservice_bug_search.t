@@ -9,8 +9,8 @@ use QA::Util;
 use QA::Tests qw(PRIVATE_BUG_USER create_bug_fields);
 use DateTime;
 use Storable qw(dclone);
-use Test::More tests => 109;
-my ($rpc, $config) = get_xmlrpc_client();
+use Test::More tests => 210;
+my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 sub string_array { map { random_string() } (1..$_[0]) }
 
@@ -36,8 +36,9 @@ my @create_bugs = (
       test => 'Create a private bug' },
 );
 
-$rpc->bz_run_tests(tests => \@create_bugs,
-                 method => 'Bug.create');
+# Creating the bugs isn't really a test, it's just preliminary work
+# for the tests. So we just run it with one of the RPC clients.
+$xmlrpc->bz_run_tests(tests => \@create_bugs, method => 'Bug.create');
 
 my @tests;
 foreach my $field (keys %$public_bug) {
@@ -161,5 +162,7 @@ sub post_success {
     }
 }
 
-$rpc->bz_run_tests(tests => \@tests,
-                 method => 'Bug.search', post_success => \&post_success);
+foreach my $rpc ($jsonrpc, $xmlrpc) {
+    $rpc->bz_run_tests(tests => \@tests,
+                       method => 'Bug.search', post_success => \&post_success);
+}

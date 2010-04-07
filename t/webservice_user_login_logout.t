@@ -6,8 +6,8 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 15;
-my ($rpc, $config) = get_xmlrpc_client();
+use Test::More tests => 30;
+my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 use constant INVALID_EMAIL => '@invalid_user@';
 
@@ -20,13 +20,13 @@ my @tests = (
       test => "Unprivileged user can log in successfully",
     },
 
-    { args  => { login => $user, password => undef },
+    { args  => { login => $user, password => '' },
       error => $error,
-      test  => "Undef password can't log in",
+      test  => "Empty password can't log in",
     },
-    { args  => { login => undef, password => $pass },
+    { args  => { login => '', password => $pass },
       error => $error,
-      test  => "Undef login can't log in",
+      test  => "Empty login can't log in",
     },
 
     { args  => { login => INVALID_EMAIL, password => $pass },
@@ -49,12 +49,14 @@ my @tests = (
     },
 );
 
-for my $t (@tests) {
-    if ($t->{user}) {
-        $rpc->bz_log_in($t->{user});
-        $rpc->bz_call_success('User.logout');
-    }
-    else {
-        $rpc->bz_call_fail('User.login', $t->{args}, $t->{error}, $t->{test});
+foreach my $rpc ($jsonrpc, $xmlrpc) {
+    for my $t (@tests) {
+        if ($t->{user}) {
+            $rpc->bz_log_in($t->{user});
+            $rpc->bz_call_success('User.logout');
+        }
+        else {
+            $rpc->bz_call_fail('User.login', $t->{args}, $t->{error}, $t->{test});
+        }
     }
 }

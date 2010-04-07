@@ -7,8 +7,8 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(PRIVATE_BUG_USER STANDARD_BUG_TESTS);
-use Test::More tests => 48;
-my ($rpc, $config) = get_xmlrpc_client();
+use Test::More tests => 96;
+my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 my $bug_url = 'http://landfill.bugzilla.org/bugzilla-tip/show_bug.cgi?id=100';
 
@@ -65,5 +65,7 @@ sub post_success {
     isa_ok($call->result->{changes}, 'HASH', "Changes");
 }
 
-$rpc->bz_run_tests(tests => \@tests,
-                 method => 'Bug.update_see_also', post_success => \&post_success);
+foreach my $rpc ($jsonrpc, $xmlrpc) {
+    $rpc->bz_run_tests(tests => \@tests, method => 'Bug.update_see_also',
+                       post_success => \&post_success);
+}

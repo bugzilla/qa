@@ -9,7 +9,7 @@ use Test::More tests => 28;
 use QA::Util;
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
-foreach my $rpc ($xmlrpc, $jsonrpc) {
+foreach my $rpc ($jsonrpc, $xmlrpc) {
     my $vers_call = $rpc->bz_call_success('Bugzilla.version');
     my $version = $vers_call->result->{version};
     ok($version, "Bugzilla.version returns $version");

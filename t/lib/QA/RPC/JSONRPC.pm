@@ -11,7 +11,14 @@ use constant DATETIME_REGEX => qr/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/;
 # Consistency with XMLRPC::Lite #
 #################################
 
-sub transport { return $_[0]->ua }
+sub ua {
+    my $self = shift;
+    if ($self->{ua} and not $self->{ua}->isa('QA::RPC::UserAgent')) {
+        bless $self->{ua}, 'QA::RPC::UserAgent';
+    }
+    return $self->SUPER::ua(@_);
+}
+sub transport { $_[0]->ua }
 
 sub call {
     my $self = shift;
@@ -41,4 +48,26 @@ use base qw(JSON::RPC::ReturnObject);
 sub faultstring { $_[0]->{content}->{error}->{message} }
 sub fault { $_[0]->is_error }
 
-__END__
+1;
+
+package QA::RPC::UserAgent;
+use strict;
+use base qw(LWP::UserAgent);
+
+########################################
+# Consistency with XMLRPC::Lite's ->ua #
+########################################
+
+sub send_request {
+    my $self = shift;
+    my $response = $self->SUPER::send_request(@_);
+    $self->http_response($response);
+    return $response;
+}
+
+# Copied directly from SOAP::Lite::Transport::HTTP.
+sub http_response {
+    my $self = shift;
+    if (@_) { $self->{'_http_response'} = shift; return $self }
+    return $self->{'_http_response'};
+}

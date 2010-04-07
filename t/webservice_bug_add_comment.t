@@ -6,8 +6,8 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 50;
-my ($rpc, $config) = get_xmlrpc_client();
+use Test::More tests => 100;
+my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 use constant INVALID_BUG_ID => -1;
 use constant INVALID_BUG_ALIAS => 'aaaaaaa12345';
@@ -134,4 +134,6 @@ my @tests = (
     # XXX Need to verify that the comment added was actually private.
 );
 
-$rpc->bz_run_tests(tests => \@tests, method => 'Bug.add_comment');
+foreach my $rpc ($jsonrpc, $xmlrpc) {
+    $rpc->bz_run_tests(tests => \@tests, method => 'Bug.add_comment');
+}

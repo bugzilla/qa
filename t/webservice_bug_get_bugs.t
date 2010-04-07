@@ -7,8 +7,8 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS);
-use Test::More tests => 31;
-my ($rpc, $config) = get_xmlrpc_client();
+use Test::More tests => 62;
+my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 sub post_success {
     my ($call, $t) = @_;
@@ -28,5 +28,7 @@ sub post_success {
     }
 }
 
-$rpc->bz_run_tests(tests => STANDARD_BUG_TESTS,
-                 method => 'Bug.get', post_success => \&post_success);
+foreach my $rpc ($jsonrpc, $xmlrpc) {
+    $rpc->bz_run_tests(tests => STANDARD_BUG_TESTS,
+                       method => 'Bug.get', post_success => \&post_success);
+}

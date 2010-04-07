@@ -25,7 +25,6 @@ use base qw(Exporter);
     set_parameters
 
     get_selenium
-    get_xmlrpc_client
     get_rpc_clients
 
     WAIT_TIME

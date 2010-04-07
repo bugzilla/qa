@@ -7,9 +7,8 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
-use Test::More tests => 56;
-my ($rpc, $config) = get_xmlrpc_client();
-
+use Test::More tests => 112;
+my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 ################
 # Bug ID Tests #
@@ -20,8 +19,10 @@ sub post_bug_success {
     is(scalar keys %{ $call->result->{bugs} }, 1, "Got exactly one bug");
 }
 
-$rpc->bz_run_tests(tests => STANDARD_BUG_TESTS, method => 'Bug.comments',
-                   post_success => \&post_bug_success);
+foreach my $rpc ($jsonrpc, $xmlrpc) {
+    $rpc->bz_run_tests(tests => STANDARD_BUG_TESTS, method => 'Bug.comments',
+                       post_success => \&post_bug_success);
+}
 
 ####################
 # Comment ID Tests #
@@ -56,8 +57,11 @@ sub post_add {
     $comments{$key} = $call->result->{id};
 }
 
-$rpc->bz_run_tests(tests => \@add_comment_tests,
-                 method => 'Bug.add_comment', post_success => \&post_add);
+
+foreach my $rpc ($jsonrpc, $xmlrpc) {
+    $rpc->bz_run_tests(tests => \@add_comment_tests,
+                       method => 'Bug.add_comment', post_success => \&post_add);
+}
 
 # Now check access on each private and public comment
 
@@ -111,5 +115,6 @@ my @comment_tests = (
     },
 );
 
-$rpc->bz_run_tests(tests => \@comment_tests,
-                 method => 'Bug.comments');
+foreach my $rpc ($jsonrpc, $xmlrpc) {
+    $rpc->bz_run_tests(tests => \@comment_tests, method => 'Bug.comments');
+}
