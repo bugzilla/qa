@@ -16,5 +16,5 @@ sub post_success {
     isa_ok($call->result->{bugs}->[0]->{history}, 'ARRAY', "Bug's history");
 }
 
-xmlrpc_run_tests(rpc => $rpc, config => $config, tests => STANDARD_BUG_TESTS,
+$rpc->bz_run_tests(tests => STANDARD_BUG_TESTS,
                  method => 'Bug.history', post_success => \&post_success);

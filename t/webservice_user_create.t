@@ -86,5 +86,5 @@ sub post_success {
     ok($call->result->{id}, "Got a non-zero user id");
 }
 
-xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@tests,
+$rpc->bz_run_tests(tests => \@tests,
                  method => 'User.create', post_success => \&post_success);

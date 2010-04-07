@@ -8,7 +8,6 @@ use HTTP::Cookies;
 use Test::More;
 use Test::WWW::Selenium;
 use WWW::Selenium::Util qw(server_is_running);
-use XMLRPC::Lite;
 
 use base qw(Exporter);
 @QA::Util::EXPORT = qw(
@@ -27,12 +26,6 @@ use base qw(Exporter);
 
     get_selenium
     get_xmlrpc_client
-
-    xmlrpc_log_in
-    xmlrpc_call_success
-    xmlrpc_call_fail
-    xmlrpc_get_product_ids
-    xmlrpc_run_tests
 
     WAIT_TIME
     CHROME_MODE
@@ -104,108 +97,12 @@ sub get_xmlrpc_client {
     my $xmlrpc_url = $config->{browser_url} . "/"
                     . $config->{bugzilla_installation} . "/xmlrpc.cgi";
 
-
+    require QA::RPC;
     # A temporary cookie jar that isn't saved after the script closes.
     my $cookie_jar = new HTTP::Cookies();
-    my $rpc        = new XMLRPC::Lite(proxy => $xmlrpc_url);
+    my $rpc        = new QA::RPC(proxy => $xmlrpc_url);
     $rpc->transport->cookie_jar($cookie_jar);
     return ($rpc, $config);
-}
-
-###############################
-# Helpers for XML-RPC scripts #
-###############################
-
-sub xmlrpc_log_in {
-    my ($rpc, $config, $user) = @_;
-    my $username = $config->{"${user}_user_login"};
-    my $password = $config->{"${user}_user_passwd"};
-
-    my $call = xmlrpc_call_success($rpc, 'User.login', 
-                                { login => $username, password => $password });
-    cmp_ok($call->result->{id}, 'gt', 0,  "Logged in as $user");
-
-    # Save the cookies in the cookie file
-    $rpc->transport->cookie_jar->extract_cookies(
-        $rpc->transport->http_response);
-    $rpc->transport->cookie_jar->save;
-}
-
-sub xmlrpc_call_success {
-    my ($rpc, $method, $args, $test_name) = @_;
-    my $call = $rpc->call($method, $args);
-    $test_name ||= "$method returned successfully";
-    ok(!defined $call->fault, $test_name) or diag($call->faultstring);
-    return $call;
-}
-
-sub xmlrpc_call_fail {
-    my ($rpc, $method, $args, $faultstring, $test_name) = @_;
-    my $call = $rpc->call($method, $args);
-    $test_name ||= "$method failed (as intended)";
-    ok(defined $call->fault, $test_name)
-        or diag("Returned: " . Dumper($call->result));
-    if (defined $faultstring) {
-        cmp_ok(trim($call->faultstring), '=~', $faultstring, 
-               "Got correct fault for $method");
-    }
-    return $call;
-}
-
-sub xmlrpc_get_product_ids {
-    my ($rpc, $config) = @_;
-    xmlrpc_log_in($rpc, $config, 'QA_Selenium_TEST');
-
-    my $accessible = xmlrpc_call_success($rpc, 
-                                         'Product.get_accessible_products');
-    my $prod_call = xmlrpc_call_success($rpc, 'Product.get', 
-                                        $accessible->result);
-    my %products;
-    foreach my $prod (@{ $prod_call->result->{products} }) {
-        $products{$prod->{name}} = $prod->{id};
-    }
-
-    xmlrpc_call_success($rpc, 'User.logout');
-
-    return \%products;
-}
-
-sub xmlrpc_run_tests {
-    my %params = @_;
-    # Required params
-    my $rpc    = $params{rpc};
-    my $config = $params{config};
-    my $tests  = $params{tests};
-    my $method = $params{method};
-
-    # Optional params
-    my $post_success = $params{post_success};
-
-    my $former_user = '';
-    foreach my $t (@$tests) {
-        # Only logout/login if the user has changed since the last test
-        # (this saves us LOTS of needless logins).
-        my $user = $t->{user} || '';
-        if ($former_user ne $user) {
-            xmlrpc_call_success($rpc, 'User.logout') if $former_user;
-            xmlrpc_log_in($rpc, $config, $user) if $user;
-            $former_user = $user;
-        }
-
-        if ($t->{error}) {
-            xmlrpc_call_fail($rpc, $method, $t->{args}, $t->{error},
-                             $t->{test});
-        }
-        else {
-            my $call = xmlrpc_call_success($rpc, $method, $t->{args},
-                                           $t->{test});
-            if ($call->result && $post_success) {
-                $post_success->($call, $t);
-            }
-        }
-    }
-
-    xmlrpc_call_success($rpc, 'User.logout') if $former_user;
 }
 
 ################################

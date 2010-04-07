@@ -13,7 +13,7 @@ use Test::More tests => 50;
 use QA::Util;
 my ($rpc, $config) = get_xmlrpc_client();
 
-my $products = xmlrpc_get_product_ids($rpc, $config);
+my $products = $rpc->bz_get_products();
 my $public    = $products->{'Another Product'};
 my $private   = $products->{'QA-Selenium-TEST'};
 my $no_entry  = $products->{'QA Entry Only'};
@@ -53,11 +53,10 @@ foreach my $user (keys %$tests) {
     my $not_enterable  = $tests->{$user}->{not_enterable};
     my $not_accessible = $tests->{$user}->{not_accessible};
 
-    xmlrpc_log_in($rpc, $config, $user) if $user;
+    $rpc->bz_log_in($user) if $user;
     $user ||= "Logged-out user";
 
-    my $select_call = xmlrpc_call_success($rpc, 
-        'Product.get_selectable_products');
+    my $select_call = $rpc->bz_call_success('Product.get_selectable_products');
     my $select_ids = $select_call->result->{ids};
     foreach my $id (@selectable) {
         ok(grep($_ == $id, @$select_ids), "$user can select " . $id_map{$id});
@@ -67,8 +66,7 @@ foreach my $user (keys %$tests) {
            "$user cannot select " . $id_map{$not_selectable});
     }
 
-    my $enter_call = xmlrpc_call_success($rpc,
-        'Product.get_enterable_products');
+    my $enter_call = $rpc->bz_call_success('Product.get_enterable_products');
     my $enter_ids = $enter_call->result->{ids};
     foreach my $id (@enterable) {
         ok(grep($_ == $id, @$enter_ids), "$user can enter " . $id_map{$id});
@@ -78,20 +76,19 @@ foreach my $user (keys %$tests) {
            "$user cannot enter " . $id_map{$not_enterable});
     }
 
-    my $access_call = xmlrpc_call_success($rpc,
-        'Product.get_accessible_products');
-    my $get_call = xmlrpc_call_success($rpc, 'Product.get', 
-                                       { ids => \@accessible });
+    my $access_call = $rpc->bz_call_success('Product.get_accessible_products');
+    my $get_call = $rpc->bz_call_success('Product.get', 
+                                         { ids => \@accessible });
     my $products = $get_call->result->{products};
     my $expected_count = scalar @accessible;
     cmp_ok(scalar @$products, '==', $expected_count,
        "Product.get gets all $expected_count accessible products for $user.");
     if ($not_accessible) {
-        my $not_accessible = xmlrpc_call_success($rpc, 'Product.get', 
-                                                 { ids => [$not_accessible] });
+        my $not_accessible = $rpc->bz_call_success('Product.get', 
+                                                   { ids => [$not_accessible] });
         ok(!scalar @{ $not_accessible->result->{products} },
            "$user gets 0 products when asking for " . $id_map{$not_accessible});
     }
 
-    xmlrpc_call_success($rpc, 'User.logout') if $user ne "Logged-out user";
+    $rpc->bz_call_success('User.logout') if $user ne "Logged-out user";
 }

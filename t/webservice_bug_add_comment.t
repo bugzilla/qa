@@ -134,5 +134,4 @@ my @tests = (
     # XXX Need to verify that the comment added was actually private.
 );
 
-xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@tests,
-                 method => 'Bug.add_comment');
+$rpc->bz_run_tests(tests => \@tests, method => 'Bug.add_comment');

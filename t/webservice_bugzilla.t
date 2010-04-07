@@ -11,20 +11,20 @@ my ($rpc, $config) = get_xmlrpc_client();
 
 use constant DATETIME_REGEX => qr/^\d{8}T\d\d:\d\d:\d\d$/;
 
-my $vers_call = xmlrpc_call_success($rpc, 'Bugzilla.version');
+my $vers_call = $rpc->bz_call_success('Bugzilla.version');
 my $version = $vers_call->result->{version};
 ok($version, "Bugzilla.version returns $version");
 
-my $tz_call = xmlrpc_call_success($rpc, 'Bugzilla.timezone');
+my $tz_call = $rpc->bz_call_success('Bugzilla.timezone');
 my $tz = $tz_call->result->{timezone};
 ok($tz, "Bugzilla.timezone retuns $tz");
 
-my $ext_call = xmlrpc_call_success($rpc, 'Bugzilla.extensions');
+my $ext_call = $rpc->bz_call_success('Bugzilla.extensions');
 my $extensions = $ext_call->result->{extensions};
 isa_ok($extensions, 'HASH', 'extensions');
 is(scalar keys %$extensions, 0, 'No extensions returned');
 
-my $time_call = xmlrpc_call_success($rpc, 'Bugzilla.time');
+my $time_call = $rpc->bz_call_success('Bugzilla.time');
 my $time_result = $time_call->result;
 foreach my $type (qw(db_time web_time web_time_utc)) {
     cmp_ok($time_result->{$type}, '=~', DATETIME_REGEX, 

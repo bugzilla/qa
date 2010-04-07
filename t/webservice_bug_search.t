@@ -36,7 +36,7 @@ my @create_bugs = (
       test => 'Create a private bug' },
 );
 
-xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@create_bugs,
+$rpc->bz_run_tests(tests => \@create_bugs,
                  method => 'Bug.create');
 
 my @tests;
@@ -161,5 +161,5 @@ sub post_success {
     }
 }
 
-xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@tests,
+$rpc->bz_run_tests(tests => \@tests,
                  method => 'Bug.search', post_success => \&post_success);

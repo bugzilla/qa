@@ -138,10 +138,10 @@ my $fields = {
 };
 
 # test calling Bug.create without logging into bugzilla
-my $create_call = xmlrpc_call_fail($rpc, 'Bug.create', $bug_fields,
+my $create_call = $rpc->bz_call_fail('Bug.create', $bug_fields,
     'You must log in', 'Cannot file bugs as logged-out user');
 
-xmlrpc_log_in($rpc, $config, 'editbugs');
+$rpc->bz_log_in('editbugs');
 
 # run the tests for all the invalid values that can be passed to Bug.create()
 foreach my $f (sort keys %{$fields}) {
@@ -151,7 +151,7 @@ foreach my $f (sort keys %{$fields}) {
         $bug_fields_copy->{$f} = $fields->{$f}->{$val}->{value};
         my $expected_faultstring = $fields->{$f}->{$val}->{faultstring};
 
-        my $fail_call = xmlrpc_call_fail($rpc, 'Bug.create', $bug_fields_copy, 
+        my $fail_call = $rpc->bz_call_fail('Bug.create', $bug_fields_copy, 
             $expected_faultstring, "Specifying $val $f fails");
     }
 }
@@ -159,13 +159,13 @@ foreach my $f (sort keys %{$fields}) {
 # after the loop ends all the $bug_fields value will be set to valid
 # this is done by the sort so call create bug with the valid $bug_fields
 # to run the test for the successful creation of the bug
-my $success_create = xmlrpc_call_success($rpc, 'Bug.create', $bug_fields);
+my $success_create = $rpc->bz_call_success('Bug.create', $bug_fields);
 my $bug_id = $success_create->result->{id};
 cmp_ok($bug_id, 'gt', 0,
        "Created new bug with id " . $success_create->result->{id});
 
 # Make sure that the bug that we created has the field values we specified.
-my $bug_result = xmlrpc_call_success($rpc, 'Bug.get', { ids => [$bug_id] });
+my $bug_result = $rpc->bz_call_success('Bug.get', { ids => [$bug_id] });
 my $bug = $bug_result->result->{bugs}->[0];
 isa_ok($bug, 'HASH', "Bug $bug_id");
 # We have to limit the fields checked because Bug.get only returns certain 
@@ -176,4 +176,4 @@ foreach my $field (qw(assigned_to component priority product severity
     is($bug->{$field}, $bug_fields->{$field}, "$field has the right value");
 };
 
-xmlrpc_call_success($rpc, 'User.logout');
+$rpc->bz_call_success('User.logout');

@@ -65,5 +65,5 @@ sub post_success {
     isa_ok($call->result->{changes}, 'HASH', "Changes");
 }
 
-xmlrpc_run_tests(rpc => $rpc, config => $config, tests => \@tests,
+$rpc->bz_run_tests(tests => \@tests,
                  method => 'Bug.update_see_also', post_success => \&post_success);
