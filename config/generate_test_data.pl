@@ -19,6 +19,7 @@ BEGIN {
 use lib $conf_path;
 
 use Bugzilla;
+use Bugzilla::Attachment;
 use Bugzilla::Bug;
 use Bugzilla::User;
 use Bugzilla::Install;
@@ -122,11 +123,8 @@ for my $username (@usernames) {
 ##########################################################################
 
 # login to bugzilla
-my $cgi = Bugzilla->cgi;
-$cgi->param( 'Bugzilla_login',    $config->{admin_user_login} );
-$cgi->param( 'Bugzilla_password', $config->{admin_user_passwd} );
-
-Bugzilla->login(LOGIN_REQUIRED);
+my $admin_user = Bugzilla::User->check($config->{admin_user_login});
+Bugzilla->set_user($admin_user);
 
 my %field_values = (
     'priority'     => 'Highest',
@@ -509,10 +507,8 @@ EOT
 # Create a Private Bug #
 ########################
 
-Bugzilla->logout;
-$cgi->param( 'Bugzilla_login',    $config->{QA_Selenium_TEST_user_login} );
-$cgi->param( 'Bugzilla_password', $config->{QA_Selenium_TEST_user_passwd} );
-Bugzilla->login(LOGIN_REQUIRED);
+my $test_user = Bugzilla::User->check($config->{QA_Selenium_TEST_user_login});
+Bugzilla->set_user($test_user);
 
 print "Creating private bug(s)...\n";
 if (Bugzilla::Bug->new('private_bug')->{error}) {
@@ -523,5 +519,28 @@ if (Bugzilla::Bug->new('private_bug')->{error}) {
     my $bug = Bugzilla::Bug->create(\%priv_values);
 }
 
+######################
+# Create Attachments #
+######################
+
+print "creating attachments...\n";
+# We use the contents of this script as the attachment.
+open(my $attachment_fh, '<', __FILE__) or die __FILE__ . ": $!";
+my $attachment_contents;
+{ local $/; $attachment_contents = <$attachment_fh>; }
+close($attachment_fh);
+foreach my $alias (qw(public_bug private_bug)) {
+    my $bug = new Bugzilla::Bug($alias);
+    foreach my $is_private (0, 1) {
+        Bugzilla::Attachment->create({
+            bug  => $bug,
+            data => $attachment_contents,
+            description => "${alias}_${is_private}",
+            filename  => "${alias}_${is_private}.pl",
+            mimetype  => 'application/x-perl',
+            isprivate => $is_private,
+        });
+    }
+}
+
 print "installation and configuration complete!\n";
-Bugzilla->logout;

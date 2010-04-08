@@ -94,7 +94,7 @@ sub bz_run_tests {
         else {
             my $call = $self->bz_call_success($method, $t->{args}, $t->{test});
             if ($call->result && $post_success) {
-                $post_success->($call, $t);
+                $post_success->($call, $t, $self);
             }
         }
     }

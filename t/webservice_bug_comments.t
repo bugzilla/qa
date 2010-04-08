@@ -7,7 +7,7 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
-use Test::More tests => 112;
+use Test::More tests => 116;
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 ################

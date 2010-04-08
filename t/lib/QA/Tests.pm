@@ -78,8 +78,14 @@ use constant STANDARD_BUG_TESTS => [
       test => 'Admin can access a public bug.',
     },
     { user => PRIVATE_BUG_USER,
-      args =>  { ids => ['private_bug'] },
-      test =>  'User with privs can successfully access a private bug',
+      args => { ids => ['private_bug'] },
+      test => 'User with privs can successfully access a private bug',
+    },
+    # This helps webservice_bug_attachment get private attachment ids
+    # from the public bug, and doesn't hurt for the other tests.
+    { user => PRIVATE_BUG_USER,
+      args => { ids => ['public_bug'] },
+      test => 'User with privs can also access the public bug',
     },
 ];
 
