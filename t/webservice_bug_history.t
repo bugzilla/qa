@@ -7,7 +7,7 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS);
-use Test::More tests => 68;
+use Test::More tests => 78;
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 sub post_success {

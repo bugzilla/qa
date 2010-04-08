@@ -5,7 +5,7 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 124;
+use Test::More tests => 172;
 use QA::Util;
 use QA::Tests qw(create_bug_fields);
 

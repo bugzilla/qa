@@ -49,6 +49,12 @@ sub bz_call_fail {
         cmp_ok(trim($call->faultstring), '=~', $faultstring, 
                $self->TYPE . ": Got correct fault for $method");
     }
+    ok($call->faultcode && $call->faultcode < 32000
+       && $call->faultcode > -32000, 
+       $self->TYPE . ': Fault code is set properly')
+        or diag("Code: " . $call->faultcode 
+                . " Message: " . $call->faultstring);
+
     return $call;
 }
 

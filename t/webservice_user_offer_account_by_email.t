@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 18;
+use Test::More tests => 26;
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 # These are the characters that are actually invalid per RFC.

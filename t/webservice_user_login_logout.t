@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 30;
+use Test::More tests => 42;
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 use constant INVALID_EMAIL => '@invalid_user@';

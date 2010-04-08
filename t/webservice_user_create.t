@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 52;
+use Test::More tests => 66;
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 use constant NEW_PASSWORD => 'password';

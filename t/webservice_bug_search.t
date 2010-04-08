@@ -9,7 +9,7 @@ use QA::Util;
 use QA::Tests qw(PRIVATE_BUG_USER create_bug_fields);
 use DateTime;
 use Storable qw(dclone);
-use Test::More tests => 210;
+use Test::More tests => 212;
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 sub string_array { map { random_string() } (1..$_[0]) }

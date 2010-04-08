@@ -5,7 +5,7 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 165;
+use Test::More tests => 193;
 use QA::Util;
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 

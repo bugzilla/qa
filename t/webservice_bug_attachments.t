@@ -5,7 +5,7 @@ use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
 use Data::Dumper;
 use List::Util qw(first);
-use Test::More tests => 186;
+use Test::More tests => 208;
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 ################

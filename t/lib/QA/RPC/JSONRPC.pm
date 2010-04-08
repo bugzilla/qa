@@ -46,6 +46,7 @@ use base qw(JSON::RPC::ReturnObject);
 #################################
 
 sub faultstring { $_[0]->{content}->{error}->{message} }
+sub faultcode   { $_[0]->{content}->{error}->{code}    }
 sub fault { $_[0]->is_error }
 
 1;
