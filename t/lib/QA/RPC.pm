@@ -32,7 +32,16 @@ sub bz_log_in {
 
 sub bz_call_success {
     my ($self, $method, $args, $test_name) = @_;
-    my $call = $self->call($method, $args);
+    my $call;
+    # Under XMLRPC::Lite, if we pass undef as the second argument,
+    # it sends a single param <value />, which shows up as an
+    # empty string on the Bugzilla side.
+    if ($args) {
+        $call = $self->call($method, $args);
+    }
+    else {
+        $call = $self->call($method);
+    }
     $test_name ||= "$method returned successfully";
     ok(!$call->fault, $self->TYPE . ": $test_name")
         or diag($call->faultstring);
