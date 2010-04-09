@@ -15,7 +15,7 @@ use constant PRIVS_USER => 'QA_Selenium_TEST';
 use constant TIMETRACKING_USER => 'admin';
 
 use constant TEST_COMMENT => '--- Test Comment From QA Tests ---';
-use constant TOO_LONG_COMMENT => 'a' x 500000;
+use constant TOO_LONG_COMMENT => 'a' x 100000;
 
 my @tests = (
     # Permissions
