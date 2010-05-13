@@ -111,6 +111,9 @@ sub get_jsonrpc_client {
     my $cookie_jar = new HTTP::Cookies();
     my $rpc = new QA::RPC::JSONRPC();
     $rpc->transport->cookie_jar($cookie_jar);
+    # If we don't set a long timeout, then the Bug.add_comment test
+    # where we add a too-large comment fails.
+    $rpc->transport->timeout(180);
     $rpc->version('1.0');
     return $rpc;
 }

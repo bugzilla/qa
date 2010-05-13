@@ -43,6 +43,7 @@ sub bz_call_success {
         $call = $self->call($method);
     }
     $test_name ||= "$method returned successfully";
+    $self->_handle_undef_response($test_name) if !$call;
     ok(!$call->fault, $self->TYPE . ": $test_name")
         or diag($call->faultstring);
     return $call;
@@ -50,8 +51,9 @@ sub bz_call_success {
 
 sub bz_call_fail {
     my ($self, $method, $args, $faultstring, $test_name) = @_;
-    my $call = $self->call($method, $args);
     $test_name ||= "$method failed (as intended)";
+    my $call = $self->call($method, $args);
+    $self->_handle_undef_response($test_name) if !$call;
     ok(defined $call->fault, $self->TYPE . ": $test_name")
         or diag("Returned: " . Dumper($call->result));
     if (defined $faultstring) {
@@ -65,6 +67,12 @@ sub bz_call_fail {
                 . " Message: " . $call->faultstring);
 
     return $call;
+}
+
+sub _handle_undef_response {
+    my ($self, $test_name) = @_;
+    my $response = $self->transport->http_response;
+    die "$test_name:\n", $response->as_string;
 }
 
 sub bz_get_products {
