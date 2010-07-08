@@ -128,7 +128,7 @@ Bugzilla->set_user($admin_user);
 
 my %field_values = (
     'priority'     => 'Highest',
-    'bug_status'   => 'NEW',
+    'bug_status'   => 'CONFIRMED',
     'version'      => 'unspecified',
     'bug_file_loc' => '',
     'comment'      => 'please ignore this bug',
@@ -297,7 +297,7 @@ for my $product (@products) {
         if (!new Bugzilla::Version({ name    => $version, 
                                      product => $new_product })) 
         {
-            Bugzilla::Version->create({name => $version, product => $new_product});
+            Bugzilla::Version->create({value => $version, product => $new_product});
         }
     }
 
