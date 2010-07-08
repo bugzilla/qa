@@ -13,8 +13,7 @@ my $unprivileged_user_login = $config->{unprivileged_user_login};
 
 log_in($sel, $config, 'admin');
 set_parameters($sel, { "Bug Fields"              => {"useclassification-off" => undef,
-                                                     "usetargetmilestone-on" => undef,
-                                                     "usevotes-on"           => undef},
+                                                     "usetargetmilestone-on" => undef},
                        "Administrative Policies" => {"allowbugdeletion-on"   => undef}
                      });
 
@@ -45,10 +44,12 @@ $sel->title_is("Add Product");
 $sel->type_ok("product", "Kill me!");
 $sel->type_ok("description", "I will disappear very soon. Do not add bugs to it.");
 $sel->type_ok("defaultmilestone", "0.1a");
-$sel->click_ok("allows_unconfirmed");
-$sel->type_ok("votesperuser", "1");
-$sel->type_ok("maxvotesperbug", "1");
-$sel->type_ok("votestoconfirm", "10");
+# Since Bugzilla 4.0, the voting system is in an extension.
+if ($config->{test_extensions}) {
+    $sel->type_ok("votesperuser", "1");
+    $sel->type_ok("maxvotesperbug", "1");
+    $sel->type_ok("votestoconfirm", "10");
+}
 $sel->type_ok("version", "0.1a");
 $sel->click_ok("//input[\@value='Add']");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -84,6 +85,8 @@ $sel->title_is("Component Already Exists");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->type_ok("component", "second comp");
+# FIXME - Re-enter the default assignee (regression due to bug 577574)
+$sel->type_ok("initialowner", $admin_user_login);
 $sel->click_ok("create");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Component Created");
@@ -160,57 +163,61 @@ edit_product($sel, "Kill me!");
 $sel->type_ok("product", "Kill me nicely");
 $sel->type_ok("description", "I will disappear very soon. Do not add bugs to it (except for testing).");
 $sel->select_ok("defaultmilestone", "label=0.2");
-$sel->type_ok("votesperuser", "2");
-$sel->type_ok("maxvotesperbug", 5);
-$sel->type_ok("votestoconfirm", "0");
+if ($config->{test_extensions}) {
+    $sel->type_ok("votesperuser", "2");
+    $sel->type_ok("maxvotesperbug", 5);
+    $sel->type_ok("votestoconfirm", "0");
+}
 $sel->click_ok("submit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Updating Product 'Kill me nicely'");
 $sel->is_text_present_ok("Updated product name from 'Kill me!' to 'Kill me nicely'");
 $sel->is_text_present_ok("Updated description");
 $sel->is_text_present_ok("Updated default milestone");
-$sel->is_text_present_ok("Updated votes per user");
-$sel->is_text_present_ok("Updated maximum votes per bug");
-$sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
-$text = trim($sel->get_text("bugzilla-body"));
-# We use .{1} in place of the right arrow character, which fails otherwise.
-ok($text =~ /Checking unconfirmed bugs in this product for any which now have sufficient votes\.{3} .{1}there were none/,
-   "No bugs confirmed by popular votes (votestoconfirm = 0 disables auto-confirmation)");
+if ($config->{test_extensions}) {
+    $sel->is_text_present_ok("Updated votes per user");
+    $sel->is_text_present_ok("Updated maximum votes per bug");
+    $sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
+    $text = trim($sel->get_text("bugzilla-body"));
+    # We use .{1} in place of the right arrow character, which fails otherwise.
+    ok($text =~ /Checking unconfirmed bugs in this product for any which now have sufficient votes\.{3} .{1}there were none/,
+       "No bugs confirmed by popular votes (votestoconfirm = 0 disables auto-confirmation)");
 
-# Now set votestoconfirm to 2, vote for a bug, and then set
-# this attribute back to 1, to trigger auto-confirmation.
+    # Now set votestoconfirm to 2, vote for a bug, and then set
+    # this attribute back to 1, to trigger auto-confirmation.
 
-$sel->click_ok("link=Kill me nicely");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Edit Product 'Kill me nicely'", "Display properties of Kill me nicely");
-$sel->type_ok("votestoconfirm", 2);
-$sel->click_ok("submit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Updating Product 'Kill me nicely'");
-$sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
+    $sel->click_ok("link=Kill me nicely");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Edit Product 'Kill me nicely'", "Display properties of Kill me nicely");
+    $sel->type_ok("votestoconfirm", 2);
+    $sel->click_ok("submit");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Updating Product 'Kill me nicely'");
+    $sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
 
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
-$sel->click_ok("link=vote");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Change Votes");
-$sel->type_ok("bug_$bug1_id", 1);
-$sel->click_ok("change");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Change Votes");
-$sel->is_text_present_ok("The changes to your votes have been saved");
+    $sel->type_ok("quicksearch_top", $bug1_id);
+    $sel->click_ok("find_top");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_like(qr/^Bug $bug1_id /);
+    $sel->click_ok("link=vote");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Change Votes");
+    $sel->type_ok("bug_$bug1_id", 1);
+    $sel->click_ok("change");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Change Votes");
+    $sel->is_text_present_ok("The changes to your votes have been saved");
 
-edit_product($sel, "Kill me nicely");
-$sel->type_ok("votestoconfirm", 1);
-$sel->click_ok("submit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Updating Product 'Kill me nicely'");
-$sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
-$text = trim($sel->get_text("bugzilla-body"));
-ok($text =~ /Bug $bug1_id confirmed by number of votes/, "Bug $bug1_id is confirmed by popular votes");
-
+    edit_product($sel, "Kill me nicely");
+    $sel->type_ok("votestoconfirm", 1);
+    $sel->click_ok("submit");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Updating Product 'Kill me nicely'");
+    $sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
+    $text = trim($sel->get_text("bugzilla-body"));
+    ok($text =~ /Bug $bug1_id confirmed by number of votes/, "Bug $bug1_id is confirmed by popular votes");
+}
+ 
 # Edit the bug.
 
 $sel->type_ok("quicksearch_top", $bug1_id);
@@ -218,7 +225,7 @@ $sel->click_ok("find_top");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $bug1_id /);
 $sel->selected_label_is("product", "Kill me nicely");
-$sel->selected_label_is("bug_status", "CONFIRMED");
+$sel->selected_label_is("bug_status", "CONFIRMED") if $config->{test_extensions};
 $sel->select_ok("target_milestone", "label=pre-0.1");
 $sel->select_ok("component", "label=second comp");
 $sel->click_ok("commit");
