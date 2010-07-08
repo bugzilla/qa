@@ -49,7 +49,7 @@ $sel->title_like(qr/Bug $bug1_id Submitted/, "Bug $bug1_id created");
 
 # 4th step: edit the bug (test musthavemilestoneonaccept ON).
 
-$sel->select_ok("bug_status", "label=ASSIGNED", "Change bug status to ASSIGNED");
+$sel->select_ok("bug_status", "label=IN_PROGRESS", "Change bug status to IN_PROGRESS");
 $sel->click_ok("commit", undef, "Save changes");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Milestone Required", "Change rejected: musthavemilestoneonaccept is on but the milestone selected is the default one");
@@ -79,7 +79,7 @@ $sel->title_like(qr/Bug $bug2_id Submitted/, "Bug $bug2_id created");
 
 # 6th step: edit the bug (test musthavemilestoneonaccept ON).
 
-$sel->select_ok("bug_status", "label=ASSIGNED");
+$sel->select_ok("bug_status", "label=IN_PROGRESS");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug $bug2_id processed");
@@ -154,7 +154,7 @@ $sel->title_like(qr/Bug $bug3_id Submitted/);
 # 10th step: musthavemilestoneonaccept must have no effect as there is
 #            no other milestone available besides the default one.
 
-$sel->select_ok("bug_status", "label=ASSIGNED");
+$sel->select_ok("bug_status", "label=IN_PROGRESS");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug $bug3_id processed");

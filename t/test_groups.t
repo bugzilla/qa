@@ -63,7 +63,7 @@ $sel->remove_all_selections_ok("product");
 $sel->add_selection_ok("product", "TestProduct");
 $sel->remove_all_selections("bug_status");
 $sel->add_selection_ok("bug_status", "UNCONFIRMED");
-$sel->add_selection_ok("bug_status", "NEW");
+$sel->add_selection_ok("bug_status", "CONFIRMED");
 $sel->select_ok("field0-0-0", "Group");
 $sel->select_ok("type0-0-0", "is equal to");
 $sel->type_ok("value0-0-0", "Selenium-test");

@@ -54,7 +54,7 @@ $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
 my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
 $sel->value_is("addselfcc", "off");
-$sel->select_ok("bug_status", "label=ASSIGNED");
+$sel->select_ok("bug_status", "label=IN_PROGRESS");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug $bug1_id processed");

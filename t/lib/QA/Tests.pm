@@ -15,7 +15,7 @@ use constant PRIVATE_BUG_USER => 'QA_Selenium_TEST';
 
 use constant CREATE_BUG => {
     'priority'     => 'Highest',
-    'status'       => 'NEW',
+    'status'       => 'CONFIRMED',
     'version'      => 'unspecified',
     'reporter'     => 'editbugs',
     'bug_file_loc' => '',

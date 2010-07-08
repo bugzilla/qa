@@ -218,7 +218,7 @@ $sel->click_ok("find_top");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $bug1_id /);
 $sel->selected_label_is("product", "Kill me nicely");
-$sel->selected_label_is("bug_status", "NEW");
+$sel->selected_label_is("bug_status", "CONFIRMED");
 $sel->select_ok("target_milestone", "label=pre-0.1");
 $sel->select_ok("component", "label=second comp");
 $sel->click_ok("commit");

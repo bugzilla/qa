@@ -38,11 +38,11 @@ $sel->title_is("Component Created");
 my $text = trim($sel->get_text("message"));
 ok($text =~ qr/The component Pegasus has been created/, "Component 'Pegasus' created");
 
-# Create a new bug with the NEW status.
+# Create a new bug with the CONFIRMED status.
 
 file_bug_in_product($sel, 'Eureka');
-# NEW must be the default bug status for users with editbugs privs.
-$sel->selected_label_is("bug_status", "NEW");
+# CONFIRMED must be the default bug status for users with editbugs privs.
+$sel->selected_label_is("bug_status", "CONFIRMED");
 $sel->type_ok("short_desc", "Aries");
 $sel->type_ok("comment", "1st constellation");
 $sel->click_ok("commit");
