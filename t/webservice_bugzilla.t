@@ -21,7 +21,15 @@ foreach my $rpc ($jsonrpc, $xmlrpc) {
     my $ext_call = $rpc->bz_call_success('Bugzilla.extensions');
     my $extensions = $ext_call->result->{extensions};
     isa_ok($extensions, 'HASH', 'extensions');
-    is(scalar keys %$extensions, 0, 'No extensions returned');
+
+    my $cmp = '==';
+    my $desc = 'No extensions returned';
+    my @ext_names = keys %$extensions;
+    if ($config->{test_extensions}) {
+        $cmp = '>';
+        $desc = scalar(@ext_names) . ' extensions returned: ' . join(', ', @ext_names);
+    }
+    cmp_ok(scalar(@ext_names), $cmp, 0, $desc);
 
     my $time_call = $rpc->bz_call_success('Bugzilla.time');
     my $time_result = $time_call->result;
