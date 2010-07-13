@@ -44,8 +44,8 @@ $sel->title_is("Update group access controls for TestProduct");
 
 file_bug_in_product($sel, "TestProduct");
 $sel->is_text_present_ok("Test group for Selenium");
-$sel->value_is("bit-${group_id}", "off"); # Must be OFF (else that's a bug)
-$sel->check_ok("bit-${group_id}");
+$sel->value_is("group_${group_id}", "off"); # Must be OFF (else that's a bug)
+$sel->check_ok("group_${group_id}");
 $sel->type_ok("short_desc", "bug restricted to the Selenium group");
 $sel->type_ok("comment", "should be invisible");
 $sel->selected_label_is("component", "TestComponent");
@@ -54,7 +54,7 @@ $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
 $sel->title_like(qr/Bug $bug1_id Submitted/, "Bug $bug1_id created");
 $sel->is_text_present_ok("Test group for Selenium");
-$sel->value_is("bit-${group_id}", "on"); # Must be ON
+$sel->value_is("group_${group_id}", "on"); # Must be ON
 
 # Look for this new bug and add it to the new "Selenium bugs" saved search.
 
@@ -105,7 +105,7 @@ $sel->selected_label_is("component", "TestComponent");
 $sel->type_ok("short_desc", "bug restricted to the Selenium group");
 $sel->type_ok("comment", "should be *visible* when created (the group is disabled)");
 ok(!$sel->is_text_present("Test group for Selenium"), "Selenium-test group unavailable");
-ok(!$sel->is_element_present("bit-${group_id}"), "Selenium-test checkbox not present");
+ok(!$sel->is_element_present("group_${group_id}"), "Selenium-test checkbox not present");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug2_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
@@ -177,7 +177,7 @@ $sel->selected_label_is("component", "TestComponent");
 $sel->type_ok("short_desc", "Selenium-test group mandatory");
 $sel->type_ok("comment", "group enabled");
 ok(!$sel->is_text_present("Test group for Selenium"), "Selenium-test group not available");
-ok(!$sel->is_element_present("bit-${group_id}"), "Selenium-test checkbox not present (mandatory group)");
+ok(!$sel->is_element_present("group_${group_id}"), "Selenium-test checkbox not present (mandatory group)");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug3_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
@@ -215,7 +215,7 @@ $sel->selected_label_is("component", "TestComponent");
 $sel->type_ok("short_desc", "bug restricted to the Selenium-test group");
 $sel->type_ok("comment", "group disabled");
 ok(!$sel->is_text_present("Test group for Selenium"), "Selenium-test group not available");
-ok(!$sel->is_element_present("bit-${group_id}"), "Selenium-test checkbox not present");
+ok(!$sel->is_element_present("group_${group_id}"), "Selenium-test checkbox not present");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 my $bug4_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
