@@ -8,9 +8,13 @@ use QA::Util;
 
 my ($sel, $config) = get_selenium();
 
+unless ($config->{test_extensions}) {
+    ok(1, "this installation doesn't test extensions. Skipping test_votes.t completely.");
+    exit;
+}
+
 log_in($sel, $config, 'admin');
-set_parameters($sel, { "Bug Fields"              => {"usevotes-on"           => undef,
-                                                     "useclassification-off" => undef},
+set_parameters($sel, { "Bug Fields"              => {"useclassification-off" => undef},
                        "Administrative Policies" => {"allowbugdeletion-on"   => undef}
                      });
 
@@ -19,7 +23,6 @@ set_parameters($sel, { "Bug Fields"              => {"usevotes-on"           => 
 add_product($sel);
 $sel->type_ok("product", "Eureka");
 $sel->type_ok("description", "A great new product");
-$sel->click_ok("allows_unconfirmed");
 $sel->type_ok("votesperuser", 10);
 $sel->type_ok("maxvotesperbug", 5);
 $sel->type_ok("votestoconfirm", 3);
