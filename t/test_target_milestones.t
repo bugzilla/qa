@@ -45,7 +45,7 @@ $sel->title_is("Bug $test_bug_1 processed");
 # Query for bugs with the TM1 milestone.
 
 open_advanced_search_page($sel);
-$sel->is_text_present_ok("Target:");
+$sel->is_text_present_ok("Target Milestone:");
 $sel->remove_all_selections_ok("product");
 $sel->add_selection_ok("product", "label=TestProduct");
 $sel->add_selection_ok("target_milestone", "label=TM1");
