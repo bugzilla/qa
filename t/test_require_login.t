@@ -29,7 +29,12 @@ my @pages = qw(admin attachment buglist chart colchange describecomponents
 
 foreach my $page (@pages) {
     $sel->open_ok("/$config->{bugzilla_installation}/${page}.cgi");
-    $sel->title_is("Log in to Bugzilla");
+    if ($page ne 'votes' || $config->{test_extensions}) {
+        $sel->title_is("Log in to Bugzilla");
+    }
+    else {
+        $sel->title_is("Extension Disabled");
+    }
 }
 
 # Those have parameters passed to the page, so we put them here separately.
@@ -39,7 +44,12 @@ foreach my $page (@pages) {
 
 foreach my $page (@pages) {
     $sel->open_ok("/$config->{bugzilla_installation}/$page");
-    $sel->title_is("Log in to Bugzilla");
+    if ($page !~ /^votes/ || $config->{test_extensions}) {
+        $sel->title_is("Log in to Bugzilla");
+    }
+    else {
+        $sel->title_is("Extension Disabled");
+    }
 }
 
 # These pages should still be accessible.
