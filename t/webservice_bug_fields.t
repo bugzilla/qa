@@ -2,63 +2,70 @@ use strict;
 use warnings;
 use lib qw(lib);
 use Data::Dumper;
-use Test::More tests => 794;
+use Test::More;
 use List::Util qw(first);
 use QA::Util;
+
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+plan tests => $config->{test_extensions} ? 794 : 784;
 
 use constant INVALID_FIELD_NAME => 'invalid_field';
 use constant INVALID_FIELD_ID => -1;
-use constant GLOBAL_GENERAL_FIELDS => qw(
-    attach_data.thedata
-    attachments.description
-    attachments.filename
-    attachments.isobsolete
-    attachments.ispatch
-    attachments.isprivate
-    attachments.isurl
-    attachments.mimetype
-    attachments.submitter
+sub GLOBAL_GENERAL_FIELDS {
+    my @fields = qw(
+        attach_data.thedata
+        attachments.description
+        attachments.filename
+        attachments.isobsolete
+        attachments.ispatch
+        attachments.isprivate
+        attachments.isurl
+        attachments.mimetype
+        attachments.submitter
 
-    flagtypes.name
-    requestees.login_name
-    setters.login_name
+        flagtypes.name
+        requestees.login_name
+        setters.login_name
 
-    alias
-    assigned_to
-    blocked
-    bug_file_loc
-    bug_group
-    bug_id
-    cc
-    cclist_accessible
-    classification
-    commenter
-    content
-    creation_ts
-    days_elapsed
-    delta_ts
-    dependson
-    everconfirmed
-    keywords
-    longdesc
-    longdescs.isprivate
-    owner_idle_time
-    product
-    qa_contact
-    reporter
-    reporter_accessible
-    see_also
-    short_desc
-    status_whiteboard
-    votes
+        alias
+        assigned_to
+        blocked
+        bug_file_loc
+        bug_group
+        bug_id
+        cc
+        cclist_accessible
+        classification
+        commenter
+        content
+        creation_ts
+        days_elapsed
+        delta_ts
+        dependson
+        everconfirmed
+        keywords
+        longdesc
+        longdescs.isprivate
+        owner_idle_time
+        product
+        qa_contact
+        reporter
+        reporter_accessible
+        see_also
+        short_desc
+        status_whiteboard
 
-    deadline
-    estimated_time
-    percentage_complete
-    remaining_time
-    work_time
-);
+        deadline
+        estimated_time
+        percentage_complete
+        remaining_time
+        work_time
+    );
+    push(@fields, 'votes') if QA::Util::get_config()->{test_extensions};
+
+    return @fields;
+}
+
 use constant STANDARD_SELECT_FIELDS => 
     qw(bug_severity bug_status op_sys priority rep_platform resolution);
 

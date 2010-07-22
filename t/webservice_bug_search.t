@@ -9,8 +9,10 @@ use QA::Util;
 use QA::Tests qw(PRIVATE_BUG_USER create_bug_fields);
 use DateTime;
 use Storable qw(dclone);
-use Test::More tests => 212;
+use Test::More;
+
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+plan tests => $config->{test_extensions} ? 212 : 206;
 
 sub string_array { map { random_string() } (1..$_[0]) }
 
@@ -99,10 +101,6 @@ push(@tests, (
     { args => { summary => \@summary_strings },
       test => 'Summary search using multiple terms',
     },
-    { args => { votes => 1 },
-      test => 'Search by votes',
-      bugs => -1, # We don't care how many it returns, for now.
-    },
 
     { args => { whiteboard => substr($public_bug->{whiteboard}, 0, 50) },
       test => 'Search by partial whiteboard',
@@ -142,6 +140,12 @@ push(@tests, (
       bugs => 1, exactly => 1,
     },
 ));
+
+push(@tests,
+    { args => { votes => 1 },
+      test => 'Search by votes',
+      bugs => -1, # We don't care how many it returns, for now.
+    }) if $config->{test_extensions};
 
 sub post_success {
     my ($call, $t) = @_;
