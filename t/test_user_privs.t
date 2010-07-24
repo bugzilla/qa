@@ -14,10 +14,7 @@ my $test_bug_1 = $config->{test_bug_1};
 $sel->open_ok("/$config->{bugzilla_installation}/index.cgi?logout=1", undef, "Log out (if required)");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Logged Out");
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/, "Display bug $test_bug_1");
+go_to_bug($sel, $test_bug_1);
 ok(!$sel->is_element_present('commit'), "Button 'Commit' not available");
 
 # Now create a new bug. As the reporter, some forms are editable to you.
@@ -36,10 +33,7 @@ logout($sel);
 
 # Some checks while being logged out.
 
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/, "Display bug $bug1_id");
+go_to_bug($sel, $bug1_id);
 ok(!$sel->is_element_present("commit"), "Button 'Commit' not available");
 my $text = trim($sel->get_text("//fieldset"));
 ok($text =~ /You need to log in before you can comment on or make changes to this bug./,

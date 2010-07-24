@@ -55,10 +55,7 @@ $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Milestone Required", "Change rejected: musthavemilestoneonaccept is on but the milestone selected is the default one");
 $sel->is_text_present_ok("You must select a target milestone", undef, "Display error message");
 # We cannot use go_back_ok() because we just left post_bug.cgi where data has been submitted using POST.
-$sel->type_ok("quicksearch_top", $bug1_id, "go_back() doesn't like POST, enter the bug ID in the QuickSearch box");
-$sel->click_ok("find_top", undef, "Go to bug $bug1_id");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+go_to_bug($sel, $bug1_id);
 $sel->select_ok("target_milestone", "label=2.0", "Select a non-default milestone");
 $sel->click_ok("commit", undef, "Save changes (2nd attempt)");
 $sel->wait_for_page_to_load(WAIT_TIME);

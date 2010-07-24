@@ -102,10 +102,7 @@ $sel->selected_label_is("cf_qa_list_$bug1_id", "---");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug $bug2_id processed");
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+go_to_bug($sel, $bug1_id);
 $sel->type_ok("cf_qa_freetext_$bug1_id", "dumbo");
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
 $sel->click_ok("commit");
@@ -119,10 +116,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Full Text Bug Listing");
 $sel->is_text_present_ok("Freetext$bug1_id: dumbo");
 $sel->is_text_present_ok("List$bug1_id: storage");
-$sel->type_ok("quicksearch_top", $bug2_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug2_id/);
+go_to_bug($sel, $bug2_id);
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -203,30 +197,21 @@ $sel->value_is("obsolete", "on");
 $sel->click_ok("edit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Custom Field Updated");
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+go_to_bug($sel, $bug1_id);
 $sel->value_is("cf_qa_freetext_$bug1_id", "thanks");
 ok(!$sel->is_element_present("cf_qa_list_$bug1_id"), "The custom list is not visible");
 
 # Custom fields are also viewable by logged out users.
 
 logout($sel);
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+go_to_bug($sel, $bug1_id);
 $sel->is_text_present_ok("Freetext$bug1_id: thanks");
 
 # Powerless users should still be able to CC themselves when
 # custom fields are in use.
 
 log_in($sel, $config, 'unprivileged');
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+go_to_bug($sel, $bug1_id);
 $sel->is_text_present_ok("Freetext$bug1_id: thanks");
 $sel->click_ok("cc_edit_area_showhide");
 $sel->type_ok("newcc", $config->{unprivileged_user_login});

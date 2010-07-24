@@ -92,10 +92,7 @@ $sel->title_is("Classification Updated");
 
 # The classification the bug belongs to is no longer displayed since bug 452733.
 # Keeping the code here in case it comes back in a future release. :)
-# $sel->type_ok("quicksearch_top", $bug1_id);
-# $sel->click_ok("find_top");
-# $sel->wait_for_page_to_load_ok(WAIT_TIME);
-# $sel->title_like(qr/^Bug $bug1_id /);
+# go_to_bug($sel, $bug1_id);
 # $sel->is_text_present('[ctwo]');
 
 # Now try to delete the 'ctwo' classification. It should fail as there are

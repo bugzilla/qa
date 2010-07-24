@@ -195,10 +195,7 @@ if ($config->{test_extensions}) {
     $sel->title_is("Updating Product 'Kill me nicely'");
     $sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
 
-    $sel->type_ok("quicksearch_top", $bug1_id);
-    $sel->click_ok("find_top");
-    $sel->wait_for_page_to_load_ok(WAIT_TIME);
-    $sel->title_like(qr/^Bug $bug1_id /);
+    go_to_bug($sel, $bug1_id);
     $sel->click_ok("link=vote");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Change Votes");
@@ -220,10 +217,7 @@ if ($config->{test_extensions}) {
  
 # Edit the bug.
 
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+go_to_bug($sel, $bug1_id);
 $sel->selected_label_is("product", "Kill me nicely");
 $sel->selected_label_is("bug_status", "CONFIRMED") if $config->{test_extensions};
 $sel->select_ok("target_milestone", "label=pre-0.1");

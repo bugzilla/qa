@@ -32,10 +32,7 @@ $sel->title_is("Milestone Created");
 
 # Edit the milestone of test_bug_1.
 
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1 /);
+go_to_bug($sel, $test_bug_1);
 $sel->is_text_present_ok("Target Milestone:");
 $sel->select_ok("target_milestone", "label=TM1");
 $sel->click_ok("commit");
@@ -69,10 +66,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Search for bugs");
 ok(!$sel->is_text_present("Target:"), "The target milestone field is no longer displayed");
 
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1 /);
+go_to_bug($sel, $test_bug_1);
 ok(!$sel->is_text_present("Target Milestone:"), "The milestone field is no longer displayed");
 
 # The existing query must still work despite milestones are off now.

@@ -97,10 +97,7 @@ logout($sel);
 # so he can view and edit the bug (as he has editbugs privs by inheritance).
 
 log_in($sel, $config, 'admin');
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+go_to_bug($sel, $bug1_id);
 $sel->select_ok("bug_severity", "label=blocker");
 $sel->select_ok("priority", "label=Highest");
 $sel->type_ok("status_whiteboard", "[Selenium was here][admin too]");
@@ -125,10 +122,7 @@ logout($sel);
 # The powerless user can see the restricted bug, as he has been CC'ed.
 
 log_in($sel, $config, 'unprivileged');
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+go_to_bug($sel, $bug1_id);
 $sel->is_text_present_ok("I have editbugs privs. Taking!");
 logout($sel);
 
@@ -136,10 +130,7 @@ logout($sel);
 # the powerless user to see the bug again.
 
 log_in($sel, $config, 'admin');
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+go_to_bug($sel, $bug1_id);
 $sel->click_ok("cclist_accessible");
 $sel->type_ok("comment", "I am allowed to turn off cclist_accessible despite not being in the mandatory group");
 $sel->click_ok("commit");
@@ -160,10 +151,7 @@ logout($sel);
 # Move the bug back to TestProduct, which has no group restrictions.
 
 log_in($sel, $config, 'admin');
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+go_to_bug($sel, $bug1_id);
 $sel->select_ok("product", "label=TestProduct");
 # When selecting a new product, Bugzilla tries to reassign the bug by default,
 # so we have to uncheck it.
@@ -190,10 +178,7 @@ logout($sel);
 # edit it, except adding comments.
 
 log_in($sel, $config, 'unprivileged');
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+go_to_bug($sel, $bug1_id);
 $sel->type_ok("comment", "I have no privs, I can only comment (and remove people from the CC list)");
 ok(!$sel->is_element_present('//select[@name="product"]'), "Product field not editable");
 ok(!$sel->is_element_present('//select[@name="bug_severity"]'), "Severity field not editable");
@@ -222,10 +207,7 @@ $sel->title_is("Update group access controls for TestProduct");
 
 # The user is in the master group, so he can comment.
 
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+go_to_bug($sel, $bug1_id);
 $sel->type_ok("comment", "Do nothing except adding a comment...");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -235,10 +217,7 @@ logout($sel);
 # This user is not in the master group, so he cannot comment.
 
 log_in($sel, $config, 'QA_Selenium_TEST');
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+go_to_bug($sel, $bug1_id);
 $sel->type_ok("comment", "Just a comment too...");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -310,10 +289,7 @@ logout($sel);
 # Reassign the newly created bug to the admin.
 
 log_in($sel, $config, 'admin');
-$sel->type_ok("quicksearch_top", $bug2_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug2_id /);
+go_to_bug($sel, $bug2_id);
 $sel->click_ok("bz_assignee_edit_action");
 $sel->type_ok("assigned_to", $config->{admin_user_login});
 $sel->type_ok("comment", "Taking!");
@@ -381,10 +357,7 @@ if ($config->{test_extensions}) {
     # $sel->title_like(qr/^Bug $bug2_id/);
     # $sel->selected_label_is("resolution", "MOVED");
 
-    $sel->type_ok("quicksearch_top", $bug2_id);
-    $sel->click_ok("find_top");
-    $sel->wait_for_page_to_load_ok(WAIT_TIME);
-    $sel->title_like(qr/^Bug $bug2_id /);
+    go_to_bug($sel, $bug2_id);
     $sel->click_ok('oldbugmove');
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Bug $bug2_id processed");

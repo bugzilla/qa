@@ -102,10 +102,7 @@ $sel->title_is("Keyword Updated");
 
 # Add keywords to bugs
 
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/, "Display bug $test_bug_1");
+go_to_bug($sel, $test_bug_1);
 # If another script is playing with keywords too, don't mess with it.
 my $kw1 = $sel->get_text("keywords");
 $sel->type_ok("keywords", "$kw1, key-selenium-kone");
@@ -113,10 +110,7 @@ $sel->click_ok("commit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug $test_bug_1 processed");
 $sel->is_text_present_ok("Changes submitted");
-$sel->type_ok("quicksearch_top", $test_bug_2);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_2/, "Display bug $test_bug_2");
+go_to_bug($sel, $test_bug_2);
 my $kw2 = $sel->get_text("keywords");
 $sel->type_ok("keywords", "$kw2, key-selenium-kone, key-selenium-ktwo");
 $sel->click_ok("commit");

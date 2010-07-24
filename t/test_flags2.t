@@ -265,10 +265,7 @@ my $flagtype2_id = $1;
 
 # Now move the bug from c1 into c2. The bug flag should survive.
 
-$sel->type_ok("quicksearch_top", $bug2_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug2_id /);
+go_to_bug($sel, $bug2_id);
 $sel->select_ok("component", "label=c2");
 $sel->click_ok("set_default_assignee");
 $sel->type_ok("comment", "The selenium flag should be preserved.");
@@ -286,10 +283,7 @@ logout($sel);
 # Powerless users can edit the 'selenium' flag being in c2.
 
 log_in($sel, $config, 'unprivileged');
-$sel->type_ok("quicksearch_top", $bug2_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug2_id /);
+go_to_bug($sel, $bug2_id);
 $sel->select_ok("flag-$flag2_id", "label=+");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);

@@ -18,10 +18,7 @@ set_parameters($sel, { "Group Security" => {"timetrackinggroup" => {type => "sel
 # Add some Hours Worked to a bug so that we are sure at least one bug
 # will be present in our buglist below.
 
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/, "Display bug $test_bug_1");
+go_to_bug($sel, $test_bug_1);
 $sel->type_ok("work_time", 2.6);
 $sel->type_ok("comment", "I did some work");
 $sel->click_ok("commit");
@@ -84,10 +81,7 @@ ok($error_msg =~ /'2009-04-31' is not a legal date/, "Illegal end date");
 # above has been taken into account). So we are just making sure that
 # the page is displayed and throws no error.
 
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/, "Display bug $test_bug_1");
+go_to_bug($sel, $test_bug_1);
 $sel->click_ok("//a[contains(text(),'Summarize time')]");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Time Summary for Bug $test_bug_1");

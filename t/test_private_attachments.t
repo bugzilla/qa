@@ -73,10 +73,7 @@ logout($sel);
 
 foreach my $user ('', 'unprivileged') {
     log_in($sel, $config, $user) if $user;
-    $sel->type_ok("quicksearch_top", $bug1_id);
-    $sel->click_ok("find_top");
-    $sel->wait_for_page_to_load_ok(WAIT_TIME);
-    $sel->title_like(qr/^Bug $bug1_id/);
+    go_to_bug($sel, $bug1_id);
     ok(!$sel->is_text_present("private attachment, v1"), "Private attachment not visible");
     $sel->is_text_present_ok("public attachment, v2");
     ok(!$sel->is_text_present("and some attachments too, like this one"), "Private comment not visible");
@@ -111,10 +108,7 @@ logout($sel);
 # Let the admin mark the powerless user's attachment as private.
 
 log_in($sel, $config, 'admin');
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+go_to_bug($sel, $bug1_id);
 $sel->click_ok('//a[@href="attachment.cgi?id=' . $attachment2_id . '&action=edit"]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Attachment $attachment2_id Details for Bug $bug1_id");
@@ -133,10 +127,7 @@ logout($sel);
 
 # A logged out user cannot see private attachments.
 
-$sel->type_ok("quicksearch_top", "$bug1_id");
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+go_to_bug($sel, $bug1_id);
 ok(!$sel->is_text_present("private attachment, v1"), "Private attachment not visible to logged out users");
 ok(!$sel->is_text_present("My patch, which I should see, always ("), "Private attachment not visible to logged out users");
 $sel->is_text_present_ok("This is my patch!");
@@ -145,10 +136,7 @@ ok(!$sel->is_text_present("Making the powerless user's patch private"), "Private
 # A powerless user can only see private attachments he owns.
 
 log_in($sel, $config, 'unprivileged');
-$sel->type_ok("quicksearch_top", "$bug1_id");
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+go_to_bug($sel, $bug1_id);
 $sel->is_text_present_ok("My patch, which I should see, always (");
 $sel->click_ok("link=My patch, which I should see, always");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);

@@ -18,6 +18,7 @@ use base qw(Exporter);
     log_in
     logout
     file_bug_in_product
+    go_to_bug
     go_to_admin
     edit_product
     add_product
@@ -172,6 +173,18 @@ sub file_bug_in_product {
         ok(1, "Only one product available in $classification. Skipping the 'Choose product' page.")
     }
     $sel->title_is("Enter Bug: $product", "Display form to enter bug data");
+}
+
+# Go to show_bug.cgi.
+sub go_to_bug {
+    my ($sel, $bug_id) = @_;
+
+    $sel->type_ok("quicksearch_top", $bug_id);
+    $sel->click_ok("find_top", undef, "Go to bug $bug_id");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    my $bug_title = $sel->get_title();
+    utf8::encode($bug_title) if utf8::is_utf8($bug_title);
+    $sel->title_like(qr/^Bug $bug_id /, $bug_title);
 }
 
 # Go to admin.cgi.

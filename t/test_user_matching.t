@@ -18,10 +18,7 @@ set_parameters($sel, { "User Matching"  => {"usemenuforusers-off" => undef,
                        "Group Security" => {"usevisibilitygroups-off" => undef}
                      });
 
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/);
+go_to_bug($sel, $test_bug_1);
 $sel->click_ok("cc_edit_area_showhide");
 
 # We enter an incomplete email address. process_bug.cgi must ask
@@ -49,10 +46,7 @@ $sel->title_is("Bug $test_bug_1 processed");
 # Now test wildcards ("*"). Due to confirmuniqueusermatch being turned on,
 # a confirmation page must be displayed.
 
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/);
+go_to_bug($sel, $test_bug_1);
 $sel->click_ok("cc_edit_area_showhide");
 $sel->type_ok("newcc", "$config->{unprivileged_user_login_truncated}*");
 $sel->click_ok("commit");
@@ -76,10 +70,7 @@ $sel->is_text_present_ok("*$config->{common_email} matched:");
 
 set_parameters($sel, { "User Matching" => {"maxusermatches" => {type => 'text', value => '1'}} });
 
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/);
+go_to_bug($sel, $test_bug_1);
 $sel->click_ok("cc_edit_area_showhide");
 
 # Several user accounts match this partial email address. Due to
@@ -132,10 +123,7 @@ if (grep {$_ eq 'tweakparams'} @groups) {
 logout($sel);
 log_in($sel, $config, 'tweakparams');
 
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/);
+go_to_bug($sel, $test_bug_1);
 $sel->click_ok("cc_edit_area_showhide");
 
 # We are not in the same groups as the unprivileged user, so we cannot see him.
@@ -175,10 +163,7 @@ $sel->is_text_present_ok("<$config->{tweakparams_user_login}>");
 
 set_parameters($sel, { "User Matching" => {"usemenuforusers-on" => undef} });
 
-$sel->type_ok("quicksearch_top", $test_bug_1);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $test_bug_1/);
+go_to_bug($sel, $test_bug_1);
 $sel->click_ok("cc_edit_area_showhide");
 my @cc = $sel->get_select_options("newcc");
 ok(!grep($_ =~ /$config->{unprivileged_user_login}/, @cc), "$config->{unprivileged_user_login} is not visible");

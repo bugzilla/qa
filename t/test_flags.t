@@ -380,13 +380,8 @@ logout($sel);
 # As an unprivileged user, try to edit flags.
 
 log_in($sel, $config, 'unprivileged');
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
-
+go_to_bug($sel, $bug1_id);
 # No privs are required to clear this flag.
-
 $sel->select_ok("flag-$flag3_1_id", "value=X");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -449,10 +444,7 @@ logout($sel);
 # someone else's patch.
 
 log_in($sel, $config, 'admin');
-$sel->type_ok("quicksearch_top", $bug1_id);
-$sel->click_ok("find_top");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+go_to_bug($sel, $bug1_id);
 $sel->click_ok("//a[\@href='attachment.cgi?id=${attachment3_id}&action=edit']");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Attachment $attachment3_id Details for Bug $bug1_id");
