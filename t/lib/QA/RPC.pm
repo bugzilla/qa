@@ -2,6 +2,7 @@
 
 package QA::RPC;
 use strict;
+use Data::Dumper;
 use QA::Util;
 use Test::More;
 
