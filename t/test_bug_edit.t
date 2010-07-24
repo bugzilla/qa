@@ -372,7 +372,7 @@ $sel->is_text_present_ok("Bug $bug2_id has been moved to another database");
 $sel->click_ok("link=Bug $bug2_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $bug2_id/);
-$sel->is_selected_ok("resolution", "MOVED");
+$sel->selected_label_is("resolution", "MOVED");
 
 # Now move these bugs out of our radar.
 
