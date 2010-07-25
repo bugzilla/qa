@@ -29,11 +29,25 @@ if($sel->is_text_present("My QA query")) {
 # bug if the QA contact field is enabled, else he looses this privilege.
 
 set_parameters($sel, { "Bug Fields" => {"useqacontact-on" => undef} });
+
+# Get the ID of the Master group.
+
+go_to_admin($sel);
+$sel->click_ok("link=Groups");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit Groups");
+$sel->click_ok("link=Master");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Change Group: Master");
+my $group_url = $sel->get_location();
+$group_url =~ /group=(\d+)$/;
+my $master_gid = $1;
+
 file_bug_in_product($sel, 'TestProduct');
 $sel->type_ok("qa_contact", $config->{unprivileged_user_login}, "Set the powerless user as QA contact");
 $sel->type_ok("short_desc", "Test for QA contact");
 $sel->type_ok("comment", "This is a test to check QA contact privs.");
-$sel->check_ok("bit-" . $config->{master_group});
+$sel->check_ok("bit-$master_gid");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
