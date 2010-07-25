@@ -186,26 +186,13 @@ $flagtype_url = $sel->get_attribute('link=SeleniumAttachmentFlag3Test@href');
 $flagtype_url =~ /id=(\d+)$/;
 my $aflagtype3_id = $1;
 
-# Get the ID of the Master group.
-
-go_to_admin($sel);
-$sel->click_ok("link=Groups");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Edit Groups");
-$sel->click_ok("link=Master");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Change Group: Master");
-my $group_url = $sel->get_location();
-$group_url =~ /group=(\d+)$/;
-my $master_gid = $1;
-
 # All flag types have been created. Now "real" tests can start.
 
 file_bug_in_product($sel, 'TestProduct');
 $sel->type_ok("short_desc", "test flags");
 $sel->type_ok("comment", "this bug is used by Selenium to test flags");
 # Restrict the bug to the Master group. That's important for subsequent tests!
-$sel->check_ok("group_$master_gid");
+$sel->check_ok('//input[@name="groups" and @value="Master"]');
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/Bug \d+ Submitted/);
@@ -382,7 +369,7 @@ $sel->is_text_present_ok("no flags");
 
 # Make the bug public and log out.
 
-$sel->uncheck_ok("group_$master_gid");
+$sel->uncheck_ok('//input[@name="groups" and @value="Master"]');
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug $bug1_id processed");
