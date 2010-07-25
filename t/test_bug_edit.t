@@ -21,8 +21,20 @@ if ($sel->is_text_present("My bugs from QA_Selenium")) {
     $sel->title_is("Search is gone");
     $sel->is_text_present_ok("OK, the My bugs from QA_Selenium search is gone");
 }
-# Just in case the test failed before completion previously.
-clear_canedit_on_testproduct($sel, $config);
+
+# Just in case the test failed before completion previously, reset the CANEDIT bit.
+go_to_admin($sel);
+$sel->click_ok("link=Groups");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit Groups");
+$sel->click_ok("link=Master");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Change Group: Master");
+my $group_url = $sel->get_location();
+$group_url =~ /group=(\d+)$/;
+my $master_gid = $1;
+
+clear_canedit_on_testproduct($sel, $master_gid);
 logout($sel);
 
 # First create a bug.
@@ -200,7 +212,7 @@ edit_product($sel, "TestProduct");
 $sel->click_ok("link=Edit Group Access Controls:");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Edit Group Controls for TestProduct");
-$sel->check_ok("canedit_" . $config->{master_group});
+$sel->check_ok("canedit_$master_gid");
 $sel->click_ok("submit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Update group access controls for TestProduct");
@@ -398,17 +410,17 @@ $sel->title_is("Search is gone");
 $sel->is_text_present_ok("OK, the My bugs from QA_Selenium search is gone");
 
 # Reset the CANEDIT bit. We want it to be turned off by default.
-clear_canedit_on_testproduct($sel, $config);
+clear_canedit_on_testproduct($sel, $master_gid);
 logout($sel);
 
 sub clear_canedit_on_testproduct {
-    my ($sel, $config) = @_;
+    my ($sel, $master_gid) = @_;
 
     edit_product($sel, "TestProduct");
     $sel->click_ok("link=Edit Group Access Controls:");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Edit Group Controls for TestProduct");
-    $sel->uncheck_ok("canedit_" . $config->{master_group});
+    $sel->uncheck_ok("canedit_$master_gid");
     $sel->click_ok("submit");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Update group access controls for TestProduct");

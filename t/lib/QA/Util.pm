@@ -228,7 +228,7 @@ sub add_product {
     my $title = $sel->get_title();
     if ($title eq "Select Classification") {
         ok(1, "More than one enterable classification available. Display them in a list");
-        $sel->click_ok("//a[contains(\@href, 'editproducts.cgi?action=add&amp;classification=$classification')]",
+        $sel->click_ok("//a[contains(\@href, 'editproducts.cgi?action=add&classification=$classification')]",
                        undef, "Add product to $classification");
     }
     else {

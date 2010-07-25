@@ -8,8 +8,6 @@ use QA::Util;
 
 my ($sel, $config) = get_selenium();
 
-my $admin_group = $config->{admin_group};
-
 # Turn on the makeproductgroups parameter. Create a new product and check that
 # it has automatically a group created for it with the same name.
 

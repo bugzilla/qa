@@ -33,7 +33,7 @@ file_bug_in_product($sel, 'TestProduct');
 $sel->type_ok("qa_contact", $config->{unprivileged_user_login}, "Set the powerless user as QA contact");
 $sel->type_ok("short_desc", "Test for QA contact");
 $sel->type_ok("comment", "This is a test to check QA contact privs.");
-$sel->check_ok("group_" . $config->{master_group});
+$sel->check_ok('//input[@name="groups" and @value="Master"]');
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
