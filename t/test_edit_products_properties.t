@@ -30,7 +30,7 @@ my $text = trim($sel->get_text("bugzilla-body"));
 if ($text =~ /(Kill me!|Kill me nicely)/) {
     my $product = $1;
     my $escaped_product = url_quote($product);
-    $sel->click_ok("//a[contains(\@href, '  editproducts.cgi?action=del&product=$escaped_product')]");
+    $sel->click_ok("//a[\@href='editproducts.cgi?action=del&product=$escaped_product']");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Delete Product '$product'");
     $sel->click_ok("delete");
@@ -309,7 +309,7 @@ go_to_admin($sel);
 $sel->click_ok("link=Products");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Select product");
-$sel->click_ok("//a[contains(\@href, '  editproducts.cgi?action=del&product=Kill%20me%20nicely')]");
+$sel->click_ok("//a[\@href='editproducts.cgi?action=del&product=Kill%20me%20nicely']");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Delete Product 'Kill me nicely'");
 $text = trim($sel->get_text("bugzilla-body"));

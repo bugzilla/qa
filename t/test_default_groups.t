@@ -51,7 +51,7 @@ $sel->selected_label_is("othercontrol_$group1_id", "NA");
 edit_product($sel, "ready_to_die");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->click_ok('//a[contains(@href, "editproducts.cgi?action=del&product=ready_to_die")]');
+$sel->click_ok('//a[@href="editproducts.cgi?action=del&product=ready_to_die"]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Delete Product 'ready_to_die'");
 $sel->click_ok("delete");
@@ -139,7 +139,7 @@ ok($text =~ qr/The group ready_to_die_ has been deleted/, "Group ready_to_die_ h
 edit_product($sel, "ready_to_die");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->click_ok('//a[contains(@href, "editproducts.cgi?action=del&product=ready_to_die")]');
+$sel->click_ok('//a[@href="editproducts.cgi?action=del&product=ready_to_die"]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Delete Product 'ready_to_die'");
 $sel->click_ok("delete");
@@ -188,7 +188,7 @@ ok($text =~ /The group ready_to_die has been deleted/, "Group ready_to_die has b
 edit_product($sel, "ready_to_die");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->click_ok('//a[contains(@href, "editproducts.cgi?action=del&product=ready_to_die")]');
+$sel->click_ok('//a[@href="editproducts.cgi?action=del&product=ready_to_die"]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Delete Product 'ready_to_die'");
 $sel->click_ok("delete");
