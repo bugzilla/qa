@@ -15,15 +15,15 @@ sub post_success {
 
     is(scalar @{ $call->result->{bugs} }, 1, "Got exactly one bug");
     if ($t->{user} && $t->{user} eq 'admin') {
-        ok(exists $call->result->{bugs}->[0]->{internals}{estimated_time}
-           && exists $call->result->{bugs}->[0]->{internals}{remaining_time}
-           && exists $call->result->{bugs}->[0]->{internals}{deadline},
+        ok(exists $call->result->{bugs}->[0]->{estimated_time}
+           && exists $call->result->{bugs}->[0]->{remaining_time}
+           && exists $call->result->{bugs}->[0]->{deadline},
            'Admin correctly gets time-tracking fields');
     }
     else {
-        ok(!exists $call->result->{bugs}->[0]->{internals}{estimated_time}
-           && !exists $call->result->{bugs}->[0]->{internals}{remaining_time}
-           && !exists $call->result->{bugs}->[0]->{internals}{deadline},
+        ok(!exists $call->result->{bugs}->[0]->{estimated_time}
+           && !exists $call->result->{bugs}->[0]->{remaining_time}
+           && !exists $call->result->{bugs}->[0]->{deadline},
            'Time-tracking fields are not returned to logged-out users');
     }
 }
