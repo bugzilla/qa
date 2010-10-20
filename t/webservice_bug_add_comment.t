@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 130;
+use Test::More tests => 138;
 my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
 
 use constant INVALID_BUG_ID => -1;
@@ -119,6 +119,13 @@ my @tests = (
     { user => 'QA_Selenium_TEST',
       args => { id => 'private_bug', comment => TEST_COMMENT },
       test => 'Privileged user can add a comment to a private bug',
+      check_privacy => 1,
+    },
+    { user => 'QA_Selenium_TEST',
+      args => { id => 'public_bug', comment => TEST_COMMENT,
+                is_private => 1 },
+      test => 'Insidergroup user can add a private comment',
+      check_privacy => 1,
     },
     { user => 'admin',
       args => { id => 'public_bug', comment => TEST_COMMENT,
@@ -126,14 +133,25 @@ my @tests = (
       test => 'Timetracking user can add work_time to a bug',
     },
     # XXX Need to verify that the comment added actually has work_time.
-    { user => 'admin',
-      args => { id => 'public_bug', comment => TEST_COMMENT,
-                isprivate => 1 },
-      test => 'Insidergroup user can add a private comment',
-    },
-    # XXX Need to verify that the comment added was actually private.
 );
 
 foreach my $rpc ($jsonrpc, $xmlrpc) {
-    $rpc->bz_run_tests(tests => \@tests, method => 'Bug.add_comment');
+    $rpc->bz_run_tests(tests => \@tests, method => 'Bug.add_comment',
+                       post_success => \&post_success);
+}
+
+sub post_success {
+    my ($call, $t, $rpc) = @_;
+    return unless $t->{check_privacy};
+
+    my $comment_id = $call->result->{id};
+    my $result = $rpc->bz_call_success('Bug.comments', {comment_ids => [$comment_id]});
+    if ($t->{args}->{is_private}) {
+        ok($result->result->{comments}->{$comment_id}->{is_private},
+           $rpc->TYPE . ": Comment $comment_id is private");
+    }
+    else {
+        ok(!$result->result->{comments}->{$comment_id}->{is_private},
+           $rpc->TYPE . ": Comment $comment_id is NOT private");
+    }
 }
