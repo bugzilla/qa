@@ -23,7 +23,7 @@ set_parameters($sel, { "Group Security" => {"insidergroup" => {type => "select",
 file_bug_in_product($sel, "TestProduct");
 $sel->type_ok("short_desc", "Some comments are private");
 $sel->type_ok("comment", "and some attachments too, like this one.");
-$sel->check_ok("commentprivacy");
+$sel->check_ok("comment_is_private");
 $sel->click_ok('//input[@value="Add an attachment"]');
 $sel->type_ok("data", "/var/www/html/selenium/bugzilla/patch.diff");
 $sel->type_ok("description", "private attachment, v1");
