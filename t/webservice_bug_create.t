@@ -9,7 +9,7 @@ use Test::More tests => 172;
 use QA::Util;
 use QA::Tests qw(create_bug_fields);
 
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 ########################
 # Bug.create() testing #

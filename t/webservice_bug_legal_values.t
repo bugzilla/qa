@@ -7,7 +7,7 @@ use warnings;
 use lib qw(lib);
 use Test::More tests => 193;
 use QA::Util;
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 use constant INVALID_PRODUCT_ID => -1;
 use constant INVALID_FIELD_NAME => 'invalid_field';

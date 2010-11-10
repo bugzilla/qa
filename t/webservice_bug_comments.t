@@ -8,7 +8,7 @@ use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
 use Test::More tests => 138;
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 ################
 # Bug ID Tests #

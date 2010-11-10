@@ -7,7 +7,7 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use Test::More tests => 26;
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 # These are the characters that are actually invalid per RFC.
 use constant INVALID_EMAIL => '()[]\;:,<>@webservice.test';

@@ -5,11 +5,11 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 28;
+use Test::More tests => 14 * 3;
 use QA::Util;
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, @clients) = get_rpc_clients();
 
-foreach my $rpc ($jsonrpc, $xmlrpc) {
+foreach my $rpc (@clients) {
     my $vers_call = $rpc->bz_call_success('Bugzilla.version');
     my $version = $vers_call->result->{version};
     ok($version, "Bugzilla.version returns $version");

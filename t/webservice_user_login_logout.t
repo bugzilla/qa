@@ -8,7 +8,7 @@ use lib qw(lib);
 use Data::Dumper;
 use QA::Util;
 use Test::More tests => 132;
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 use constant INVALID_EMAIL => '@invalid_user@';
 

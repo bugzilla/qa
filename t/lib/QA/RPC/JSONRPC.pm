@@ -4,8 +4,13 @@ package QA::RPC::JSONRPC;
 use strict;
 use base qw(QA::RPC JSON::RPC::Client);
 
-use constant TYPE => 'JSON-RPC';
+use URI::Escape;
+
 use constant DATETIME_REGEX => qr/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/;
+sub TYPE {
+    my ($self) = @_;
+    return $self->bz_get_mode ? 'JSON-RPC GET' : 'JSON-RPC';
+}
 
 #################################
 # Consistency with XMLRPC::Lite #
@@ -20,6 +25,12 @@ sub ua {
 }
 sub transport { $_[0]->ua }
 
+sub bz_get_mode {
+    my ($self, $value) = @_;
+    $self->{bz_get_mode} = $value if @_ > 1;
+    return $self->{bz_get_mode};
+}
+
 sub call {
     my $self = shift;
     my ($method, $args) = @_;
@@ -27,7 +38,21 @@ sub call {
     my $config = $self->bz_config;
     my $url = $config->{browser_url} . "/"
               . $config->{bugzilla_installation} . "/jsonrpc.cgi";
-    my $result = $self->SUPER::call($url, \%params);
+    my $result;
+    if ($self->bz_get_mode) {
+        my $method_escaped = uri_escape($method);
+        $url .= "?method=$method_escaped";
+        if ($args) {
+            my $params_json = $self->json->encode($args);
+            my $params_escaped = uri_escape($params_json);
+            $url .= "&params=$params_escaped";
+        }
+        $result = $self->SUPER::call($url);
+    }
+    else {
+        $result = $self->SUPER::call($url, \%params);
+    }
+
     if ($result) {
         bless $result, 'QA::RPC::JSONRPC::ReturnObject';
     }

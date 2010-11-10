@@ -107,6 +107,7 @@ sub get_xmlrpc_client {
 }
 
 sub get_jsonrpc_client {
+    my ($get_mode) = @_;
     require QA::RPC::JSONRPC;
     # A temporary cookie jar that isn't saved after the script closes.
     my $cookie_jar = new HTTP::Cookies();
@@ -116,13 +117,15 @@ sub get_jsonrpc_client {
     # where we add a too-large comment fails.
     $rpc->transport->timeout(180);
     $rpc->version('1.0');
+    $rpc->bz_get_mode($get_mode);
     return $rpc;
 }
 
 sub get_rpc_clients {
     my ($xmlrpc, $config) = get_xmlrpc_client();
     my $jsonrpc = get_jsonrpc_client();
-    return ($xmlrpc, $jsonrpc, $config);
+    my $jsonrpc_get = get_jsonrpc_client('GET');
+    return ($config, $xmlrpc, $jsonrpc, $jsonrpc_get);
 }
 
 ################################

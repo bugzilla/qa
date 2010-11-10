@@ -7,7 +7,7 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use Test::More tests => 82;
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 my $get_user = $config->{unprivileged_user_login};
 

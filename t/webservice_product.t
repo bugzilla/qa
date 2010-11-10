@@ -11,7 +11,7 @@ use warnings;
 use lib qw(lib);
 use Test::More tests => 95;
 use QA::Util;
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 my $products = $xmlrpc->bz_get_products();
 my $public    = $products->{'Another Product'};

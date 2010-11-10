@@ -11,7 +11,7 @@ use DateTime;
 use Storable qw(dclone);
 use Test::More;
 
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 plan tests => $config->{test_extensions} ? 212 : 206;
 
 sub string_array { map { random_string() } (1..$_[0]) }

@@ -7,7 +7,7 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use Test::More tests => 138;
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 use constant INVALID_BUG_ID => -1;
 use constant INVALID_BUG_ALIAS => 'aaaaaaa12345';

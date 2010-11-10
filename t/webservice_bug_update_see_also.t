@@ -8,7 +8,7 @@ use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(PRIVATE_BUG_USER STANDARD_BUG_TESTS);
 use Test::More tests => 108;
-my ($xmlrpc, $jsonrpc, $config) = get_rpc_clients();
+my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 my $bug_url = 'http://landfill.bugzilla.org/bugzilla-tip/show_bug.cgi?id=100';
 
