@@ -12,6 +12,9 @@ sub bz_config {
     return $self->{bz_config}; 
 }
 
+# True if we're doing calls over GET instead of POST.
+sub bz_get_mode { return 0 }
+
 ################################
 # Helpers for RPC test scripts #
 ################################
@@ -61,8 +64,11 @@ sub bz_call_fail {
         cmp_ok(trim($call->faultstring), '=~', $faultstring, 
                $self->TYPE . ": Got correct fault for $method");
     }
-    ok($call->faultcode && $call->faultcode < 32000
-       && $call->faultcode > -32000, 
+    ok($call->faultcode 
+       && (($call->faultcode < 32000 && $call->faultcode > -32000) 
+           # Fault code 32610 is OK because it's the "you must use HTTP POST"
+           # code, which we test for sometimes.
+           || $call->faultcode == 32610), 
        $self->TYPE . ': Fault code is set properly')
         or diag("Code: " . $call->faultcode 
                 . " Message: " . $call->faultstring);

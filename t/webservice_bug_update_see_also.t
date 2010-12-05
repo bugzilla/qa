@@ -7,7 +7,7 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(PRIVATE_BUG_USER STANDARD_BUG_TESTS);
-use Test::More tests => 108;
+use Test::More tests => 111;
 my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 my $bug_url = 'http://landfill.bugzilla.org/bugzilla-tip/show_bug.cgi?id=100';
@@ -64,6 +64,10 @@ sub post_success {
     my ($call, $t) = @_;
     isa_ok($call->result->{changes}, 'HASH', "Changes");
 }
+
+$jsonrpc_get->bz_call_fail('Bug.update_see_also',
+    { ids => ['public_bug'], add => [$bug_url] },
+    'must use HTTP POST', 'update_see_also fails over GET');
 
 foreach my $rpc ($jsonrpc, $xmlrpc) {
     $rpc->bz_run_tests(tests => \@tests, method => 'Bug.update_see_also',

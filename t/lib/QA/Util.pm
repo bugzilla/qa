@@ -116,7 +116,7 @@ sub get_jsonrpc_client {
     # If we don't set a long timeout, then the Bug.add_comment test
     # where we add a too-large comment fails.
     $rpc->transport->timeout(180);
-    $rpc->version('1.0');
+    $rpc->version($get_mode ? '1.1' : '1.0');
     $rpc->bz_get_mode($get_mode);
     return $rpc;
 }

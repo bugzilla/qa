@@ -7,8 +7,8 @@ use warnings;
 use lib qw(lib);
 use Data::Dumper;
 use QA::Util;
-use Test::More tests => 132;
-my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
+use Test::More tests => 166;
+my ($config, @clients) = get_rpc_clients();
 
 use constant INVALID_EMAIL => '@invalid_user@';
 
@@ -93,22 +93,45 @@ sub _login_args {
     return \%fixed_args;
 }
 
-foreach my $rpc ($jsonrpc, $xmlrpc) {
+foreach my $rpc (@clients) {
+    if ($rpc->bz_get_mode) {
+        $rpc->bz_call_fail('User.logout', undef, 'must use HTTP POST',
+                           'User.logout fails when called via GET');
+    }
+
     for my $t (@tests) {
         if ($t->{user}) {
-            $rpc->bz_log_in($t->{user});
-            _check_has_cookies($rpc);
-            $rpc->bz_call_success('User.logout');
+            my $username = $config->{$t->{user} . '_user_login'};
             my $password = $config->{$t->{user} . '_user_passwd'};
+
+            if ($rpc->bz_get_mode) {
+                $rpc->bz_call_fail('User.login', 
+                    { login => $username, password => $password },
+                    'must use HTTP POST', $t->{test} . ' (fails on GET)');
+                _check_no_cookies($rpc); 
+            }
+            else {
+                $rpc->bz_log_in($t->{user});
+                _check_has_cookies($rpc);
+                $rpc->bz_call_success('User.logout');
+            }
             $rpc->bz_call_success('Bugzilla.version',
-                { Bugzilla_login => $config->{$t->{user} . '_user_login'}, 
+                { Bugzilla_login => $username,
                   Bugzilla_password => $password });
-            _check_has_cookies($rpc); 
+            if ($rpc->bz_get_mode) {
+                _check_no_cookies($rpc);
+            }
+            else {
+                _check_has_cookies($rpc); 
+            }
         }
         else {
-            $rpc->bz_call_fail('User.login', $t->{args}, $t->{error}, 
-                               $t->{test});
-            _check_no_cookies($rpc, $t->{clears_cookies});
+            # Under GET, there's no reason to have extra failing tests.
+            if (!$rpc->bz_get_mode) {
+                $rpc->bz_call_fail('User.login', $t->{args}, $t->{error}, 
+                                   $t->{test});
+                _check_no_cookies($rpc, $t->{clears_cookies});
+            }
             if (defined $t->{args}->{login} 
                 and defined $t->{args}->{password}) 
             {

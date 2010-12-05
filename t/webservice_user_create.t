@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 66;
+use Test::More tests => 69;
 my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 use constant NEW_PASSWORD => 'password';
@@ -25,6 +25,11 @@ sub post_success {
     my ($call) = @_;
     ok($call->result->{id}, "Got a non-zero user id");
 }
+
+$jsonrpc_get->bz_call_fail('User.create',
+    { email => new_login(), full_name => NEW_FULLNAME,
+      password => '*' },
+    'must use HTTP POST', 'User.create fails over GET');
 
 # We have to wrap @tests in the foreach, because we want a different
 # login for each user, separately for each RPC client. (You can't create

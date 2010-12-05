@@ -47,6 +47,9 @@ sub call {
             my $params_escaped = uri_escape($params_json);
             $url .= "&params=$params_escaped";
         }
+        if ($self->version eq '1.1') {
+            $url .= "&version=1.1";
+        }
         $result = $self->SUPER::call($url);
     }
     else {

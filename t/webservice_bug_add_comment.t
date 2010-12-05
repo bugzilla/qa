@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 138;
+use Test::More tests => 141;
 my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 use constant INVALID_BUG_ID => -1;
@@ -134,6 +134,10 @@ my @tests = (
     },
     # XXX Need to verify that the comment added actually has work_time.
 );
+
+$jsonrpc_get->bz_call_fail('Bug.add_comment',
+    { id => 'public_bug', comment => TEST_COMMENT },
+    'must use HTTP POST', 'add_comment fails over GET');
 
 foreach my $rpc ($jsonrpc, $xmlrpc) {
     $rpc->bz_run_tests(tests => \@tests, method => 'Bug.add_comment',

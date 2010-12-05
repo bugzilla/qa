@@ -5,7 +5,7 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 172;
+use Test::More tests => 175;
 use QA::Util;
 use QA::Tests qw(create_bug_fields);
 
@@ -139,6 +139,9 @@ my $fields = {
 
     },
 };
+
+$jsonrpc_get->bz_call_fail('Bug.create', $bug_fields,
+    'must use HTTP POST', 'create fails over GET');
 
 foreach my $rpc ($jsonrpc, $xmlrpc) {
     # test calling Bug.create without logging into bugzilla
