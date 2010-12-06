@@ -5,7 +5,8 @@ use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
 use Data::Dumper;
 use List::Util qw(first);
-use Test::More tests => 295;
+use MIME::Base64;
+use Test::More tests => 307;
 my ($config, @clients) = get_rpc_clients();
 
 ################
@@ -50,6 +51,12 @@ foreach my $alias (qw(public_bug private_bug)) {
 ####################
 # Attachment Tests #
 ####################
+
+my $content_file = '../config/generate_test_data.pl';
+open(my $fh, '<', $content_file) or die "$content_file: $!";
+my $content;
+{ local $/; $content = <$fh>; }
+close($fh);
 
 # Access tests for public/private stuff, and also validate that the
 # format of each return value is correct.
@@ -128,6 +135,9 @@ sub post_success {
            "filename is in the expected format");
     is($attachment->{attacher}, $config->{QA_Selenium_TEST_user_login},
        "attacher is the correct user");
+    my $data = $attachment->{data};
+    $data = decode_base64($data) if $rpc->isa('QA::RPC::JSONRPC');
+    is($data, $content, 'data is correct');
 }
 
 foreach my $rpc (@clients) {
