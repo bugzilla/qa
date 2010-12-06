@@ -15,6 +15,20 @@ sub bz_config {
 # True if we're doing calls over GET instead of POST.
 sub bz_get_mode { return 0 }
 
+# When doing bz_log_in over GET, we can't actually call User.login,
+# we just store credentials here and then pass them as Bugzilla_login
+# and Bugzilla_password with every future call until User.logout is called
+# (which actually just calls _bz_clear_credentials, under GET).
+sub _bz_credentials {
+    my ($self, $user, $pass) = @_;
+    if (@_ == 3) {
+        $self->{_bz_credentials}->{user} = $user;
+        $self->{_bz_credentials}->{pass} = $pass;
+    }
+    return $self->{_bz_credentials};
+}
+sub _bz_clear_credentials { delete $_[0]->{_bz_credentials} }
+
 ################################
 # Helpers for RPC test scripts #
 ################################
@@ -23,6 +37,11 @@ sub bz_log_in {
     my ($self, $user) = @_;
     my $username = $self->bz_config->{"${user}_user_login"};
     my $password = $self->bz_config->{"${user}_user_passwd"};
+
+    if ($self->bz_get_mode) {
+        $self->_bz_credentials($username, $password);
+        return;
+    }
 
     my $call = $self->bz_call_success(
         'User.login', { login => $username, password => $password });
@@ -36,6 +55,12 @@ sub bz_log_in {
 
 sub bz_call_success {
     my ($self, $method, $args, $test_name) = @_;
+
+    if ($self->bz_get_mode and $method eq 'User.logout') {
+        $self->_bz_clear_credentials();
+        return;
+    }
+
     my $call;
     # Under XMLRPC::Lite, if we pass undef as the second argument,
     # it sends a single param <value />, which shows up as an

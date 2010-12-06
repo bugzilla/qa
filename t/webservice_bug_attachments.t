@@ -5,8 +5,8 @@ use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
 use Data::Dumper;
 use List::Util qw(first);
-use Test::More tests => 208;
-my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
+use Test::More tests => 295;
+my ($config, @clients) = get_rpc_clients();
 
 ################
 # Bug ID Tests #
@@ -35,7 +35,7 @@ sub post_bug_success {
     
 }
 
-foreach my $rpc ($jsonrpc, $xmlrpc) {
+foreach my $rpc (@clients) {
     $rpc->bz_run_tests(tests => STANDARD_BUG_TESTS, method => 'Bug.attachments',
                        post_success => \&post_bug_success);
 }
@@ -130,7 +130,7 @@ sub post_success {
        "attacher is the correct user");
 }
 
-foreach my $rpc ($jsonrpc, $xmlrpc) {
+foreach my $rpc (@clients) {
     $rpc->bz_run_tests(method => 'Bug.attachments', tests => \@tests,
                        post_success => \&post_success);
 }

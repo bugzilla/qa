@@ -9,11 +9,11 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 95;
+use Test::More tests => 134;
 use QA::Util;
-my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
+my ($config, @clients) = get_rpc_clients();
 
-my $products = $xmlrpc->bz_get_products();
+my $products = $clients[0]->bz_get_products();
 my $public    = $products->{'Another Product'};
 my $private   = $products->{'QA-Selenium-TEST'};
 my $no_entry  = $products->{'QA Entry Only'};
@@ -45,7 +45,7 @@ my $tests = {
     },
 };
 
-foreach my $rpc ($jsonrpc, $xmlrpc) {
+foreach my $rpc (@clients) {
     foreach my $user (keys %$tests) {
         my @selectable = @{ $tests->{$user}->{selectable} };
         my @enterable  = @{ $tests->{$user}->{enterable} };

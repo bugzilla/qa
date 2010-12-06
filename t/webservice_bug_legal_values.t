@@ -5,9 +5,9 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 193;
+use Test::More tests => 269;
 use QA::Util;
-my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
+my ($config, @clients) = get_rpc_clients();
 
 use constant INVALID_PRODUCT_ID => -1;
 use constant INVALID_FIELD_NAME => 'invalid_field';
@@ -17,7 +17,7 @@ use constant GLOBAL_FIELDS =>
 use constant PRODUCT_FIELDS => qw(version target_milestone component);
 
 
-my $products = $xmlrpc->bz_get_products();
+my $products = $clients[0]->bz_get_products();
 my $public_product = $products->{'Another Product'};
 my $private_product = $products->{'QA-Selenium-TEST'};
 
@@ -87,7 +87,7 @@ sub post_success {
            'Got one or more values');
 }
 
-foreach my $rpc ($jsonrpc, $xmlrpc) {
+foreach my $rpc (@clients) {
     $rpc->bz_run_tests(tests => \@all_tests,  method => 'Bug.legal_values',
                        post_success => \&post_success);
 }

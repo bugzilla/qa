@@ -6,8 +6,8 @@ use Test::More;
 use List::Util qw(first);
 use QA::Util;
 
-my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
-plan tests => $config->{test_extensions} ? 794 : 784;
+my ($config, @clients) = get_rpc_clients();
+plan tests => ($config->{test_extensions} ? 1188 : 1173);
 
 use constant INVALID_FIELD_NAME => 'invalid_field';
 use constant INVALID_FIELD_ID => -1;
@@ -95,7 +95,7 @@ sub get_products_from_field {
 }
 
 our %field_ids;
-foreach my $rpc ($jsonrpc, $xmlrpc) {
+foreach my $rpc (@clients) {
     my $call = $rpc->bz_call_success('Bug.fields');
     my $fields = $call->result->{fields};
     foreach my $field (ALL_FIELDS) {
@@ -197,7 +197,7 @@ sub post_success {
     }
 }
 
-foreach my $rpc ($jsonrpc, $xmlrpc) {
+foreach my $rpc (@clients) {
     $rpc->bz_run_tests(tests => \@all_tests,  method => 'Bug.fields',
                        post_success => \&post_success);
 }

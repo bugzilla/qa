@@ -42,6 +42,12 @@ sub call {
     if ($self->bz_get_mode) {
         my $method_escaped = uri_escape($method);
         $url .= "?method=$method_escaped";
+        if (my $cred = $self->_bz_credentials) {
+            $args->{Bugzilla_login} = $cred->{user}
+                if !exists $args->{Bugzilla_login};
+            $args->{Bugzilla_password} = $cred->{pass}
+                if !exists $args->{Bugzilla_password};
+        }
         if ($args) {
             my $params_json = $self->json->encode($args);
             my $params_escaped = uri_escape($params_json);

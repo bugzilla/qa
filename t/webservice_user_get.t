@@ -6,8 +6,8 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 82;
-my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
+use Test::More tests => 117;
+my ($config, @clients) = get_rpc_clients();
 
 my $get_user = $config->{unprivileged_user_login};
 
@@ -72,7 +72,7 @@ sub post_success {
     }
 }
 
-foreach my $rpc ($jsonrpc, $xmlrpc) {
+foreach my $rpc (@clients) {
     $rpc->bz_run_tests(tests => \@tests, method => 'User.get', 
                        post_success => \&post_success);
 

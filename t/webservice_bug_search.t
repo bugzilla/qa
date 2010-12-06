@@ -11,8 +11,8 @@ use DateTime;
 use Storable qw(dclone);
 use Test::More;
 
-my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
-plan tests => $config->{test_extensions} ? 212 : 206;
+my ($config, @clients) = get_rpc_clients();
+plan tests => $config->{test_extensions} ? 308 : 302;
 
 sub string_array { map { random_string() } (1..$_[0]) }
 
@@ -40,7 +40,7 @@ my @create_bugs = (
 
 # Creating the bugs isn't really a test, it's just preliminary work
 # for the tests. So we just run it with one of the RPC clients.
-$xmlrpc->bz_run_tests(tests => \@create_bugs, method => 'Bug.create');
+$clients[0]->bz_run_tests(tests => \@create_bugs, method => 'Bug.create');
 
 my @tests;
 foreach my $field (keys %$public_bug) {
@@ -166,7 +166,7 @@ sub post_success {
     }
 }
 
-foreach my $rpc ($jsonrpc, $xmlrpc) {
+foreach my $rpc (@clients) {
     $rpc->bz_run_tests(tests => \@tests,
                        method => 'Bug.search', post_success => \&post_success);
 }
