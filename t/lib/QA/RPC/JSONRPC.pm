@@ -31,6 +31,12 @@ sub bz_get_mode {
     return $self->{bz_get_mode};
 }
 
+sub _bz_callback {
+    my ($self, $value) = @_;
+    $self->{bz_callback} = $value if @_ > 1;
+    return $self->{bz_callback};
+}
+
 sub call {
     my $self = shift;
     my ($method, $args) = @_;
@@ -56,6 +62,11 @@ sub call {
         if ($self->version eq '1.1') {
             $url .= "&version=1.1";
         }
+        my $callback = delete $args->{callback};
+        if (defined $callback) {
+            $self->_bz_callback($callback);
+            $url .= "&callback=" . uri_escape($callback);
+        }
         $result = $self->SUPER::call($url);
     }
     else {
@@ -64,6 +75,23 @@ sub call {
 
     if ($result) {
         bless $result, 'QA::RPC::JSONRPC::ReturnObject';
+    }
+    return $result;
+}
+
+sub _get {
+    my $self = shift;
+    my $result = $self->SUPER::_get(@_);
+    # Simple JSONP support for tests. We just remove the callback from
+    # the return value.
+    my $callback = $self->_bz_callback;
+    if (defined $callback and $result->is_success) {
+        my $content = $result->content;
+        $content =~ s/^\Q$callback(\E(.*)\)$/$1/s;
+        $result->content($content);
+        # We don't need this anymore, and we don't want it to affect
+        # future calls.
+        delete $self->{bz_callback};
     }
     return $result;
 }

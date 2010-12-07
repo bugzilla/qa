@@ -91,9 +91,9 @@ sub bz_call_fail {
     }
     ok($call->faultcode 
        && (($call->faultcode < 32000 && $call->faultcode > -32000) 
-           # Fault code 32610 is OK because it's the "you must use HTTP POST"
-           # code, which we test for sometimes.
-           || $call->faultcode == 32610), 
+           # Fault codes 32610 and above are OK because they are errors
+           # that we expect and test for sometimes.
+           || $call->faultcode >= 32610), 
        $self->TYPE . ': Fault code is set properly')
         or diag("Code: " . $call->faultcode 
                 . " Message: " . $call->faultstring);
