@@ -55,7 +55,7 @@ sub bz_call_fail {
     $test_name ||= "$method failed (as intended)";
     my $call = $self->call($method, $args);
     $self->_handle_undef_response($test_name) if !$call;
-    ok(defined $call->fault, $self->TYPE . ": $test_name")
+    ok($call->fault, $self->TYPE . ": $test_name")
         or diag("Returned: " . Dumper($call->result));
     if (defined $faultstring) {
         cmp_ok(trim($call->faultstring), '=~', $faultstring, 
