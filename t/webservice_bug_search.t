@@ -6,41 +6,14 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use QA::Tests qw(PRIVATE_BUG_USER create_bug_fields);
+use QA::Tests qw(PRIVATE_BUG_USER);
 use DateTime;
-use Storable qw(dclone);
 use Test::More;
 
 my ($config, @clients) = get_rpc_clients();
-plan tests => $config->{test_extensions} ? 308 : 302;
+plan tests => $config->{test_extensions} ? 317 : 311;
 
-sub string_array { map { random_string() } (1..$_[0]) }
-
-my @whiteboard_strings = string_array(3);
-my @summary_strings = string_array(3);
-
-my $public_bug = create_bug_fields($config);
-$public_bug->{alias} = random_string(20);
-$public_bug->{whiteboard} = join(' ', @whiteboard_strings);
-$public_bug->{summary} = join(' ', @summary_strings);
-
-my $private_bug = dclone($public_bug);
-$private_bug->{alias}     = random_string(20);
-$private_bug->{product}   = 'QA-Selenium-TEST';
-$private_bug->{component} = 'QA-Selenium-TEST';
-
-my @create_bugs = (
-    { user => 'editbugs',
-      args => $public_bug,
-      test => 'Create a public bug' },
-    { user => PRIVATE_BUG_USER,
-      args => $private_bug,
-      test => 'Create a private bug' },
-);
-
-# Creating the bugs isn't really a test, it's just preliminary work
-# for the tests. So we just run it with one of the RPC clients.
-$clients[0]->bz_run_tests(tests => \@create_bugs, method => 'Bug.create');
+my ($public_bug, $private_bug) = $clients[0]->bz_create_test_bugs($config);
 
 my @tests;
 foreach my $field (keys %$public_bug) {
@@ -98,7 +71,7 @@ push(@tests, (
       test => 'Summary search that returns no results',
       bugs => 0,
     },
-    { args => { summary => \@summary_strings },
+    { args => { summary => [split(/\s/, $public_bug->{summary})] },
       test => 'Summary search using multiple terms',
     },
 
@@ -110,7 +83,7 @@ push(@tests, (
       test => 'Whiteboard search that returns no results',
       bugs => 0,
     },
-    { args => { whiteboard => \@whiteboard_strings },
+    { args => { whiteboard => [split(/\s/, $public_bug->{whiteboard})] },
       test => 'Whiteboard search using multiple terms',
       bugs => 1, exactly => 1,
     },

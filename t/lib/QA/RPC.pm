@@ -4,6 +4,8 @@ package QA::RPC;
 use strict;
 use Data::Dumper;
 use QA::Util;
+use QA::Tests qw(PRIVATE_BUG_USER create_bug_fields);
+use Storable qw(dclone);
 use Test::More;
 
 sub bz_config {
@@ -120,6 +122,52 @@ sub bz_get_products {
 
     $self->bz_call_success('User.logout');
     return \%products;
+}
+
+sub _string_array { map { random_string() } (1..$_[0]) }
+
+sub bz_create_test_bugs {
+    my ($self, $config) = @_;
+
+    my @whiteboard_strings = _string_array(3);
+    my @summary_strings = _string_array(3);
+
+    my $public_bug = create_bug_fields($config);
+    $public_bug->{alias} = random_string(20);
+    $public_bug->{whiteboard} = join(' ', @whiteboard_strings);
+    $public_bug->{summary} = join(' ', @summary_strings);
+
+    my $private_bug = dclone($public_bug);
+    $private_bug->{alias}     = random_string(20);
+    $private_bug->{product}   = 'QA-Selenium-TEST';
+    $private_bug->{component} = 'QA-Selenium-TEST';
+
+    my @create_bugs = (
+        { user => 'editbugs',
+          args => $public_bug,
+          test => 'Create a public bug' },
+        { user => PRIVATE_BUG_USER,
+          args => $private_bug,
+          test => 'Create a private bug' },
+    );
+
+    my $post_success = sub {
+        my ($call, $t) = @_;
+        my $id = $call->result->{id};
+        if ($t->{test} =~ /public/) {
+            $public_bug->{id} = $id;
+        }
+        else {
+            $private_bug->{id} = $id;
+        }
+    };
+
+    # Creating the bugs isn't really a test, it's just preliminary work
+    # for the tests. So we just run it with one of the RPC clients.
+    $self->bz_run_tests(tests => \@create_bugs, method => 'Bug.create',
+                        post_success => $post_success);
+
+    return ($public_bug, $private_bug);
 }
 
 sub bz_run_tests {
