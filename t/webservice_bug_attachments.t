@@ -27,7 +27,7 @@ sub post_bug_success {
         foreach my $is_private (0, 1) {
             my $find_desc = "${alias}_${is_private}";
             my $attachment = first { $_->{description} eq $find_desc }
-                                   @$bug_attachments;
+                                   reverse @$bug_attachments;
             if ($attachment) {
                 $attachments{$find_desc} = $attachment->{id};
             }
