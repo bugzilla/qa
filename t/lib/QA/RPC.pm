@@ -127,7 +127,7 @@ sub bz_get_products {
 sub _string_array { map { random_string() } (1..$_[0]) }
 
 sub bz_create_test_bugs {
-    my ($self, $config) = @_;
+    my ($self, $config, $second_private) = @_;
 
     my @whiteboard_strings = _string_array(3);
     my @summary_strings = _string_array(3);
@@ -138,28 +138,28 @@ sub bz_create_test_bugs {
     $public_bug->{summary} = join(' ', @summary_strings);
 
     my $private_bug = dclone($public_bug);
-    $private_bug->{alias}     = random_string(20);
-    $private_bug->{product}   = 'QA-Selenium-TEST';
-    $private_bug->{component} = 'QA-Selenium-TEST';
+    $private_bug->{alias} = random_string(20);
+    if ($second_private) {
+        $private_bug->{product}   = 'QA-Selenium-TEST';
+        $private_bug->{component} = 'QA-Selenium-TEST';
+        $private_bug->{target_milestone} = 'QAMilestone';
+        $private_bug->{version} = 'QAVersion';
+    }
 
     my @create_bugs = (
         { user => 'editbugs',
           args => $public_bug,
           test => 'Create a public bug' },
-        { user => PRIVATE_BUG_USER,
+        { user => $second_private ? PRIVATE_BUG_USER : 'editbugs',
           args => $private_bug,
-          test => 'Create a private bug' },
+          test => $second_private ? 'Create a private bug' 
+                                  : 'Create a second public bug' },
     );
 
     my $post_success = sub {
         my ($call, $t) = @_;
         my $id = $call->result->{id};
-        if ($t->{test} =~ /public/) {
-            $public_bug->{id} = $id;
-        }
-        else {
-            $private_bug->{id} = $id;
-        }
+        $t->{args}->{id} = $id;
     };
 
     # Creating the bugs isn't really a test, it's just preliminary work

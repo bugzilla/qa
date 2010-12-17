@@ -11,9 +11,10 @@ use DateTime;
 use Test::More;
 
 my ($config, @clients) = get_rpc_clients();
-plan tests => $config->{test_extensions} ? 317 : 311;
+plan tests => $config->{test_extensions} ? 329 : 320;
 
-my ($public_bug, $private_bug) = $clients[0]->bz_create_test_bugs($config);
+my ($public_bug, $private_bug) = $clients[0]->bz_create_test_bugs(
+    $config, 'private');
 
 my @tests;
 foreach my $field (keys %$public_bug) {

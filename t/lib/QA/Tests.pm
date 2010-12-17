@@ -21,15 +21,19 @@ use constant CREATE_BUG => {
     'bug_file_loc' => '',
     'description'  => '-- Comment Created By Bugzilla XML-RPC Tests --',
     'cc'           => ['unprivileged'],
-    'component'    => 'TestComponent',
-    'platform'     => 'All',
-    'assigned_to'  => 'editbugs',
-    'summary'      => 'XML-RPC Test Bug',
-    'product'      => 'TestProduct',
+    'component'    => 'c1',
+    'platform'     => 'PC',
+    # It's necessary to assign the bug to somebody who isn't in the
+    # timetracking group, for the Bug.update tests.
+    'assigned_to'  => PRIVATE_BUG_USER,
+    'summary'      => 'WebService Test Bug',
+    'product'      => 'Another Product',
     'op_sys'       => 'Linux',
     'severity'     => 'normal',
     'qa_contact'   => 'canconfirm',
+     version       => 'Another1',
      url           => 'http://www.bugzilla.org/',
+     target_milestone => 'AnotherMS1',
 };
 
 sub create_bug_fields {

@@ -48,7 +48,7 @@ my $fields = {
         undefined =>
             { faultstring => 'You must select/enter a version.', value => undef },
         invalid => {
-            faultstring => "There is no version named 'does-not-exist' in the 'TestProduct' product.",
+            faultstring => "There is no version named 'does-not-exist' in the",
             value       => 'does-not-exist'
         },
     },

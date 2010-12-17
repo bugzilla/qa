@@ -29,8 +29,8 @@ use Bugzilla::Component;
 use Bugzilla::Group;
 use Bugzilla::Version;
 use Bugzilla::Constants;
+use Bugzilla::Keyword;
 use Bugzilla::Config qw(:admin);
-
 
 my $dbh = Bugzilla->dbh;
 
@@ -541,6 +541,23 @@ foreach my $alias (qw(public_bug private_bug)) {
             isprivate => $is_private,
         });
     }
+}
+
+###################
+# Create Keywords #
+###################
+
+my @keywords = (
+    { name => 'test-keyword-1',
+      description => 'Created for Bugzilla QA Tests, Keyword 1' },
+    { name => 'test-keyword-2',
+      description => 'Created for Bugzilla QA Tests, Keyword 2' },
+);
+
+print "creating keywords...\n";
+foreach my $kw (@keywords) {
+    next if new Bugzilla::Keyword({ name => $kw->{name} });
+    Bugzilla::Keyword->create($kw);
 }
 
 print "installation and configuration complete!\n";
