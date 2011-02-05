@@ -383,6 +383,45 @@ if ($config->{test_extensions}) {
     set_parameters($sel, { "Bug Moving" => {"movers" => {type => "text", value => ""}} });
 }
 
+# Make sure token checks are working correctly for single bug editing and mass change,
+# first with no token, then with an invalid token.
+
+foreach my $params (["no_token_single_bug", ""], ["invalid_token_single_bug", "&token=1"]) {
+    my ($comment, $token) = @$params;
+    $sel->open_ok("/$config->{bugzilla_installation}/process_bug.cgi?id=$bug1_id&comment=$comment$token",
+                  undef, "Edit a single bug with " . ($token ? "an invalid" : "no") . " token");
+    $sel->title_is("Suspicious Action");
+    $sel->is_text_present_ok($token ? "an invalid token" : "web browser directly");
+    $sel->click_ok("confirm");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Bug $bug1_id processed");
+    $sel->click_ok("link=bug $bug1_id");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_like(qr/^Bug $bug1_id /);
+    $sel->is_text_present_ok($comment);
+}
+
+foreach my $params (["no_token_mass_change", ""], ["invalid_token_mass_change", "&token=1"]) {
+    my ($comment, $token) = @$params;
+    $sel->open_ok("/$config->{bugzilla_installation}/process_bug.cgi?id_$bug1_id=1&id_$bug2_id=1&comment=$comment$token",
+                  undef, "Mass change with " . ($token ? "an invalid" : "no") . " token");
+    $sel->title_is("Suspicious Action");
+    $sel->is_text_present_ok("no valid token for the buglist_mass_change action");
+    $sel->click_ok("confirm");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Bugs processed");
+    foreach my $bug_id ($bug1_id, $bug2_id) {
+        $sel->click_ok("link=bug $bug_id");
+        $sel->wait_for_page_to_load_ok(WAIT_TIME);
+        $sel->title_like(qr/^Bug $bug_id /);
+        $sel->is_text_present_ok($comment);
+        next if $bug_id == $bug2_id;
+        $sel->go_back_ok();
+        $sel->wait_for_page_to_load_ok(WAIT_TIME);
+        $sel->title_is("Bugs processed");
+    }
+}
+
 # Now move these bugs out of our radar.
 
 $sel->click_ok("link=My bugs from QA_Selenium");
