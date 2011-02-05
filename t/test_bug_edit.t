@@ -291,7 +291,20 @@ $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
 my $bug2_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
-$sel->type_ok("comment", "Make sure");
+
+# Clicking the "Back" button and resubmitting the form again should trigger a warning.
+
+$sel->go_back_ok();
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Enter Bug: TestProduct");
+$sel->click_ok("commit");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Already filed bug");
+$sel->is_text_present_ok("You already used the form");
+$sel->click_ok("file_bug_again");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
+$sel->type_ok("comment", "New comment not allowed");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Product Edit Access Denied");
