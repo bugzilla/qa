@@ -242,6 +242,9 @@ $sel->select_ok("component", "label=second comp");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug $bug1_id processed");
+$sel->click_ok("link=bug $bug1_id");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/Bug $bug1_id /);
 @cc_list = $sel->get_select_options("cc");
 ok(grep($_ eq $permanent_user, @cc_list), "User $permanent_user automatically added to the CC list");
 
