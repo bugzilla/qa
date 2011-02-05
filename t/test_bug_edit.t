@@ -343,6 +343,16 @@ $sel->click_ok("link=bug $bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/Bug $bug1_id /);
 $sel->selected_label_is("resolution", "WORKSFORME");
+$sel->select_ok("resolution", "label=INVALID");
+$sel->click_ok("commit");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Bug $bug1_id processed");
+
+$sel->click_ok("link=bug $bug1_id");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/Bug $bug1_id /);
+$sel->selected_label_is("resolution", "INVALID");
+
 $sel->click_ok("link=History");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Changes made to bug $bug1_id");
