@@ -10,6 +10,7 @@ my ($sel, $config) = get_selenium();
 
 my $admin_user_login = $config->{admin_user_login};
 my $unprivileged_user_login = $config->{unprivileged_user_login};
+my $permanent_user = $config->{permanent_user};
 
 log_in($sel, $config, 'admin');
 set_parameters($sel, { "Bug Fields"              => {"useclassification-off" => undef,
@@ -87,6 +88,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->type_ok("component", "second comp");
 # FIXME - Re-enter the default assignee (regression due to bug 577574)
 $sel->type_ok("initialowner", $admin_user_login);
+$sel->type_ok("initialcc", $permanent_user);
 $sel->click_ok("create");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Component Created");
@@ -154,6 +156,21 @@ $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug \d+ Submitted/);
 my $bug1_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
+my @cc_list = $sel->get_select_options("cc");
+ok(grep($_ eq $unprivileged_user_login, @cc_list), "$unprivileged_user_login correctly added to the CC list");
+ok(!grep($_ eq $permanent_user, @cc_list), "$permanent_user not in the CC list for 'first comp' by default");
+
+# File a second bug, and make sure users in the default CC list are added.
+file_bug_in_product($sel, "Kill me!");
+$sel->select_ok("version", "label=0.1a");
+$sel->select_ok("component", "label=second comp");
+$sel->type_ok("short_desc", "check default CC list");
+$sel->type_ok("comment", "is the CC list populated correctly?");
+$sel->click_ok("commit");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/^Bug \d+ Submitted/);
+@cc_list = $sel->get_select_options("cc");
+ok(grep($_ eq $permanent_user, @cc_list), "$permanent_user in the CC list for 'second comp' by default");
 
 # Edit product properties and set votes_to_confirm to 0, which has
 # the side-effect to disable auto-confirmation (new behavior compared
@@ -225,6 +242,8 @@ $sel->select_ok("component", "label=second comp");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug $bug1_id processed");
+@cc_list = $sel->get_select_options("cc");
+ok(grep($_ eq $permanent_user, @cc_list), "User $permanent_user automatically added to the CC list");
 
 # Delete the milestone the bug belongs to. This should retarget the bug
 # to the default milestone.
@@ -257,7 +276,7 @@ $sel->click_ok("//a[contains(\@href, 'editversions.cgi?action=del&product=Kill%2
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Delete Version of Product 'Kill me nicely'");
 $text = trim($sel->get_text("bugzilla-body"));
-ok($text =~ /Sorry, there is 1 bug outstanding for this version/, "Rejecting version deletion");
+ok($text =~ /Sorry, there are 2 bugs outstanding for this version/, "Rejecting version deletion");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 
@@ -284,7 +303,7 @@ $sel->click_ok("//a[contains(\@href, 'editcomponents.cgi?action=del&product=Kill
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Delete component 'second comp' from 'Kill me nicely' product");
 $text = trim($sel->get_text("bugzilla-body"));
-ok($text =~ /There is 1 bug entered for this component/, "Warning displayed");
+ok($text =~ /There are 2 bugs entered for this component/, "Warning displayed");
 ok($text =~ /Do you really want to delete this component\?/, "Requesting confirmation");
 $sel->click_ok("delete");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
