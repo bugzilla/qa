@@ -11,11 +11,12 @@ use QA::Util;
 my ($sel, $config) = get_selenium(CHROME_MODE);
 
 # set the insidergroup parameter to the admin group, and make sure
-# we can view attachments.
+# we can view and delete attachments.
 
 log_in($sel, $config, 'admin');
 set_parameters($sel, { "Group Security" => {"insidergroup" => {type => "select", value => "admin"}},
-                       "Attachments"    => {"allow_attachment_display-on" => undef}
+                       "Attachments"    => {"allow_attachment_display-on" => undef,
+                                            "allow_attachment_deletion-on" => undef}
                      });
 
 # First create a new bug with a private attachment.
@@ -131,7 +132,7 @@ go_to_bug($sel, $bug1_id);
 ok(!$sel->is_text_present("private attachment, v1"), "Private attachment not visible to logged out users");
 ok(!$sel->is_text_present("My patch, which I should see, always ("), "Private attachment not visible to logged out users");
 $sel->is_text_present_ok("This is my patch!");
-ok(!$sel->is_text_present("Making the powerless user's patch private"), "Private attachment not visible to logged out users");
+ok(!$sel->is_text_present("Making the powerless user's patch private"), "Private comment not visible to logged out users");
 
 # A powerless user can only see private attachments he owns.
 
@@ -145,7 +146,31 @@ $sel->title_is("");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 logout($sel);
+
+# Admins can delete attachments.
+
 log_in($sel, $config, 'admin');
+go_to_bug($sel, $bug1_id);
+$sel->click_ok('//a[@href="attachment.cgi?id=' . $attachment2_id . '&action=edit"]');
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Attachment $attachment2_id Details for Bug $bug1_id");
+$sel->click_ok("link=Delete");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Delete Attachment $attachment2_id of Bug $bug1_id");
+$sel->is_text_present_ok("Do you really want to delete this attachment?");
+$sel->type_ok("reason", "deleted by Selenium");
+$sel->click_ok("delete");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Changes Submitted to Attachment $attachment2_id of Bug $bug1_id");
+$sel->click_ok("link=bug $bug1_id");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/^Bug $bug1_id/);
+$sel->is_text_present_ok("deleted by Selenium");
+$sel->click_ok("link=attachment $attachment2_id");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Attachment Removed");
+$sel->is_text_present_ok("The attachment you are attempting to access has been removed");
+
 set_parameters($sel, { 
     "Group Security" => {"insidergroup" => { type => "select", 
                                              value => "QA-Selenium-TEST" }},
