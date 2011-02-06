@@ -39,6 +39,7 @@ $sel->click_ok("create");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Custom Field Created");
 $sel->is_text_present_ok("The new custom field \'cf_qa_freetext_$bug1_id\' has been successfully created.");
+
 $sel->click_ok("link=Add a new custom field");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Add a new Custom Field");
@@ -64,6 +65,7 @@ $sel->title_is("Edit the Custom Field \'cf_qa_list_$bug1_id\' (List$bug1_id)");
 $sel->click_ok("link=Edit legal values for this field");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Select value for the \'List$bug1_id\' (cf_qa_list_$bug1_id) field");
+
 $sel->click_ok("link=Add");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Add Value for the \'List$bug1_id\' (cf_qa_list_$bug1_id) field");
@@ -73,6 +75,7 @@ $sel->click_ok("create");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("New Field Value Created");
 $sel->is_text_present_ok("The value have fun? has been added as a valid choice for the List$bug1_id (cf_qa_list_$bug1_id) field.");
+
 $sel->click_ok("link=Add");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Add Value for the \'List$bug1_id\' (cf_qa_list_$bug1_id) field");
@@ -82,6 +85,65 @@ $sel->click_ok("create");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("New Field Value Created");
 $sel->is_text_present_ok("The value storage has been added as a valid choice for the List$bug1_id (cf_qa_list_$bug1_id) field.");
+
+# Also create a new bug status and a new resolution.
+
+go_to_admin($sel);
+$sel->click_ok("link=Field Values");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit values for which field?");
+$sel->click_ok("link=Resolution");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Select value for the 'Resolution' (resolution) field");
+$sel->click_ok("link=Add");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Add Value for the 'Resolution' (resolution) field");
+$sel->type_ok("value", "UPSTREAM");
+$sel->type_ok("sortkey", 450);
+$sel->click_ok("create");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("New Field Value Created");
+
+go_to_admin($sel);
+$sel->click_ok("link=Field Values");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit values for which field?");
+$sel->click_ok("link=Status");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Select value for the 'Status' (bug_status) field");
+$sel->click_ok("link=Add");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Add Value for the 'Status' (bug_status) field");
+$sel->type_ok("value", "SUSPENDED");
+$sel->type_ok("sortkey", 250);
+$sel->click_ok("open_status");
+$sel->click_ok("create");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("New Field Value Created");
+
+$sel->click_ok("link=Add");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Add Value for the 'Status' (bug_status) field");
+$sel->type_ok("value", "IN_QA");
+$sel->type_ok("sortkey", 550);
+$sel->click_ok("closed_status");
+$sel->click_ok("create");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("New Field Value Created");
+
+$sel->click_ok("link=status workflow page");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit Workflow");
+$sel->click_ok('//td[@title="From UNCONFIRMED to SUSPENDED"]//input[@type="checkbox"]');
+$sel->click_ok('//td[@title="From CONFIRMED to SUSPENDED"]//input[@type="checkbox"]');
+$sel->click_ok('//td[@title="From SUSPENDED to CONFIRMED"]//input[@type="checkbox"]');
+$sel->click_ok('//td[@title="From SUSPENDED to IN_PROGRESS"]//input[@type="checkbox"]');
+$sel->click_ok('//td[@title="From RESOLVED to IN_QA"]//input[@type="checkbox"]');
+$sel->click_ok('//td[@title="From IN_QA to VERIFIED"]//input[@type="checkbox"]');
+$sel->click_ok('//td[@title="From IN_QA to CONFIRMED"]//input[@type="checkbox"]');
+$sel->click_ok('//input[@value="Commit Changes"]');
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit Workflow");
 
 # Create new bug to test custom fields in bug creation page
 
@@ -99,23 +161,36 @@ my $bug2_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
 
 $sel->type_ok("cf_qa_freetext_$bug1_id", "bonsai");
 $sel->selected_label_is("cf_qa_list_$bug1_id", "---");
+$sel->select_ok("bug_status", "label=SUSPENDED");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug $bug2_id processed");
+
 go_to_bug($sel, $bug1_id);
 $sel->type_ok("cf_qa_freetext_$bug1_id", "dumbo");
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
+$sel->select_ok("bug_status", "RESOLVED");
+$sel->select_ok("resolution", "UPSTREAM");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug $bug1_id processed");
 $sel->click_ok("link=bug $bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $bug1_id/);
+$sel->select_ok("bug_status", "IN_QA");
+$sel->click_ok("commit");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Bug $bug1_id processed");
+$sel->click_ok("link=bug $bug1_id");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/^Bug $bug1_id/);
+
 $sel->click_ok("link=Format For Printing");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Full Text Bug Listing");
 $sel->is_text_present_ok("Freetext$bug1_id: dumbo");
 $sel->is_text_present_ok("List$bug1_id: storage");
+$sel->is_text_present_ok("Status: IN_QA UPSTREAM");
 go_to_bug($sel, $bug2_id);
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
 $sel->click_ok("commit");
@@ -128,6 +203,7 @@ open_advanced_search_page($sel);
 $sel->remove_all_selections_ok("product");
 $sel->add_selection_ok("product", "TestProduct");
 $sel->remove_all_selections("bug_status");
+$sel->remove_all_selections("resolution");
 $sel->select_ok("field0-0-0", "label=List$bug1_id");
 $sel->select_ok("type0-0-0", "label=is equal to");
 $sel->type_ok("value0-0-0", "storage");
@@ -235,4 +311,72 @@ $sel->value_is("obsolete", "on");
 $sel->click_ok("edit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Custom Field Updated");
+
+# Trying to delete a bug status which is in use is forbidden.
+
+go_to_admin($sel);
+$sel->click_ok("link=Field Values");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit values for which field?");
+$sel->click_ok("link=Status");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Select value for the 'Status' (bug_status) field");
+$sel->click_ok('//a[@href="editvalues.cgi?action=del&field=bug_status&value=SUSPENDED"]');
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Delete Value 'SUSPENDED' from the 'Status' (bug_status) field");
+$sel->is_text_present_ok("Sorry, but the 'SUSPENDED' value cannot be deleted");
+
+go_to_bug($sel, $bug2_id);
+$sel->select_ok("bug_status", "CONFIRMED");
+$sel->click_ok("commit");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Bug $bug2_id processed");
+
+go_to_bug($sel, $bug1_id);
+$sel->select_ok("bug_status", "VERIFIED");
+$sel->select_ok("resolution", "INVALID");
+$sel->click_ok("commit");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Bug $bug1_id processed");
+
+# Unused values can be deleted.
+
+go_to_admin($sel);
+$sel->click_ok("link=Field Values");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit values for which field?");
+$sel->click_ok("link=Status");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Select value for the 'Status' (bug_status) field");
+$sel->click_ok('//a[@href="editvalues.cgi?action=del&field=bug_status&value=SUSPENDED"]');
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Delete Value 'SUSPENDED' from the 'Status' (bug_status) field");
+$sel->click_ok("delete");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Field Value Deleted");
+$sel->is_text_present_ok("The value SUSPENDED of the Status (bug_status) field has been deleted");
+
+$sel->click_ok('//a[@href="editvalues.cgi?action=del&field=bug_status&value=IN_QA"]');
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Delete Value 'IN_QA' from the 'Status' (bug_status) field");
+$sel->click_ok("delete");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Field Value Deleted");
+$sel->is_text_present_ok("The value IN_QA of the Status (bug_status) field has been deleted");
+
+go_to_admin($sel);
+$sel->click_ok("link=Field Values");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit values for which field?");
+$sel->click_ok("link=Resolution");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Select value for the 'Resolution' (resolution) field");
+$sel->click_ok('//a[@href="editvalues.cgi?action=del&field=resolution&value=UPSTREAM"]');
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Delete Value 'UPSTREAM' from the 'Resolution' (resolution) field");
+$sel->click_ok("delete");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Field Value Deleted");
+$sel->is_text_present_ok("The value UPSTREAM of the Resolution (resolution) field has been deleted");
+
 logout($sel);
