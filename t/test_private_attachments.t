@@ -84,6 +84,21 @@ foreach my $user ('', 'unprivileged') {
     $sel->is_text_present_ok("this patch is public. Everyone can see it.");
 }
 
+# A powerless user can comment on attachments he doesn't own.
+
+$sel->click_ok('//a[@href="attachment.cgi?id=' . $attachment1_id . '&action=edit"]');
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Attachment $attachment1_id Details for Bug $bug1_id");
+$sel->is_text_present_ok("Creator: admin");
+$sel->type_ok("comment", "This attachment is not mine.");
+$sel->click_ok("update");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Changes Submitted to Attachment $attachment1_id of Bug $bug1_id");
+$sel->click_ok("link=bug $bug1_id");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/^Bug $bug1_id/);
+$sel->is_text_present_ok("This attachment is not mine");
+
 # Powerless users will always be able to view their own attachments, even
 # when those are marked private by a member of the insider group.
 
@@ -128,7 +143,7 @@ $sel->click_ok("link=bug $bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/^Bug $bug1_id/);
 $sel->is_text_present_ok("My patch, which I should see, always (");
-$sel->is_checked_ok('//a[@id="comment_link_3"]/../..//div//input[@type="checkbox"]');
+$sel->is_checked_ok('//a[@id="comment_link_4"]/../..//div//input[@type="checkbox"]');
 $sel->is_text_present_ok("Making the powerless user's patch private.");
 logout($sel);
 
