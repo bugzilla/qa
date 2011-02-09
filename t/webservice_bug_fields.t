@@ -7,7 +7,7 @@ use List::Util qw(first);
 use QA::Util;
 
 my ($config, @clients) = get_rpc_clients();
-plan tests => ($config->{test_extensions} ? 1188 : 1173);
+plan tests => ($config->{test_extensions} ? 1356 : 1341);
 
 use constant INVALID_FIELD_NAME => 'invalid_field';
 use constant INVALID_FIELD_ID => -1;
@@ -74,6 +74,7 @@ use constant ALL_SELECT_FIELDS => (STANDARD_SELECT_FIELDS,
 use constant PRODUCT_FIELDS => qw(version target_milestone component);
 use constant ALL_FIELDS => (GLOBAL_GENERAL_FIELDS, ALL_SELECT_FIELDS,
                             PRODUCT_FIELDS);
+use constant MANDATORY_FIELDS => qw(short_desc product version component);
 
 use constant PUBLIC_PRODUCT  => 'Another Product';
 use constant PRIVATE_PRODUCT => 'QA-Selenium-TEST';
@@ -103,6 +104,13 @@ foreach my $rpc (@clients) {
         ok($field_data, "$field is in the returned result")
             or diag(Dumper($fields));
         $field_ids{$field} = $field_data->{id};
+
+        if (grep($_ eq $field, MANDATORY_FIELDS)) {
+            ok($field_data->{is_mandatory}, "$field is mandatory");
+        }
+        else {
+            ok(!$field_data->{is_mandatory}, "$field is not mandatory");
+        }
     }
 
     foreach my $field (ALL_SELECT_FIELDS, PRODUCT_FIELDS) {
