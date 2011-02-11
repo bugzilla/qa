@@ -41,20 +41,20 @@ Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
 # Set Parameters
 ##########################################################################
 
-my $params_modified = 0;
 # Some parameters must be turned on to create bugs requiring them.
 # They are also expected to be turned on by some webservice_*.t scripts.
-if (!Bugzilla->params->{usebugaliases}) {
-    SetParam('usebugaliases', 1);
-    $params_modified = 1;
-}
-if (!Bugzilla->params->{useqacontact}) {
-    SetParam('useqacontact', 1);
-    $params_modified = 1;
-}
-# Do not try to send emails for real!
-if (Bugzilla->params->{mail_delivery_method} ne 'Test') {
-    SetParam('mail_delivery_method', 'Test');
+my %set_params = (
+    usebugaliases => 1,
+    useqacontact  => 1,
+    mail_delivery_method => 'Test',
+    maxattachmentsize => 256,
+);
+
+my $params_modified;
+foreach my $param (keys %set_params) {
+    my $value = $set_params{$param};
+    next if Bugzilla->params->{$param} eq $value;
+    SetParam($param, $value);
     $params_modified = 1;
 }
 

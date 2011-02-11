@@ -179,6 +179,7 @@ sub bz_run_tests {
 
     # Optional params
     my $post_success = $params{post_success};
+    my $pre_call = $params{pre_call};
 
     my $former_user = '';
     foreach my $t (@$tests) {
@@ -190,6 +191,8 @@ sub bz_run_tests {
             $self->bz_log_in($user) if $user;
             $former_user = $user;
         }
+
+        $pre_call->($t, $self) if $pre_call;
 
         if ($t->{error}) {
             $self->bz_call_fail($method, $t->{args}, $t->{error}, $t->{test});
