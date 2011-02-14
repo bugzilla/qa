@@ -5,10 +5,57 @@
 use strict;
 use warnings;
 use lib qw(lib);
+use DateTime;
 use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
-use Test::More tests => 184;
+use Test::More tests => 358;
 my ($config, @clients) = get_rpc_clients();
+
+# These gets populated when we call Bug.add_comment.
+our $creation_time;
+our %comments = (
+    public_comment_public_bug  => 0,
+    public_comment_private_bug  => 0,
+    private_comment_public_bug  => 0,
+    private_comment_private_bug => 0,
+);
+
+sub test_comments {
+    my ($comments_returned, $call, $t, $rpc) = @_;
+
+    my $comment = $comments_returned->[0];
+    ok($comment->{bug_id}, "bug_id exists");
+    # XXX At some point we should test attachment_id here.
+
+    if ($t->{args}->{comment_ids}) {
+        my $expected_id = $t->{args}->{comment_ids}->[0];
+        is($comment->{id}, $expected_id, "comment id is correct");
+
+        my %reverse_map = reverse %comments;
+        my $expected_text = $reverse_map{$expected_id};
+        is($comment->{text}, $expected_text, "comment has the correct text");
+   
+        my $priv_login = $rpc->bz_config->{PRIVATE_BUG_USER . '_user_login'};
+        is($comment->{author}, $priv_login, "comment author is correct");
+        is($comment->{creator}, $priv_login, "comment creator is correct");
+
+
+        my $creation_day;
+        if ($rpc->isa('QA::RPC::XMLRPC')) {
+            $creation_day = $creation_time->ymd('');
+        }
+        else {
+            $creation_day = $creation_time->ymd;
+        }
+        like($comment->{time}, qr/^\Q${creation_day}\ET\d\d:\d\d:\d\d/,
+             "comment time has the right format");
+    }
+    else {
+        foreach my $field (qw(id text author creator time)) {
+            ok(defined $comment->{$field}, "$field is defined");
+        }
+    }
+}
 
 ################
 # Bug ID Tests #
@@ -16,7 +63,10 @@ my ($config, @clients) = get_rpc_clients();
 
 sub post_bug_success {
     my ($call, $t) = @_;
-    is(scalar keys %{ $call->result->{bugs} }, 1, "Got exactly one bug");
+    my @bugs = values %{ $call->result->{bugs} };
+    is(scalar @bugs, 1, "Got exactly one bug");
+    my @comments = map { @{ $_->{comments} } } @bugs;
+    test_comments(\@comments, @_);
 }
 
 foreach my $rpc (@clients) {
@@ -29,16 +79,7 @@ foreach my $rpc (@clients) {
 ####################
 
 # First, create comments using add_comment.
-
-our %comments = (
-    public_comment_public_bug  => 0,
-    public_comment_private_bug  => 0,
-    private_comment_public_bug  => 0,
-    private_comment_private_bug => 0,
-);
-
 my @add_comment_tests;
-
 foreach my $key (keys %comments) {
     $key =~ /^([a-z]+)_comment_(\w+)$/;
     my $is_private = ($1 eq 'private' ? 1 : 0);
@@ -57,6 +98,7 @@ sub post_add {
     $comments{$key} = $call->result->{id};
 }
 
+$creation_time = DateTime->now();
 # We only need to create these comments once, with one of the interfaces.
 $clients[0]->bz_run_tests(
     tests => \@add_comment_tests, method => 'Bug.add_comment', 
@@ -114,6 +156,14 @@ my @comment_tests = (
     },
 );
 
+sub post_comments {
+    my ($call) = @_;
+    my @comments = values %{ $call->result->{comments} };
+    is(scalar @comments, 1, "Got exactly one comment");
+    test_comments(\@comments, @_);
+}
+
 foreach my $rpc (@clients) {
-    $rpc->bz_run_tests(tests => \@comment_tests, method => 'Bug.comments');
+    $rpc->bz_run_tests(tests => \@comment_tests, method => 'Bug.comments',
+                       post_success => \&post_comments);
 }
