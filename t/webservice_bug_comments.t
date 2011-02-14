@@ -7,7 +7,7 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
-use Test::More tests => 178;
+use Test::More tests => 184;
 my ($config, @clients) = get_rpc_clients();
 
 ################

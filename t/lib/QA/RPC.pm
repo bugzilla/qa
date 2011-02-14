@@ -127,7 +127,8 @@ sub bz_get_products {
 sub _string_array { map { random_string() } (1..$_[0]) }
 
 sub bz_create_test_bugs {
-    my ($self, $config, $second_private) = @_;
+    my ($self, $second_private) = @_;
+    my $config = $self->bz_config;
 
     my @whiteboard_strings = _string_array(3);
     my @summary_strings = _string_array(3);
@@ -144,6 +145,9 @@ sub bz_create_test_bugs {
         $private_bug->{component} = 'QA-Selenium-TEST';
         $private_bug->{target_milestone} = 'QAMilestone';
         $private_bug->{version} = 'QAVersion';
+        # Although we don't directly use this, this helps some tests that
+        # depend on the values in $private_bug.
+        $private_bug->{creator} = $config->{PRIVATE_BUG_USER . '_user_login'};
     }
 
     my @create_bugs = (

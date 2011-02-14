@@ -5,7 +5,7 @@ use Data::Dumper;
 use QA::Util;
 use QA::Tests qw(PRIVATE_BUG_USER STANDARD_BUG_TESTS);
 use Storable qw(dclone);
-use Test::More tests => 959;
+use Test::More tests => 965;
 
 use constant NONEXISTANT_BUG => 12_000_000;
 
@@ -21,7 +21,7 @@ sub get_tests {
     # update doesn't support logged-out users.
     my @tests = grep { $_->{user} } @{ STANDARD_BUG_TESTS() };
 
-    my ($public_bug, $second_bug) = $rpc->bz_create_test_bugs($config);
+    my ($public_bug, $second_bug) = $rpc->bz_create_test_bugs();
     my ($public_id, $second_id) = ($public_bug->{id}, $second_bug->{id});
     
     my $comment_call = $rpc->bz_call_success(

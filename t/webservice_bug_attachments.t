@@ -6,7 +6,7 @@ use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
 use Data::Dumper;
 use List::Util qw(first);
 use MIME::Base64;
-use Test::More tests => 307;
+use Test::More tests => 313;
 my ($config, @clients) = get_rpc_clients();
 
 ################
