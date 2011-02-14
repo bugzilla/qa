@@ -5,10 +5,11 @@
 use strict;
 use warnings;
 use lib qw(lib);
+use Data::Dumper;
 use DateTime;
 use QA::Util;
 use QA::Tests qw(bug_tests PRIVATE_BUG_USER);
-use Test::More tests => 679;
+use Test::More tests => 1012;
 my ($config, @clients) = get_rpc_clients();
 
 my $xmlrpc = $clients[0];
@@ -118,6 +119,17 @@ sub post_success {
         # "description" is used by Bug.create but comments are not returned
         # by Bug.get.
         next if $field eq 'description';
+
+        my @include = @{ $t->{args}->{include_fields} || [] };
+        my @exclude = @{ $t->{args}->{exclude_fields} || [] };
+        if ((@include and !grep { $_ eq $field } @include )
+            or (@exclude and grep { $_ eq $field } @exclude))
+        {
+            ok(!exists $bug->{$field}, "$field is not included")
+              or diag Dumper($bug);
+            next;
+        }
+
         if ($field =~ /^is_/) {
             ok(defined $bug->{$field}, $rpc->TYPE . ": $field is not null");
             is($bug->{$field} ? 1 : 0, $expect->{$field} ? 1 : 0,
@@ -149,7 +161,22 @@ sub post_success {
     }
 }
 
+my @tests = (
+    @{ bug_tests($public_id, $private_id) },
+    { args => { ids => [$public_id],
+                include_fields => ['id', 'summary', 'groups'] },
+      test => 'include_fields',
+    },
+    { args => { ids => [$public_id],
+                exclude_fields => ['assigned_to', 'cf_qa_status'] },
+      test => 'exclude_fields' },
+    { args => { ids => [$public_id], 
+                include_fields => ['id', 'summary', 'groups'],
+                exclude_fields => ['summary'] },
+      test => 'exclude_fields overrides include_fields' },
+);
+
 foreach my $rpc (@clients) {
-    $rpc->bz_run_tests(tests => bug_tests($public_bug->{id}, $private_bug->{id}),
-                       method => 'Bug.get', post_success => \&post_success);
+    $rpc->bz_run_tests(tests => \@tests,  method => 'Bug.get',
+                       post_success => \&post_success);
 }
