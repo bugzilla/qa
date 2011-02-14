@@ -69,7 +69,7 @@ for my $field (PRODUCT_FIELDS) {
 
 my @extra_tests = (
     { args  => { product_id => $private_product, },
-      error => "Can't use as a field name",
+      error => "requires a field argument",
       test  =>  "Passing product_id without 'field' throws an error",
     },
     { args  => { field => INVALID_FIELD_NAME },
