@@ -6,7 +6,7 @@ use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
 use Data::Dumper;
 use List::Util qw(first);
 use MIME::Base64;
-use Test::More tests => 313;
+use Test::More tests => 337;
 my ($config, @clients) = get_rpc_clients();
 
 ################
@@ -133,8 +133,10 @@ sub post_success {
        "content_type is correct");
     cmp_ok($attachment->{file_name}, '=~', qr/^\w+\.pl$/,
            "filename is in the expected format");
-    is($attachment->{attacher}, $config->{QA_Selenium_TEST_user_login},
-       "attacher is the correct user");
+    is($attachment->{$_}, $config->{QA_Selenium_TEST_user_login},
+       "$_ is the correct user") foreach qw(attacher creator);
+    is($attachment->{summary}, $attachment->{description},
+       "summary and description have the same values");
     my $data = $attachment->{data};
     $data = decode_base64($data) if $rpc->isa('QA::RPC::JSONRPC');
     is($data, $content, 'data is correct');
