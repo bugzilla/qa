@@ -6,10 +6,14 @@ use strict;
 use warnings;
 use lib qw(lib);
 use QA::Util;
-use Test::More tests => 117;
+use QA::Tests qw(PRIVATE_BUG_USER);
+use Test::More tests => 180;
 my ($config, @clients) = get_rpc_clients();
 
-my $get_user = $config->{unprivileged_user_login};
+my $get_user = $config->{'unprivileged_user_login'};
+my $priv_user = $config->{PRIVATE_BUG_USER . '_user_login'};
+my $disabled = $config->{'disabled_user_login'};
+my $disabled_match = substr($disabled, 0, length($disabled) - 1);
 
 # These are the basic tests. There are tests for include_fields 
 # and exclude_field below.
@@ -27,6 +31,7 @@ my @tests = (
       error => 'Logged-out users cannot use',
     },
 
+    # match & names
     { user => 'unprivileged',
       args => { names => [$get_user] },
       test => "Unprivileged user can get himself",
@@ -39,6 +44,36 @@ my @tests = (
       args => { match => [$get_user], names => [$get_user] },
       test => 'Specifying the same thing in "match" and "names"',
     },
+
+    # include_disabled
+    { user => 'unprivileged',
+      args => { match => [$get_user, $disabled_match] },
+      test => 'Disabled users are not normally returned'
+    },
+    { user => 'unprivileged',
+      args => { match => [$disabled_match], include_disabled => 1 },
+      test => 'Specifying include_disabled returns disabled users'
+    },
+    { user => 'unprivileged',
+      args => { match => [$disabled] },
+      test => 'Full match on a disabled user returns that user',
+    },
+
+    # groups and group_ids
+    { args  => { groups => ['QA-Selenium-TEST'] },
+      test  => 'Specifying just groups fails',
+      error => 'one of the following parameters',
+    },
+    { args => { group_ids => [1] },
+      test => 'Specifying just group ids fails',
+      error => 'one of the following parameters',
+    },
+    { args => { names => [$get_user, $priv_user],
+                groups => ['QA-Selenium-TEST'] },
+      test => 'Limiting the return value to a group'
+    },
+    # XXX We have no way of getting group_ids from the WebService, so
+    # we can't really test that they work.
 
     { user => 'admin',
       args => { names => [$get_user] },
