@@ -115,50 +115,7 @@ sub post_success {
     my @fields = sort keys %$expect;
     push(@fields, 'creation_time', 'last_change_time');
 
-    foreach my $field (@fields) {
-        # "description" is used by Bug.create but comments are not returned
-        # by Bug.get.
-        next if $field eq 'description';
-
-        my @include = @{ $t->{args}->{include_fields} || [] };
-        my @exclude = @{ $t->{args}->{exclude_fields} || [] };
-        if ((@include and !grep { $_ eq $field } @include )
-            or (@exclude and grep { $_ eq $field } @exclude))
-        {
-            ok(!exists $bug->{$field}, "$field is not included")
-              or diag Dumper($bug);
-            next;
-        }
-
-        if ($field =~ /^is_/) {
-            ok(defined $bug->{$field}, $rpc->TYPE . ": $field is not null");
-            is($bug->{$field} ? 1 : 0, $expect->{$field} ? 1 : 0,
-               $rpc->TYPE . ": $field has the right boolean value");
-        }
-        elsif ($field eq 'cc') {
-            foreach my $cc_item (@{ $expect->{cc} || [] }) {
-                ok(grep($_ eq $cc_item, @{ $bug->{cc} }),
-                   $rpc->TYPE . ": $field contains $cc_item");
-            }
-        }
-        elsif ($field eq 'creation_time' or $field eq 'last_change_time') {
-            my $creation_day;
-            # XML-RPC and JSON-RPC have different date formats.
-            if ($rpc->isa('QA::RPC::XMLRPC')) {
-                $creation_day = $creation_time->ymd('');
-            }
-            else {
-                $creation_day = $creation_time->ymd;
-            }
-            
-            like($bug->{$field}, qr/^\Q${creation_day}\ET\d\d:\d\d:\d\d/,
-                 $rpc->TYPE . ": $field has the right format");
-        }
-        else {
-            is_deeply($bug->{$field}, $expect->{$field},
-                      $rpc->TYPE . ": $field value is correct");
-        }
-    }
+    $rpc->bz_test_bug(\@fields, $bug, $expect, $t, $creation_time);
 }
 
 my @tests = (

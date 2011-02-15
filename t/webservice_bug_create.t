@@ -5,9 +5,10 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 175;
+use Storable qw(dclone);
+use Test::More tests => 287;
 use QA::Util;
-use QA::Tests qw(create_bug_fields);
+use QA::Tests qw(create_bug_fields PRIVATE_BUG_USER);
 
 my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
@@ -138,51 +139,96 @@ my $fields = {
         },
 
     },
+# XXX This should fail explicitly but does not yet--it currently
+# fails silently.
+#    groups => {
+#        non_existent => {
+#            faultstring => 'some error should be here',
+#            value => [random_string(20)],
+#        },
+#    },
+    comment_is_private => {
+        invalid => {
+             faultstring => 'you are not allowed to.+comments.+private',
+             value => 1,
+        }
+    },
 };
 
 $jsonrpc_get->bz_call_fail('Bug.create', $bug_fields,
     'must use HTTP POST', 'create fails over GET');
 
-foreach my $rpc ($jsonrpc, $xmlrpc) {
-    # test calling Bug.create without logging into bugzilla
-    my $create_call = $rpc->bz_call_fail('Bug.create', $bug_fields,
-        'You must log in', 'Cannot file bugs as logged-out user');
+my @tests = (
+    { args  => $bug_fields,
+      error => "You must log in",
+      test  => "Cannot file bugs as a logged-out user",
+    },
+    { user => PRIVATE_BUG_USER,
+      args => { %$bug_fields, product => 'QA-Selenium-TEST',
+                component => 'QA-Selenium-TEST',
+                target_milestone => 'QAMilestone',
+                version => 'QAVersion',
+                groups => ['QA-Selenium-TEST'],
+                # These are set here because we can't actually set them,
+                # and we need the values to be correct for post_success.
+                qa_contact => $config->{PRIVATE_BUG_USER . '_user_login'},
+                status => 'UNCONFIRMED' },
+      test => "Authorized user can file a bug against a group",
+    },
+    { user => PRIVATE_BUG_USER,
+      args => { %$bug_fields, comment_is_private => 1,
+                # These are here because PRIVATE_BUG_USER can't set them
+                # and we need their values to be correct for post_success.
+                assigned_to => $config->{'permanent_user'},
+                qa_contact => '',
+                status => 'UNCONFIRMED' },
+      test => "Insider can create a private description"
+    },
+    { user => 'editbugs',
+      args => $bug_fields,
+      test => "Creating a bug with standard values succeeds",
+    },
+);
 
-    $rpc->bz_log_in('editbugs');
-
-    # run the tests for all the invalid values that can be passed 
-    # to Bug.create()
-    foreach my $f (sort keys %{$fields}) {
-        foreach my $val (sort keys %{$fields->{$f}}) {
-            my %bug_fields_hash = %$bug_fields;
-            my $bug_fields_copy = \%bug_fields_hash;
-            $bug_fields_copy->{$f} = $fields->{$f}->{$val}->{value};
-            my $expected_faultstring = $fields->{$f}->{$val}->{faultstring};
-
-            my $fail_call = $rpc->bz_call_fail('Bug.create', $bug_fields_copy, 
-                $expected_faultstring, "Specifying $val $f fails");
-        }
+# Convert the $fields tests into standard bz_run_tests format.
+foreach my $field (sort keys %$fields) {
+    my $test_values = $fields->{$field};
+    foreach my $test_name (sort keys %$test_values) {
+        my $input_fields = dclone($bug_fields);
+        my $check_value = $test_values->{$test_name}->{value};
+        my $error       = $test_values->{$test_name}->{faultstring};
+        $input_fields->{$field} = $check_value;
+        my $test = { user => 'editbugs', args => $input_fields, 
+                     error => $error, 
+                     test => "$field $test_name: fails as expected" };
+        push(@tests, $test);
     }
+}
 
-    # after the loop ends all the $bug_fields value will be set to valid
-    # this is done by the sort so call create bug with the valid $bug_fields
-    # to run the test for the successful creation of the bug
-    my $success_create = $rpc->bz_call_success('Bug.create', $bug_fields);
-    my $bug_id = $success_create->result->{id};
-    cmp_ok($bug_id, 'gt', 0,
-           "Created new bug with id " . $success_create->result->{id});
+sub post_success {
+    my ($call, $t, $rpc) = @_;
 
-    # Make sure that the bug that we created has the field values we specified.
-    my $bug_result = $rpc->bz_call_success('Bug.get', { ids => [$bug_id] });
-    my $bug = $bug_result->result->{bugs}->[0];
-    isa_ok($bug, 'HASH', "Bug $bug_id");
-    # We have to limit the fields checked because Bug.get only returns certain 
-    # fields.
-    foreach my $field (qw(assigned_to component priority product severity 
-                          status summary)) 
-    {
-        is($bug->{$field}, $bug_fields->{$field}, "$field has the right value");
-    };
+    my $id = $call->result->{id};
+    ok($id, $rpc->TYPE . ": Result has an id: $id");
 
-    $rpc->bz_call_success('User.logout');
+    my $get_call = $rpc->bz_call_success('Bug.get', { ids => [$id] });
+    my $bug = $get_call->result->{bugs}->[0];
+
+    my $expect = dclone $t->{args};
+    
+    my $comment_is_private = delete $expect->{comment_is_private};
+    $expect->{creator} = $rpc->bz_config->{$t->{user} . '_user_login'};
+
+    my @fields = keys %$expect;
+    $rpc->bz_test_bug(\@fields, $bug, $expect, $t);
+
+    my $comment_call = $rpc->bz_call_success('Bug.comments', { ids => [$id] });
+    my $comment = $comment_call->result->{bugs}->{$id}->{comments}->[0];
+    is($comment->{is_private} ? 1 : 0, $comment_is_private ? 1 : 0,
+       $rpc->TYPE . ": comment privacy is correct");
+}
+
+foreach my $rpc ($jsonrpc, $xmlrpc) {
+    $rpc->bz_run_tests(tests => \@tests, method => 'Bug.create',
+                       post_success => \&post_success);
 }
