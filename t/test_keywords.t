@@ -144,8 +144,8 @@ $sel->remove_all_selections("bug_status");
 $sel->type_ok("keywords", "selenium");
 $sel->click_ok("Search");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("Unknown Keyword");
-$sel->is_text_present_ok("selenium is not a known keyword");
+$sel->title_is("Invalid Keyword");
+$sel->is_text_present_ok("There is no keyword named 'selenium'");
 
 # Make sure describekeywords.cgi works as expected.
 
