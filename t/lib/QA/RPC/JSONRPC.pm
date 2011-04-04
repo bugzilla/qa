@@ -40,7 +40,9 @@ sub _bz_callback {
 sub call {
     my $self = shift;
     my ($method, $args) = @_;
-    my %params = ( method => $method, params => [$args] );
+    my %params = ( method => $method );
+    $params{params} = $args ? [$args] : [];
+
     my $config = $self->bz_config;
     my $url = $config->{browser_url} . "/"
               . $config->{bugzilla_installation} . "/jsonrpc.cgi";
@@ -125,6 +127,9 @@ sub send_request {
     my $self = shift;
     my $response = $self->SUPER::send_request(@_);
     $self->http_response($response);
+    # JSON::RPC::Client can't handle 500 responses, even though
+    # they're required by the JSON-RPC spec.
+    $response->code(200);
     return $response;
 }
 
