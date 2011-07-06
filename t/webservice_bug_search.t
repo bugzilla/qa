@@ -144,7 +144,7 @@ sub post_success {
         cmp_ok(scalar @$bugs, $operator, $expected_count, 
                'The right number of bugs are returned');
         unless ($t->{user} and $t->{user} eq PRIVATE_BUG_USER) {
-            ok(!grep($_->{alias} eq $private_bug->{alias}, @$bugs),
+            ok(!grep($_->{alias} && $_->{alias} eq $private_bug->{alias}, @$bugs),
                'Result does not contain the private bug');
         }
 
