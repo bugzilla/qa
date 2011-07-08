@@ -399,7 +399,7 @@ eval {
 my @flagtypes = (
     {name => 'spec_multi_flag', desc => 'Specifically requestable and multiplicable bug flag',
      is_requestable => 1, is_requesteeble => 1, is_multiplicable => 1, grant_group => 'editbugs',
-     target_type => 'b', inclusions => ['Another Product:c1']},
+     target_type => 'b', cc_list => '', inclusions => ['Another Product:c1']},
 );
 
 print "creating flag types...\n";
