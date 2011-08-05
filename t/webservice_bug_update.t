@@ -426,16 +426,16 @@ sub invalid_values {
         
         groups => [
             { value => { add => ['Master'] },
-              error => 'group .* but you do not have permissions to do so',
+              error => 'either this group does not exist, or you are not allowed to restrict bugs to this group',
               test  => "adding group we don't have access to but is valid fails" },
             { value => { add => ['QA-Selenium-TEST'] },
-              error => 'product can not be restricted to that group',
+              error => 'either this group does not exist, or you are not allowed to restrict bugs to this group',
               test  => 'adding valid group that is not in this product fails' },
             { value => { add => [random_string(20)] },
-              error => 'There is no group named',
+              error => 'either this group does not exist, or you are not allowed to restrict bugs to this group',
               test  => 'adding non-existent group fails' },
             { value => { remove => [random_string(20)] },
-              error => 'There is no group named',
+              error => 'either this group does not exist, or you are not allowed to remove bugs from this group',
               test => 'removing non-existent group fails' },
         ],
         
