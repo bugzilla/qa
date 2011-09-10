@@ -123,7 +123,6 @@ go_to_admin($sel);
 $sel->click_ok("link=Default Preferences");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Default Preferences");
-$sel->check_ok("post_bug_submit_action-enabled");
 $sel->select_ok("post_bug_submit_action", "label=Show the updated bug");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load(WAIT_TIME);
@@ -206,15 +205,13 @@ $sel->is_text_present_ok("The changes to your email preferences have been saved.
 # Create a test bug (bugmail to both normal user and admin)
 file_bug_in_product($sel, "Another Product");
 $sel->select_ok("component", "label=c1");
-$sel->type_ok("short_desc", "Selenium Email Preference test bug", "Enter bug summary");
+my $bug_summary = "Selenium Email Preference test bug";
+$sel->type_ok("short_desc", $bug_summary, "Enter bug summary");
 $sel->type_ok("comment", "Created by Selenium to test Email Preferences", "Enter bug description");
 $sel->type_ok("assigned_to", $config->{editbugs_user_login});
 $sel->type_ok("qa_contact", $config->{admin_user_login});
 $sel->type_ok("cc", $config->{admin_user_login});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load(WAIT_TIME);
-my $bug1_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_like(qr/^Bug $bug1_id Submitted/, "Bug $bug1_id created");
+my $bug1_id = create_bug($sel, $bug_summary);
 my @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
 my @email_excluded = get_email_excluded($sel);
@@ -226,9 +223,7 @@ go_to_bug($sel, $bug1_id);
 # Severity change (bugmail to normal user but not admin)
 $sel->select_ok("bug_severity", "label=blocker");
 $sel->selected_label_is("bug_severity", "blocker");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_normal, \@email_sentto, "Normal user got bugmail");
 @email_excluded = get_email_excluded($sel);
@@ -236,9 +231,7 @@ is_deeply(\@email_admin, \@email_excluded, "Admin excluded from bugmail");
 # Add a comment (bugmail to no one)
 $sel->type_ok("comment", "This is a Selenium generated normal user test comment 1 of 2. (No bugmail should be generated for this.)");
 $sel->value_is("comment", "This is a Selenium generated normal user test comment 1 of 2. (No bugmail should be generated for this.)");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 ok($email_sentto[0] eq "no one", "No bugmail sent");
 @email_excluded = get_email_excluded($sel);
@@ -246,9 +239,7 @@ is_deeply(\@email_both, \@email_excluded, "Admin and normal user excluded from b
 # Add normal user to CC list (bugmail to admin but not normal user)
 $sel->type_ok("newcc", $config->{editbugs_user_login});
 $sel->value_is("newcc", $config->{editbugs_user_login});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
 @email_excluded = get_email_excluded($sel);
@@ -257,9 +248,7 @@ is_deeply(\@email_normal, \@email_excluded, "Normal user excluded from bugmail")
 $sel->select_ok("flag_type-1", "label=?");
 $sel->type_ok("requestee_type-1", $config->{admin_user_login});
 $sel->value_is("requestee_type-1", $config->{admin_user_login});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 ok($email_sentto[0] eq "no one", "No bugmail sent");
 @email_excluded = get_email_excluded($sel);
@@ -273,9 +262,7 @@ go_to_bug($sel, $bug1_id);
 # Severity change (bugmail to normal user but not admin)
 $sel->select_ok("bug_severity", "label=trivial");
 $sel->selected_label_is("bug_severity", "trivial");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_normal, \@email_sentto, "Normal user got bugmail");
 @email_excluded = get_email_excluded($sel);
@@ -283,9 +270,7 @@ is_deeply(\@email_admin, \@email_excluded, "Admin excluded from bugmail");
 # Add a comment (bugmail to normal user but not admin)
 $sel->type_ok("comment", "This is a Selenium generated admin user test comment. (Only normal user should get bugmail for this.)");
 $sel->value_is("comment", "This is a Selenium generated admin user test comment. (Only normal user should get bugmail for this.)");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_normal, \@email_sentto, "Normal user got bugmail");
 @email_excluded = get_email_excluded($sel);
@@ -295,9 +280,7 @@ $sel->click_ok("removecc");
 $sel->add_selection_ok("cc", "label=$config->{editbugs_user_login}");
 $sel->value_is("removecc", "on");
 $sel->selected_label_is("cc", $config->{editbugs_user_login});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
 @email_excluded = get_email_excluded($sel);
@@ -305,9 +288,7 @@ ok($email_excluded[0] eq "no one", "Nobody excluded from bugmail");
 # Reassign bug to admin user (bugmail to both normal user and admin)
 $sel->type_ok("assigned_to", $config->{admin_user_login});
 $sel->value_is("assigned_to", $config->{admin_user_login});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
 @email_excluded = get_email_excluded($sel);
@@ -316,16 +297,14 @@ ok($email_excluded[0] eq "no one", "Nobody excluded from bugmail");
 $sel->select_ok("flag_type-1", "label=?");
 $sel->type_ok("requestee_type-1", $config->{editbugs_user_login});
 $sel->value_is("requestee_type-1", $config->{editbugs_user_login});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
 @email_excluded = get_email_excluded($sel);
 is_deeply(\@email_normal, \@email_excluded, "Normal user excluded from bugmail");
 # Grant a normal user flag request (bugmail to admin but not normal user and request mail to no one)
 my $flag1_id = set_flag($sel, $config->{admin_user_login}, "?", "+");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
 @email_excluded = get_email_excluded($sel);
@@ -339,9 +318,7 @@ go_to_bug($sel, $bug1_id);
 # Severity change (bugmail to both admin and normal user)
 $sel->select_ok("bug_severity", "label=normal");
 $sel->selected_label_is("bug_severity", "normal");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
 @email_excluded = get_email_excluded($sel);
@@ -349,9 +326,7 @@ ok($email_excluded[0] eq "no one", "Nobody excluded from bugmail");
 # Add a comment (bugmail to admin but not normal user)
 $sel->type_ok("comment", "This is a Selenium generated normal user test comment 2 of 2. (Only admin should get bugmail for this.)");
 $sel->value_is("comment", "This is a Selenium generated normal user test comment 2 of 2. (Only admin should get bugmail for this.)");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
 @email_excluded = get_email_excluded($sel);
@@ -359,16 +334,14 @@ is_deeply(\@email_normal, \@email_excluded, "Normal user excluded from bugmail")
 # Reassign to normal user (bugmail to admin but not normal user)
 $sel->type_ok("assigned_to", $config->{editbugs_user_login});
 $sel->value_is("assigned_to", $config->{editbugs_user_login});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
 @email_excluded = get_email_excluded($sel);
 is_deeply(\@email_normal, \@email_excluded, "Normal user excluded from bugmail");
 # Deny a flag requested by admin (bugmail to no one and request mail to admin)
 my $flag2_id = set_flag($sel, $config->{editbugs_user_login}, "?", "-");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 ok($email_sentto[0] eq "no one", "No bugmail sent");
 @email_excluded = get_email_excluded($sel);
@@ -376,12 +349,23 @@ is_deeply(\@email_both, \@email_excluded, "Admin and normal user excluded from b
 # Cancel both flags (bugmail and request mail to no one)
 set_flag($sel, undef, "+", "X", $flag1_id);
 set_flag($sel, undef, "-", "X", $flag2_id);
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
+edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 ok($email_sentto[0] eq "no one", "No bugmail sent");
 @email_excluded = get_email_excluded($sel);
 is_deeply(\@email_both, \@email_excluded, "Admin and normal user excluded from bugmail");
+logout($sel);
+
+# Set "After changing a bug" default preference back to "Do Nothing".
+log_in($sel, $config, 'admin');
+go_to_admin($sel);
+$sel->click_ok("link=Default Preferences");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Default Preferences");
+$sel->select_ok("post_bug_submit_action", "label=Do Nothing");
+$sel->click_ok("update");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Default Preferences");
 logout($sel);
 
 # Help functions

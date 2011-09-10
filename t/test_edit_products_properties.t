@@ -150,12 +150,10 @@ $sel->select_ok("component", "label=first comp");
 $sel->select_ok("bug_status", "label=UNCONFIRMED");
 $sel->type_ok("cc", $unprivileged_user_login);
 $sel->type_ok("bug_file_loc", "http://www.test.com");
-$sel->type_ok("short_desc", "test create/edit product properties");
+my $bug_summary = "test create/edit product properties";
+$sel->type_ok("short_desc", $bug_summary);
 $sel->type_ok("comment", "this bug will soon be dead");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug \d+ Submitted/);
-my $bug1_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
+my $bug1_id = create_bug($sel, $bug_summary);
 my @cc_list = $sel->get_select_options("cc");
 ok(grep($_ eq $unprivileged_user_login, @cc_list), "$unprivileged_user_login correctly added to the CC list");
 ok(!grep($_ eq $permanent_user, @cc_list), "$permanent_user not in the CC list for 'first comp' by default");
@@ -164,11 +162,10 @@ ok(!grep($_ eq $permanent_user, @cc_list), "$permanent_user not in the CC list f
 file_bug_in_product($sel, "Kill me!");
 $sel->select_ok("version", "label=0.1a");
 $sel->select_ok("component", "label=second comp");
-$sel->type_ok("short_desc", "check default CC list");
+my $bug_summary2 = "check default CC list";
+$sel->type_ok("short_desc", $bug_summary2);
 $sel->type_ok("comment", "is the CC list populated correctly?");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug \d+ Submitted/);
+create_bug($sel, $bug_summary2);
 @cc_list = $sel->get_select_options("cc");
 ok(grep($_ eq $permanent_user, @cc_list), "$permanent_user in the CC list for 'second comp' by default");
 
@@ -185,7 +182,7 @@ if ($config->{test_extensions}) {
     $sel->type_ok("maxvotesperbug", 5);
     $sel->type_ok("votestoconfirm", "0");
 }
-$sel->click_ok("submit");
+$sel->click_ok("update-product");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Updating Product 'Kill me nicely'");
 $sel->is_text_present_ok("Updated product name from 'Kill me!' to 'Kill me nicely'");
@@ -207,7 +204,7 @@ if ($config->{test_extensions}) {
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Edit Product 'Kill me nicely'", "Display properties of Kill me nicely");
     $sel->type_ok("votestoconfirm", 2);
-    $sel->click_ok("submit");
+    $sel->click_ok("update-product");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Updating Product 'Kill me nicely'");
     $sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
@@ -224,7 +221,7 @@ if ($config->{test_extensions}) {
 
     edit_product($sel, "Kill me nicely");
     $sel->type_ok("votestoconfirm", 1);
-    $sel->click_ok("submit");
+    $sel->click_ok("update-product");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Updating Product 'Kill me nicely'");
     $sel->is_text_present_ok("Updated number of votes needed to confirm a bug");
@@ -239,12 +236,7 @@ $sel->selected_label_is("product", "Kill me nicely");
 $sel->selected_label_is("bug_status", "CONFIRMED") if $config->{test_extensions};
 $sel->select_ok("target_milestone", "label=pre-0.1");
 $sel->select_ok("component", "label=second comp");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
-$sel->click_ok("link=bug $bug1_id");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug $bug1_id /);
+edit_bug_and_return($sel, $bug1_id, $bug_summary);
 @cc_list = $sel->get_select_options("cc");
 ok(grep($_ eq $permanent_user, @cc_list), "User $permanent_user automatically added to the CC list");
 
@@ -320,10 +312,10 @@ ok($text =~ /All bugs being in this component and all references to them have al
 # be selected by default.
 
 file_bug_in_product($sel, "Kill me nicely");
-$sel->type_ok("short_desc", "bye bye everybody!");
+$bug_summary2 = "bye bye everybody!";
+$sel->type_ok("short_desc", $bug_summary2);
 $sel->type_ok("comment", "I'm dead :(");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
+create_bug($sel, $bug_summary2);
 
 # Now delete the product.
 

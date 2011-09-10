@@ -12,12 +12,10 @@ log_in($sel, $config, 'admin');
 # Create new bug to test custom fields
 
 file_bug_in_product($sel, 'TestProduct');
-$sel->type_ok("short_desc", "What's your ID?");
+my $bug_summary = "What's your ID?";
+$sel->type_ok("short_desc", $bug_summary);
 $sel->type_ok("comment", "I only want the ID of this bug to generate a unique custom field name.");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
-my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
+my $bug1_id = create_bug($sel, $bug_summary);
 
 # Create custom fields
 
@@ -150,40 +148,25 @@ $sel->title_is("Edit Workflow");
 file_bug_in_product($sel, 'TestProduct');
 $sel->is_text_present_ok("List$bug1_id:");
 $sel->is_element_present_ok("cf_qa_list_$bug1_id");
-$sel->type_ok("short_desc", "Et de un");
-$sel->type_ok("comment", "hops!");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
-my $bug2_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
+my $bug_summary2 = "Et de un";
+$sel->type_ok("short_desc", $bug_summary2);
+my $bug2_id = create_bug($sel, $bug_summary2);
 
 # Both fields are editable.
 
 $sel->type_ok("cf_qa_freetext_$bug1_id", "bonsai");
 $sel->selected_label_is("cf_qa_list_$bug1_id", "---");
 $sel->select_ok("bug_status", "label=SUSPENDED");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug2_id processed");
+edit_bug($sel, $bug2_id, $bug_summary2);
 
 go_to_bug($sel, $bug1_id);
 $sel->type_ok("cf_qa_freetext_$bug1_id", "dumbo");
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
 $sel->select_ok("bug_status", "RESOLVED");
 $sel->select_ok("resolution", "UPSTREAM");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
-$sel->click_ok("link=bug $bug1_id");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+edit_bug_and_return($sel, $bug1_id, $bug_summary);
 $sel->select_ok("bug_status", "IN_QA");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
-$sel->click_ok("link=bug $bug1_id");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+edit_bug_and_return($sel, $bug1_id, $bug_summary);
 
 $sel->click_ok("link=Format For Printing");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -193,9 +176,7 @@ $sel->is_text_present_ok("List$bug1_id: storage");
 $sel->is_text_present_ok("Status: IN_QA UPSTREAM");
 go_to_bug($sel, $bug2_id);
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug2_id processed");
+edit_bug($sel, $bug2_id, $bug_summary2);
 
 # Test searching for bugs using the custom fields
 
@@ -204,9 +185,9 @@ $sel->remove_all_selections_ok("product");
 $sel->add_selection_ok("product", "TestProduct");
 $sel->remove_all_selections("bug_status");
 $sel->remove_all_selections("resolution");
-$sel->select_ok("field0-0-0", "label=List$bug1_id");
-$sel->select_ok("type0-0-0", "label=is equal to");
-$sel->type_ok("value0-0-0", "storage");
+$sel->select_ok("f1", "label=List$bug1_id");
+$sel->select_ok("o1", "label=is equal to");
+$sel->type_ok("v1", "storage");
 $sel->click_ok("Search");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug List");
@@ -231,9 +212,7 @@ $sel->title_like(qr/^Bug $bug2_id/);
 $sel->value_is("cf_qa_freetext_$bug1_id", "thanks");
 $sel->selected_label_is("cf_qa_list_$bug1_id", "---");
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug2_id processed");
+edit_bug($sel, $bug2_id, $bug_summary2);
 
 # Delete the existing '---' field value.
 
@@ -291,9 +270,7 @@ go_to_bug($sel, $bug1_id);
 $sel->is_text_present_ok("Freetext$bug1_id: thanks");
 $sel->click_ok("cc_edit_area_showhide");
 $sel->type_ok("newcc", $config->{unprivileged_user_login});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 logout($sel);
 
 # Disable the remaining free text field.
@@ -328,16 +305,12 @@ $sel->is_text_present_ok("Sorry, but the 'SUSPENDED' value cannot be deleted");
 
 go_to_bug($sel, $bug2_id);
 $sel->select_ok("bug_status", "CONFIRMED");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug2_id processed");
+edit_bug($sel, $bug2_id, $bug_summary2);
 
 go_to_bug($sel, $bug1_id);
 $sel->select_ok("bug_status", "VERIFIED");
 $sel->select_ok("resolution", "INVALID");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id, $bug_summary);
 
 # Unused values can be deleted.
 
