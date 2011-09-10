@@ -31,6 +31,7 @@ use Bugzilla::Version;
 use Bugzilla::Constants;
 use Bugzilla::Keyword;
 use Bugzilla::Config qw(:admin);
+use Bugzilla::User::Setting;
 
 my $dbh = Bugzilla->dbh;
 
@@ -59,6 +60,21 @@ foreach my $param (keys %set_params) {
 }
 
 write_params() if $params_modified;
+
+##########################################################################
+# Set Default User Preferences
+##########################################################################
+
+# When editing a bug, the page being displayed depends on the
+# post_bug_submit_action user pref. We set it globally so that we know
+# the exact behavior of process_bug.cgi.
+my %user_prefs = (post_bug_submit_action => 'nothing');
+
+foreach my $pref (keys %user_prefs) {
+    my $value = $user_prefs{$pref};
+    Bugzilla::User::Setting::set_default($pref, $value, 0);
+}
+
 ##########################################################################
 # Create Users
 ##########################################################################

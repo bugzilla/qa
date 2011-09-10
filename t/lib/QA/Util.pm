@@ -18,6 +18,9 @@ use base qw(Exporter);
     log_in
     logout
     file_bug_in_product
+    create_bug
+    edit_bug
+    edit_bug_and_return
     go_to_bug
     go_to_admin
     edit_product
@@ -36,6 +39,7 @@ use base qw(Exporter);
 use constant WAIT_TIME => 60000;
 use constant CONF_FILE =>  "../config/selenium_test.conf";
 use constant CHROME_MODE => 1;
+use constant NDASH => chr(0x2013);
 
 #####################
 # Utility Functions #
@@ -176,6 +180,40 @@ sub file_bug_in_product {
         ok(1, "Only one product available in $classification. Skipping the 'Choose product' page.")
     }
     $sel->title_is("Enter Bug: $product", "Display form to enter bug data");
+}
+
+sub create_bug {
+    my ($sel, $bug_summary) = @_;
+    my $ndash = NDASH;
+
+    $sel->click_ok('commit');
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    my $bug_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
+    $sel->title_is("Bug $bug_id $ndash $bug_summary", "Bug $bug_id created with summary '$bug_summary'");
+    return $bug_id;
+}
+
+sub edit_bug {
+    my ($sel, $bug_id, $bug_summary, $options) = @_;
+    my $ndash = NDASH;
+    my $btn_id = $options ? $options->{id} : 'commit';
+
+    $sel->click_ok($btn_id);
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Bug $bug_id $ndash $bug_summary", "Changes submitted to bug $bug_id");
+    # If the web browser doesn't support history.ReplaceState or has it turned off,
+    # "Bug XXX processed" is displayed instead (as in Bugzilla 4.0 and older).
+    # $sel->title_is("Bug $bug_id processed", "Changes submitted to bug $bug_id");
+}
+
+sub edit_bug_and_return {
+    my ($sel, $bug_id, $bug_summary, $options) = @_;
+    my $ndash = NDASH;
+
+    edit_bug($sel, $bug_id, $bug_summary, $options);
+    $sel->click_ok("link=bug $bug_id");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Bug $bug_id $ndash $bug_summary", "Returning back to bug $bug_id");
 }
 
 # Go to show_bug.cgi.
