@@ -31,13 +31,11 @@ if($sel->is_text_present("My QA query")) {
 set_parameters($sel, { "Bug Fields" => {"useqacontact-on" => undef} });
 file_bug_in_product($sel, 'TestProduct');
 $sel->type_ok("qa_contact", $config->{unprivileged_user_login}, "Set the powerless user as QA contact");
-$sel->type_ok("short_desc", "Test for QA contact");
+my $bug_summary = "Test for QA contact";
+$sel->type_ok("short_desc", $bug_summary);
 $sel->type_ok("comment", "This is a test to check QA contact privs.");
 $sel->check_ok('//input[@name="groups" and @value="Master"]');
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
-my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
+my $bug1_id = create_bug($sel, $bug_summary);
 
 # Create a saved search querying for all bugs with the powerless user
 # as QA contact.
@@ -46,9 +44,9 @@ open_advanced_search_page($sel);
 $sel->remove_all_selections_ok("product");
 $sel->add_selection_ok("product", "TestProduct");
 $sel->remove_all_selections("bug_status");
-$sel->select_ok("field0-0-0", "label=QA Contact");
-$sel->select_ok("type0-0-0", "label=is equal to");
-$sel->type_ok("value0-0-0", $config->{unprivileged_user_login}, "Look for the powerless user as QA contact");
+$sel->select_ok("f1", "label=QA Contact");
+$sel->select_ok("o1", "label=is equal to");
+$sel->type_ok("v1", $config->{unprivileged_user_login}, "Look for the powerless user as QA contact");
 $sel->click_ok("Search");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug List");
@@ -115,15 +113,13 @@ set_parameters($sel, { "Bug Fields" => {"useqacontact-on" => undef} });
 logout($sel);
 
 # Log in as the powerless user. As the QA contact field is enabled again,
-# you can now access the restricted bug. Before doing that, we need to set
-# some user prefs correctly to not interfere with our test.
+# you can now access the restricted bug.
 
 log_in($sel, $config, 'unprivileged');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("User Preferences");
 $sel->select_ok("state_addselfcc", "value=never");
-$sel->select_ok("post_bug_submit_action", "value=same_bug");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("User Preferences");
@@ -132,9 +128,9 @@ open_advanced_search_page($sel);
 $sel->remove_all_selections_ok("product");
 $sel->add_selection_ok("product", "TestProduct");
 $sel->remove_all_selections_ok("bug_status");
-$sel->select_ok("field0-0-0", "label=QA Contact");
-$sel->select_ok("type0-0-0", "label=is equal to");
-$sel->type_ok("value0-0-0", $config->{unprivileged_user_login}, "Look for the powerless user as QA contact");
+$sel->select_ok("f1", "label=QA Contact");
+$sel->select_ok("o1", "label=is equal to");
+$sel->type_ok("v1", $config->{unprivileged_user_login}, "Look for the powerless user as QA contact");
 $sel->click_ok("Search");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bug List");
@@ -147,12 +143,11 @@ $sel->title_like(qr/Bug $bug1_id /);
 $sel->click_ok("bz_qa_contact_edit_action");
 $sel->value_is("qa_contact", $config->{unprivileged_user_login}, "The powerless user is the current QA contact");
 $sel->check_ok("set_default_qa_contact");
-$sel->click_ok("commit");
+edit_bug($sel, $bug1_id, $bug_summary);
 
 # The user is no longer the QA contact, and he has no other role
 # with the bug. He can no longer see it.
 
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->is_text_present_ok("(list of e-mails not available)");
 $sel->click_ok("link=bug $bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);

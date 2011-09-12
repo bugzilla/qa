@@ -46,13 +46,11 @@ file_bug_in_product($sel, "TestProduct");
 $sel->is_text_present_ok("Test group for Selenium");
 $sel->value_is("group_${group_id}", "off"); # Must be OFF (else that's a bug)
 $sel->check_ok("group_${group_id}");
-$sel->type_ok("short_desc", "bug restricted to the Selenium group");
+my $bug_summary = "bug restricted to the Selenium group";
+$sel->type_ok("short_desc", $bug_summary);
 $sel->type_ok("comment", "should be invisible");
 $sel->selected_label_is("component", "TestComponent");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load(WAIT_TIME);
-my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
-$sel->title_like(qr/Bug $bug1_id Submitted/, "Bug $bug1_id created");
+my $bug1_id = create_bug($sel, $bug_summary);
 $sel->is_text_present_ok("Test group for Selenium");
 $sel->value_is("group_${group_id}", "on"); # Must be ON
 
@@ -64,9 +62,9 @@ $sel->add_selection_ok("product", "TestProduct");
 $sel->remove_all_selections("bug_status");
 $sel->add_selection_ok("bug_status", "UNCONFIRMED");
 $sel->add_selection_ok("bug_status", "CONFIRMED");
-$sel->select_ok("field0-0-0", "Group");
-$sel->select_ok("type0-0-0", "is equal to");
-$sel->type_ok("value0-0-0", "Selenium-test");
+$sel->select_ok("f1", "Group");
+$sel->select_ok("o1", "is equal to");
+$sel->type_ok("v1", "Selenium-test");
 $sel->click_ok("Search");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug List");
@@ -102,14 +100,12 @@ $sel->is_text_present_ok("The group will no longer be used for bugs");
 
 file_bug_in_product($sel, "TestProduct");
 $sel->selected_label_is("component", "TestComponent");
-$sel->type_ok("short_desc", "bug restricted to the Selenium group");
+my $bug_summary2 = "bug restricted to the Selenium group";
+$sel->type_ok("short_desc", $bug_summary2);
 $sel->type_ok("comment", "should be *visible* when created (the group is disabled)");
 ok(!$sel->is_text_present("Test group for Selenium"), "Selenium-test group unavailable");
 ok(!$sel->is_element_present("group_${group_id}"), "Selenium-test checkbox not present");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load(WAIT_TIME);
-my $bug2_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_like(qr/Bug $bug2_id Submitted/, "Bug $bug2_id created");
+my $bug2_id = create_bug($sel, $bug_summary2);
 
 # Make sure the new bug doesn't appear in the "Selenium bugs" saved search.
 
@@ -174,14 +170,12 @@ $sel->is_element_present_ok("b$bug2_id", undef, "Bug $bug2_id restricted to the 
 
 file_bug_in_product($sel, "TestProduct");
 $sel->selected_label_is("component", "TestComponent");
-$sel->type_ok("short_desc", "Selenium-test group mandatory");
+my $bug_summary3 = "Selenium-test group mandatory";
+$sel->type_ok("short_desc", $bug_summary3);
 $sel->type_ok("comment", "group enabled");
 ok(!$sel->is_text_present("Test group for Selenium"), "Selenium-test group not available");
 ok(!$sel->is_element_present("group_${group_id}"), "Selenium-test checkbox not present (mandatory group)");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load(WAIT_TIME);
-my $bug3_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_like(qr/Bug $bug3_id Submitted/, "Bug $bug3_id created");
+my $bug3_id = create_bug($sel, $bug_summary3);
 
 # Make sure all three bugs are listed as being restricted to the bug group.
 
@@ -212,14 +206,12 @@ $sel->is_text_present_ok("The group will no longer be used for bugs");
 
 file_bug_in_product($sel, "TestProduct");
 $sel->selected_label_is("component", "TestComponent");
-$sel->type_ok("short_desc", "bug restricted to the Selenium-test group");
+my $bug_summary4 = "bug restricted to the Selenium-test group";
+$sel->type_ok("short_desc", $bug_summary4);
 $sel->type_ok("comment", "group disabled");
 ok(!$sel->is_text_present("Test group for Selenium"), "Selenium-test group not available");
 ok(!$sel->is_element_present("group_${group_id}"), "Selenium-test checkbox not present");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load(WAIT_TIME);
-my $bug4_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_like(qr/Bug $bug4_id Submitted/, "Bug $bug4_id created");
+my $bug4_id = create_bug($sel, $bug_summary4);
 
 # The last bug must not be in the list.
 

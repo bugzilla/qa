@@ -40,12 +40,10 @@ file_bug_in_product($sel, "TestProduct");
 $sel->selected_label_is("component", "TestComponent", "Component already selected (no other component defined)");
 $sel->selected_label_is("target_milestone", "---", "Default milestone selected");
 $sel->selected_label_is("version", "unspecified", "Version already selected (no other version defined)");
-$sel->type_ok("short_desc", "Target Milestone left to default", "Enter bug summary");
-$sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept'", "Enter bug description");
-$sel->click_ok("commit", undef, "Commit bug data to post_bug.cgi");
-$sel->wait_for_page_to_load(WAIT_TIME);
-my $bug1_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_like(qr/Bug $bug1_id Submitted/, "Bug $bug1_id created");
+my $bug_summary = "Target Milestone left to default";
+$sel->type_ok("short_desc", $bug_summary);
+$sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept'");
+my $bug1_id = create_bug($sel, $bug_summary);
 
 # 4th step: edit the bug (test musthavemilestoneonaccept ON).
 
@@ -57,9 +55,7 @@ $sel->is_text_present_ok("You must select a target milestone", undef, "Display e
 # We cannot use go_back_ok() because we just left post_bug.cgi where data has been submitted using POST.
 go_to_bug($sel, $bug1_id);
 $sel->select_ok("target_milestone", "label=2.0", "Select a non-default milestone");
-$sel->click_ok("commit", undef, "Save changes (2nd attempt)");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed", undef, "Changes saved");
+edit_bug($sel, $bug1_id, $bug_summary);
 
 # 5th step: create another bug.
 
@@ -67,23 +63,21 @@ file_bug_in_product($sel, "TestProduct");
 $sel->select_ok("target_milestone", "label=2.0", "Set the milestone to 2.0");
 $sel->selected_label_is("component", "TestComponent", "Component already selected (no other component defined)");
 $sel->selected_label_is("version", "unspecified", "Version already selected (no other version defined)");
-$sel->type_ok("short_desc", "Target Milestone set to non-default", "Enter bug summary");
-$sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept'", "Enter bug description");
-$sel->click_ok("commit", undef, "Commit bug data to post_bug.cgi");
-$sel->wait_for_page_to_load(WAIT_TIME);
-my $bug2_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_like(qr/Bug $bug2_id Submitted/, "Bug $bug2_id created");
+my $bug_summary2 = "Target Milestone set to non-default";
+$sel->type_ok("short_desc", $bug_summary2);
+$sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept'");
+my $bug2_id = create_bug($sel, $bug_summary2);
 
 # 6th step: edit the bug (test musthavemilestoneonaccept ON).
 
 $sel->select_ok("bug_status", "label=IN_PROGRESS");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("Bug $bug2_id processed");
+edit_bug($sel, $bug2_id, $bug_summary2);
 
 # 7th step: test validation methods for milestones.
 
-$sel->open_ok("/$config->{bugzilla_installation}/editmilestones.cgi");
+go_to_admin($sel);
+$sel->click_ok("link=milestones");
+$sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Edit milestones for which product?");
 $sel->click_ok("link=TestProduct");
 $sel->wait_for_page_to_load(WAIT_TIME);
@@ -141,20 +135,16 @@ $sel->is_text_present_ok('regexp:Target Milestone:\W+---', undef, "Milestone has
 file_bug_in_product($sel, "TestProduct");
 $sel->selected_label_is("target_milestone", "---", "Default milestone selected");
 $sel->selected_label_is("component", "TestComponent");
-$sel->type_ok("short_desc", "Only one Target Milestone available", "Enter bug summary");
-$sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept'", "Enter bug description");
-$sel->click_ok("commit", undef, "Commit bug data to post_bug.cgi");
-$sel->wait_for_page_to_load(WAIT_TIME);
-my $bug3_id = $sel->get_value("//input[\@name='id' and \@type='hidden']");
-$sel->title_like(qr/Bug $bug3_id Submitted/);
+my $bug_summary3 = "Only one Target Milestone available";
+$sel->type_ok("short_desc", $bug_summary3);
+$sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept'");
+my $bug3_id = create_bug($sel, $bug_summary3);
 
 # 10th step: musthavemilestoneonaccept must have no effect as there is
 #            no other milestone available besides the default one.
 
 $sel->select_ok("bug_status", "label=IN_PROGRESS");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("Bug $bug3_id processed");
+edit_bug($sel, $bug3_id, $bug_summary3);
 
 # 11th step: turn musthavemilestoneonaccept back to OFF.
 
