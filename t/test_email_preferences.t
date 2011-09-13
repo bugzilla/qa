@@ -128,10 +128,15 @@ $sel->click_ok("update");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Default Preferences");
 
-# Set normal user Email Prefs (by directly going to Email Prefs pane)
+# Set normal user Email Prefs
 logout($sel);
 log_in($sel, $config, 'editbugs');
-$sel->open_ok("$config->{bugzilla_installation}/userprefs.cgi?tab=email");
+$sel->click_ok("link=Preferences");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("User Preferences");
+$sel->click_ok("link=Email Preferences");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("User Preferences");
 $sel->is_text_present_ok("Email Preferences");
 $sel->click_ok("//input[\@value='Enable All Mail']");
 $sel->click_ok("email-3-1", undef, 'Clear "I\'m added to or removed from this capacity" for CCed role');

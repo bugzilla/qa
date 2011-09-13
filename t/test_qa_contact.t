@@ -11,17 +11,14 @@ my ($sel, $config) = get_selenium();
 # First make sure the 'My QA query' saved search is gone.
 
 log_in($sel, $config, 'admin');
-if($sel->is_text_present("My QA query")) {
-    $sel->open_ok("/$config->{bugzilla_installation}/buglist.cgi?cmdtype=dorem&remaction=forget&namedcmd=My%20QA%20query",
-                  undef, "Make sure the 'My QA query' saved search isn't present");
-    # We bypass the UI to delete the saved search, and so Bugzilla should complain about the missing token.
-    $sel->title_is("Suspicious Action");
-    $sel->is_text_present_ok("It looks like you didn't come from the right page");
-    $sel->click_ok("confirm");
+if ($sel->is_text_present("My QA query")) {
+    $sel->click_ok("link=My QA query");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Bug List: My QA query");
+    $sel->click_ok("link=Forget Search 'My QA query'");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Search is gone");
-    my $text = trim($sel->get_text("message"));
-    ok($text =~ /OK, the My QA query search is gone/, "Removed the 'My QA query' saved search");
+    $sel->is_text_present_ok("OK, the My QA query search is gone.");
 }
 
 # Enable the QA contact field and file a new bug restricted to the 'Master' group

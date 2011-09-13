@@ -126,8 +126,7 @@ $sel->title_is("Milestone Deleted");
 
 # 8th step: make sure the (now deleted) milestone of the bug has fallen back to the default milestone.
 
-$sel->open_ok("/$config->{bugzilla_installation}/show_bug.cgi?id=$bug1_id");
-$sel->title_like(qr/^Bug $bug1_id/);
+go_to_bug($sel, $bug1_id);
 $sel->is_text_present_ok('regexp:Target Milestone:\W+---', undef, "Milestone has fallen back to the default milestone");
 
 # 9th step: file another bug.

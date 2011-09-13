@@ -22,6 +22,7 @@ use base qw(Exporter);
     edit_bug
     edit_bug_and_return
     go_to_bug
+    go_to_home
     go_to_admin
     edit_product
     add_product
@@ -136,11 +137,17 @@ sub get_rpc_clients {
 # Helpers for Selenium Scripts #
 ################################
 
+sub go_to_home {
+    my ($sel, $config) = @_;
+    $sel->open_ok("/$config->{bugzilla_installation}/", undef, "Go to the home page");
+    $sel->title_is("Bugzilla Main Page");
+}
+
 # Go to the home/login page and log in.
 sub log_in {
     my ($sel, $config, $user) = @_;
 
-    $sel->open_ok("/$config->{bugzilla_installation}/", undef, "Go to the login page");
+    go_to_home($sel, $config);
     $sel->type_ok("Bugzilla_login_top", $config->{"${user}_user_login"}, "Enter $user login name");
     $sel->type_ok("Bugzilla_password_top", $config->{"${user}_user_passwd"}, "Enter $user password");
     $sel->click_ok("log_in_top", undef, "Submit credentials");

@@ -11,8 +11,8 @@ my ($sel, $config) = get_selenium();
 
 # First, a very trivial search, which returns no result.
 
-$sel->open_ok("/$config->{bugzilla_installation}/query.cgi?format=advanced");
-$sel->title_is("Search for bugs", "Display the Advanced Query Form");
+go_to_home($sel, $config);
+open_advanced_search_page($sel);
 $sel->type_ok("short_desc", "justdave", "Type a non-existent string in the bug summary field");
 $sel->click_ok("Search", undef, "Start search");
 $sel->wait_for_page_to_load(WAIT_TIME);
