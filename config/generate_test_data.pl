@@ -44,7 +44,18 @@ Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
 
 # Some parameters must be turned on to create bugs requiring them.
 # They are also expected to be turned on by some webservice_*.t scripts.
+my ($urlbase, $sslbase);
+$urlbase = $config->{browser_url} . '/' . $config->{bugzilla_installation};
+$urlbase .= '/' unless $urlbase =~ /\/$/;
+
+if ($urlbase =~ /^https/) {
+    $sslbase = $urlbase;
+    $urlbase =~ s/^https(.+)$/http$1/;
+}
+
 my %set_params = (
+    urlbase => $urlbase,
+    sslbase => $sslbase,
     usebugaliases => 1,
     useqacontact  => 1,
     mail_delivery_method => 'Test',
@@ -54,7 +65,7 @@ my %set_params = (
 my $params_modified;
 foreach my $param (keys %set_params) {
     my $value = $set_params{$param};
-    next if Bugzilla->params->{$param} eq $value;
+    next unless defined $value && Bugzilla->params->{$param} ne $value;
     SetParam($param, $value);
     $params_modified = 1;
 }
