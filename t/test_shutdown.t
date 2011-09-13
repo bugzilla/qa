@@ -20,11 +20,10 @@ my @pages = qw(admin attachment buglist chart colchange config createaccount
                editclassifications editcomponents editfields editflagtypes
                editgroups editkeywords editmilestones editproducts editsettings
                editusers editvalues editversions editwhines editworkflow
-               enter_bug index long_list page post_bug process_bug query quips
-               relogin report reports request sanitycheck search_plugin
-               show_activity show_bug showattachment showdependencygraph
-               showdependencytree sidebar summarize_time token userprefs votes
-               xml xmlrpc);
+               enter_bug index page post_bug process_bug query quips relogin
+               report reports request sanitycheck search_plugin show_activity
+               show_bug showdependencygraph showdependencytree summarize_time
+               token userprefs votes xmlrpc);
 
 foreach my $page (@pages) {
     $sel->open_ok("/$config->{bugzilla_installation}/${page}.cgi");
