@@ -7,7 +7,7 @@ use List::Util qw(first);
 use QA::Util;
 
 my ($config, @clients) = get_rpc_clients();
-plan tests => ($config->{test_extensions} ? 1356 : 1338);
+plan tests => ($config->{test_extensions} ? 1338 : 1320);
 
 use constant INVALID_FIELD_NAME => 'invalid_field';
 use constant INVALID_FIELD_ID => -1;
@@ -19,7 +19,6 @@ sub GLOBAL_GENERAL_FIELDS {
         attachments.isobsolete
         attachments.ispatch
         attachments.isprivate
-        attachments.isurl
         attachments.mimetype
         attachments.submitter
 
@@ -129,7 +128,8 @@ foreach my $rpc (@clients) {
         my $first_value = $field_data->{values}->[0];
         ok(defined $first_value->{name}, 'The first value has a name')
             or diag(Dumper($field_data->{values}));
-        cmp_ok($first_value->{sortkey}, '=~', qr/^\d+$/,
+        # The sortkey for milestones can be negative.
+        cmp_ok($first_value->{sortkey}, '=~', qr/^-?\d+$/,
                "The first value has a numeric sortkey");
 
         ok(defined $first_value->{visibility_values},

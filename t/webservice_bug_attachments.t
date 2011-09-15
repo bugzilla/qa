@@ -6,7 +6,7 @@ use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
 use Data::Dumper;
 use List::Util qw(first);
 use MIME::Base64;
-use Test::More tests => 337;
+use Test::More tests => 325;
 my ($config, @clients) = get_rpc_clients();
 
 ################
@@ -123,7 +123,6 @@ sub post_success {
            "last_change_time is in the right format");
     cmp_ok($attachment->{creation_time}, '=~', $rpc->DATETIME_REGEX,
            "creation_time is in the right format");
-    is($attachment->{is_url}, 0, 'is_url is 0');
     is($attachment->{is_obsolete}, 0, 'is_obsolete is 0');
     cmp_ok($attachment->{bug_id}, '=~', qr/^\d+$/,
            "bug_id is an integer");
