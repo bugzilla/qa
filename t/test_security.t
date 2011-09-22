@@ -10,11 +10,67 @@ my ($sel, $config) = get_selenium(CHROME_MODE);
 my $urlbase = $config->{bugzilla_installation};
 my $admin_user = $config->{admin_user_login};
 
+# Let's create a bug and attachment to play with.
+
+log_in($sel, $config, 'admin');
+file_bug_in_product($sel, "TestProduct");
+my $bug_summary = "Security checks";
+$sel->type_ok("short_desc", $bug_summary);
+$sel->type_ok("comment", "This bug will be used to test security fixes.");
+$sel->type_ok("data", "/var/www/html/selenium/bugzilla/patch.diff");
+$sel->type_ok("description", "simple patch, v1");
+$sel->click_ok("ispatch");
+$sel->click_ok('commit');
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
+$sel->title_like(qr/Bug $bug1_id /, "Bug $bug1_id created");
+
+
+#######################################################################
+# Security bug 38862.
+#######################################################################
+
+# No alternate host for attachments; cookies will be accessible.
+
+set_parameters($sel, { "Attachments" => {"allow_attachment_display-on" => undef,
+                                         "reset-attachment_base" => undef} });
+
+go_to_bug($sel, $bug1_id);
+$sel->click_ok("link=simple patch, v1");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("");
+my @cookies = split(/[\s;]+/, $sel->get_cookie());
+my $nb_cookies = scalar @cookies;
+ok($nb_cookies, "Found $nb_cookies cookies:\n" . join("\n", @cookies));
+ok(!$sel->is_cookie_present("Bugzilla_login"), "Bugzilla_login not accessible");
+ok(!$sel->is_cookie_present("Bugzilla_logincookie"), "Bugzilla_logincookie not accessible");
+$sel->go_back_ok();
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/^Bug $bug1_id /);
+
+# Alternate host for attachments; no cookie should be accessible.
+
+set_parameters($sel, { "Attachments" => {"attachment_base" => {type  => "text",
+                                                               value => "http://127.0.0.1/$urlbase/"}} });
+go_to_bug($sel, $bug1_id);
+$sel->click_ok("link=simple patch, v1");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("");
+@cookies = split(/[\s;]+/, $sel->get_cookie());
+$nb_cookies = scalar @cookies;
+ok(!$nb_cookies, "No cookies found");
+ok(!$sel->is_cookie_present("Bugzilla_login"), "Bugzilla_login not accessible");
+ok(!$sel->is_cookie_present("Bugzilla_logincookie"), "Bugzilla_logincookie not accessible");
+$sel->go_back_ok();
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_like(qr/^Bug $bug1_id /);
+
+set_parameters($sel, { "Attachments" => {"reset-attachment_base" => undef} });
+
 #######################################################################
 # Security bug 472362.
 #######################################################################
 
-log_in($sel, $config, 'admin');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("User Preferences");
@@ -61,20 +117,9 @@ logout($sel);
 log_in($sel, $config, 'admin');
 set_parameters($sel, { "Attachments" => {"allow_attachment_display-off" => undef} });
 
-file_bug_in_product($sel, "TestProduct");
-my $bug_summary = "Security checks";
-$sel->type_ok("short_desc", $bug_summary);
-$sel->type_ok("comment", "This bug will be used to test security fixes.");
-$sel->type_ok("data", "/var/www/html/selenium/bugzilla/patch.diff");
-$sel->type_ok("description", "simple patch, v1");
-$sel->click_ok("ispatch");
-$sel->click_ok('commit');
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
-$sel->title_like(qr/Bug $bug1_id /, "Bug $bug1_id created");
-
 # Attachments are not viewable.
 
+go_to_bug($sel, $bug1_id);
 $sel->click_ok("link=Details");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_like(qr/Attachment \d+ Details for Bug $bug1_id/);
