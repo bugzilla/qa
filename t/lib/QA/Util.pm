@@ -18,7 +18,9 @@ use base qw(Exporter);
     log_in
     logout
     file_bug_in_product
+    create_bug
     go_to_bug
+    go_to_home
     go_to_admin
     edit_product
     add_product
@@ -36,6 +38,7 @@ use base qw(Exporter);
 use constant WAIT_TIME => 60000;
 use constant CONF_FILE =>  "../config/selenium_test.conf";
 use constant CHROME_MODE => 1;
+use constant NDASH => chr(0x2013);
 
 #####################
 # Utility Functions #
@@ -132,6 +135,12 @@ sub get_rpc_clients {
 # Helpers for Selenium Scripts #
 ################################
 
+sub go_to_home {
+    my ($sel, $config) = @_;
+    $sel->open_ok("/$config->{bugzilla_installation}/", undef, "Go to the home page");
+    $sel->title_is("Bugzilla Main Page");
+}
+
 # Go to the home/login page and log in.
 sub log_in {
     my ($sel, $config, $user) = @_;
@@ -176,6 +185,17 @@ sub file_bug_in_product {
         ok(1, "Only one product available in $classification. Skipping the 'Choose product' page.")
     }
     $sel->title_is("Enter Bug: $product", "Display form to enter bug data");
+}
+
+sub create_bug {
+    my ($sel, $bug_summary) = @_;
+    my $ndash = NDASH;
+
+    $sel->click_ok('commit');
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    my $bug_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
+    $sel->title_is("Bug $bug_id Submitted $ndash $bug_summary", "Bug $bug_id created with summary '$bug_summary'");
+    return $bug_id;
 }
 
 # Go to show_bug.cgi.
