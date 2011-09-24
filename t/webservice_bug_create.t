@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 use Storable qw(dclone);
-use Test::More tests => 287;
+use Test::More tests => 293;
 use QA::Util;
 use QA::Tests qw(create_bug_fields PRIVATE_BUG_USER);
 
@@ -139,14 +139,12 @@ my $fields = {
         },
 
     },
-# XXX This should fail explicitly but does not yet--it currently
-# fails silently.
-#    groups => {
-#        non_existent => {
-#            faultstring => 'some error should be here',
-#            value => [random_string(20)],
-#        },
-#    },
+    groups => {
+        non_existent => {
+            faultstring => 'either this group does not exist, or you are not allowed to restrict bugs to this group',
+            value => [random_string(20)],
+        },
+    },
     comment_is_private => {
         invalid => {
              faultstring => 'you are not allowed to.+comments.+private',
