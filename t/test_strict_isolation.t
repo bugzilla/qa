@@ -106,6 +106,10 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Invalid User Group");
 $sel->is_text_present_ok("User '$no_privs_user' is not able to edit the 'Another Product' Product");
 
+# Reset parameters back to defaults.
+
+set_parameters($sel, { "Group Security" => {"strict_isolation-off" => undef} });
+
 go_to_admin($sel);
 $sel->click_ok("link=Users");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
