@@ -218,6 +218,12 @@ sub valid_values {
             { value => { remove => ['http://landfill.bugzilla.org/bugzilla-tip/show_bug.cgi?id=1'] },
               no_changes => 1,
               test => 'removing non-existent URI works' },
+            { value => { add => [''] },
+              no_changes => 1,
+              test  => 'adding an empty string to see_also does nothing' },
+            { value => { add => [undef] },
+              no_changes => 1,
+              test  => 'adding a null to see_also does nothing' },
         ],
         
         status => [
@@ -525,17 +531,11 @@ sub invalid_values {
         
         see_also => [
             { value => { add => [random_string(20)] },
-              error => 'You must specify a full URL',
+              error => 'is not a valid bug number nor an alias',
               test  => 'random string fails in see_also' },
             { value => { add => ['http://landfill.bugzilla.org/'] },
               error => 'See Also URLs should point to one of',
               test  => 'no show_bug.cgi in see_also URI' },
-            { value => { add => [''] },
-              error => 'input argument, and that argument was not set',
-              test  => 'adding an empty string to see_also fails' },
-            { value => { add => [undef] },
-              error => 'input argument, and that argument was not set',
-              test  => 'adding a null to see_also fails' },
         ],
         
         status => [
