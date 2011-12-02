@@ -36,7 +36,7 @@ $sel->value_is("obsolete", "off");
 $sel->click_ok("create");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Custom Field Created");
-$sel->is_text_present_ok("The new custom field \'cf_qa_freetext_$bug1_id\' has been successfully created.");
+$sel->is_text_present_ok("The new custom field 'cf_qa_freetext_$bug1_id' has been successfully created.");
 
 $sel->click_ok("link=Add a new custom field");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -53,20 +53,20 @@ $sel->value_is("obsolete", "off");
 $sel->click_ok("create");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Custom Field Created");
-$sel->is_text_present_ok("The new custom field \'cf_qa_list_$bug1_id\' has been successfully created.");
+$sel->is_text_present_ok("The new custom field 'cf_qa_list_$bug1_id' has been successfully created.");
 
 # Add values to the custom fields.
 
 $sel->click_ok("link=cf_qa_list_$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Edit the Custom Field \'cf_qa_list_$bug1_id\' (List$bug1_id)");
+$sel->title_is("Edit the Custom Field 'cf_qa_list_$bug1_id' (List$bug1_id)");
 $sel->click_ok("link=Edit legal values for this field");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Select value for the \'List$bug1_id\' (cf_qa_list_$bug1_id) field");
+$sel->title_is("Select value for the 'List$bug1_id' (cf_qa_list_$bug1_id) field");
 
 $sel->click_ok("link=Add");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Add Value for the \'List$bug1_id\' (cf_qa_list_$bug1_id) field");
+$sel->title_is("Add Value for the 'List$bug1_id' (cf_qa_list_$bug1_id) field");
 $sel->type_ok("value", "have fun?");
 $sel->type_ok("sortkey", "805");
 $sel->click_ok("create");
@@ -76,7 +76,7 @@ $sel->is_text_present_ok("The value have fun? has been added as a valid choice f
 
 $sel->click_ok("link=Add");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Add Value for the \'List$bug1_id\' (cf_qa_list_$bug1_id) field");
+$sel->title_is("Add Value for the 'List$bug1_id' (cf_qa_list_$bug1_id) field");
 $sel->type_ok("value", "storage");
 $sel->type_ok("sortkey", "49");
 $sel->click_ok("create");
@@ -222,10 +222,10 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Edit values for which field?");
 $sel->click_ok("link=List$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Select value for the \'List$bug1_id\' (cf_qa_list_$bug1_id) field");
+$sel->title_is("Select value for the 'List$bug1_id' (cf_qa_list_$bug1_id) field");
 $sel->click_ok("//a[contains(\@href, 'editvalues.cgi?action=del&field=cf_qa_list_$bug1_id&value=have%20fun%3F')]");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Delete Value \'have fun?\' from the \'List$bug1_id\' (cf_qa_list_$bug1_id) field");
+$sel->title_is("Delete Value 'have fun?' from the 'List$bug1_id' (cf_qa_list_$bug1_id) field");
 $sel->is_text_present_ok("Do you really want to delete this value?");
 $sel->click_ok("delete");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -235,7 +235,7 @@ $sel->title_is("Field Value Deleted");
 
 $sel->click_ok("//a[contains(\@href, 'editvalues.cgi?action=del&field=cf_qa_list_$bug1_id&value=storage')]");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Delete Value \'storage\' from the \'List$bug1_id\' (cf_qa_list_$bug1_id) field");
+$sel->title_is("Delete Value 'storage' from the 'List$bug1_id' (cf_qa_list_$bug1_id) field");
 $sel->is_text_present_ok("There is 1 bug with this field value");
 
 # Mark the <select> field as obsolete, making it unavailable in bug reports.
@@ -246,7 +246,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Custom Fields");
 $sel->click_ok("link=cf_qa_list_$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Edit the Custom Field \'cf_qa_list_$bug1_id\' (List$bug1_id)");
+$sel->title_is("Edit the Custom Field 'cf_qa_list_$bug1_id' (List$bug1_id)");
 $sel->click_ok("obsolete");
 $sel->value_is("obsolete", "on");
 $sel->click_ok("edit");
@@ -282,7 +282,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Custom Fields");
 $sel->click_ok("link=cf_qa_freetext_$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Edit the Custom Field \'cf_qa_freetext_$bug1_id\' (Freetext$bug1_id)");
+$sel->title_is("Edit the Custom Field 'cf_qa_freetext_$bug1_id' (Freetext$bug1_id)");
 $sel->click_ok("obsolete");
 $sel->value_is("obsolete", "on");
 $sel->click_ok("edit");
