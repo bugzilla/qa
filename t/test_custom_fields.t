@@ -56,6 +56,22 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Custom Field Created");
 $sel->is_text_present_ok("The new custom field 'cf_qa_list_$bug1_id' has been successfully created.");
 
+$sel->click_ok("link=Add a new custom field");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Add a new Custom Field");
+$sel->type_ok("name", "cf_qa_bugid_$bug1_id");
+$sel->type_ok("desc", "Reference$bug1_id");
+$sel->select_ok("type", "label=Bug ID");
+$sel->type_ok("sortkey", $bug1_id);
+$sel->type_ok("reverse_desc", "IsRef$bug1_id");
+$sel->click_ok("enter_bug");
+$sel->value_is("enter_bug", "on");
+$sel->value_is("obsolete", "off");
+$sel->click_ok("create");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Custom Field Created");
+$sel->is_text_present_ok("The new custom field 'cf_qa_bugid_$bug1_id' has been successfully created.");
+
 # Add values to the custom fields.
 
 $sel->click_ok("link=cf_qa_list_$bug1_id");
@@ -149,9 +165,14 @@ $sel->title_is("Edit Workflow");
 file_bug_in_product($sel, 'TestProduct');
 $sel->is_text_present_ok("List$bug1_id:");
 $sel->is_element_present_ok("cf_qa_list_$bug1_id");
+$sel->is_text_present_ok("Reference$bug1_id:");
+$sel->is_element_present_ok("cf_qa_bugid_$bug1_id");
+ok(!$sel->is_text_present("Freetext$bug1_id:"), "Freetext$bug1_id is not displayed");
+ok(!$sel->is_element_present("cf_qa_freetext_$bug1_id"), "cf_qa_freetext_$bug1_id is not available");
 my $bug_summary2 = "Et de un";
 $sel->type_ok("short_desc", $bug_summary2);
 $sel->select_ok("bug_severity", "critical");
+$sel->type_ok("cf_qa_bugid_$bug1_id", $bug1_id);
 my $bug2_id = create_bug($sel, $bug_summary2);
 
 # Both fields are editable.
@@ -164,6 +185,7 @@ edit_bug($sel, $bug2_id, $bug_summary2);
 go_to_bug($sel, $bug1_id);
 $sel->type_ok("cf_qa_freetext_$bug1_id", "dumbo");
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
+$sel->is_text_present_ok("IsRef$bug1_id: $bug2_id");
 $sel->select_ok("bug_status", "RESOLVED");
 $sel->select_ok("resolution", "UPSTREAM");
 edit_bug_and_return($sel, $bug1_id, $bug_summary);
