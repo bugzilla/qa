@@ -19,6 +19,8 @@ use base qw(Exporter);
     logout
     file_bug_in_product
     create_bug
+    edit_bug
+    edit_bug_and_return
     go_to_bug
     go_to_home
     go_to_admin
@@ -196,6 +198,25 @@ sub create_bug {
     my $bug_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
     $sel->title_is("Bug $bug_id Submitted $ndash $bug_summary", "Bug $bug_id created with summary '$bug_summary'");
     return $bug_id;
+}
+
+sub edit_bug {
+    my ($sel, $bug_id, $options) = @_;
+    my $btn_id = $options ? $options->{id} : 'commit';
+
+    $sel->click_ok($btn_id);
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Bug $bug_id processed", "Changes submitted to bug $bug_id");
+}
+
+sub edit_bug_and_return {
+    my ($sel, $bug_id, $bug_summary, $options) = @_;
+    my $ndash = NDASH;
+
+    edit_bug($sel, $bug_id, $options);
+    $sel->click_ok("link=bug $bug_id");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Bug $bug_id $ndash $bug_summary", "Returning back to bug $bug_id");
 }
 
 # Go to show_bug.cgi.

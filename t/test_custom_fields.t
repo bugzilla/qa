@@ -12,12 +12,11 @@ log_in($sel, $config, 'admin');
 # Create new bug to test custom fields
 
 file_bug_in_product($sel, 'TestProduct');
-$sel->type_ok("short_desc", "What's your ID?");
-$sel->type_ok("comment", "I only want the ID of this bug to generate a unique custom field name.");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
-my $bug1_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
+my $bug_summary = "What's your ID?";
+$sel->type_ok("short_desc", $bug_summary);
+$sel->type_ok("comment", "Use the ID of this bug to generate a unique custom field name.");
+$sel->type_ok("bug_severity", "label=normal");
+my $bug1_id = create_bug($sel, $bug_summary);
 
 # Create custom fields
 
@@ -150,40 +149,27 @@ $sel->title_is("Edit Workflow");
 file_bug_in_product($sel, 'TestProduct');
 $sel->is_text_present_ok("List$bug1_id:");
 $sel->is_element_present_ok("cf_qa_list_$bug1_id");
-$sel->type_ok("short_desc", "Et de un");
+my $bug_summary2 = "Et de un";
+$sel->type_ok("short_desc", $bug_summary2);
+$sel->select_ok("bug_severity", "critical");
 $sel->type_ok("comment", "hops!");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug \d+ Submitted/, "Bug created");
-my $bug2_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
+my $bug2_id = create_bug($sel, $bug_summary2);
 
 # Both fields are editable.
 
 $sel->type_ok("cf_qa_freetext_$bug1_id", "bonsai");
 $sel->selected_label_is("cf_qa_list_$bug1_id", "---");
 $sel->select_ok("bug_status", "label=SUSPENDED");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug2_id processed");
+edit_bug($sel, $bug2_id);
 
 go_to_bug($sel, $bug1_id);
 $sel->type_ok("cf_qa_freetext_$bug1_id", "dumbo");
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
 $sel->select_ok("bug_status", "RESOLVED");
 $sel->select_ok("resolution", "UPSTREAM");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
-$sel->click_ok("link=bug $bug1_id");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+edit_bug_and_return($sel, $bug1_id, $bug_summary);
 $sel->select_ok("bug_status", "IN_QA");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
-$sel->click_ok("link=bug $bug1_id");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+edit_bug_and_return($sel, $bug1_id, $bug_summary);
 
 $sel->click_ok("link=Format For Printing");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -193,9 +179,7 @@ $sel->is_text_present_ok("List$bug1_id: storage");
 $sel->is_text_present_ok("Status: IN_QA UPSTREAM");
 go_to_bug($sel, $bug2_id);
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug2_id processed");
+edit_bug($sel, $bug2_id);
 
 # Test searching for bugs using the custom fields
 
@@ -231,11 +215,81 @@ $sel->title_like(qr/^Bug $bug2_id/);
 $sel->value_is("cf_qa_freetext_$bug1_id", "thanks");
 $sel->selected_label_is("cf_qa_list_$bug1_id", "---");
 $sel->select_ok("cf_qa_list_$bug1_id", "label=storage");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug2_id processed");
+edit_bug($sel, $bug2_id);
 
-# Delete the existing '---' field value.
+# Let's now test custom field visibility.
+
+go_to_admin($sel);
+$sel->click_ok("link=Custom Fields");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Custom Fields");
+$sel->click_ok("link=cf_qa_list_$bug1_id");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit the Custom Field 'cf_qa_list_$bug1_id' (List$bug1_id)");
+$sel->select_ok("visibility_field_id", "label=Severity (bug_severity)");
+$sel->select_ok("visibility_value_id", "label=critical");
+$sel->click_ok("edit");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Custom Field Updated");
+
+go_to_bug($sel, $bug1_id);
+$sel->is_element_present_ok("cf_qa_list_$bug1_id", "List$bug1_id is in the DOM of the page...");
+ok(!$sel->is_visible("cf_qa_list_$bug1_id"), "... but is not displayed with severity = 'normal'");
+$sel->select_ok("bug_severity", "major");
+ok(!$sel->is_visible("cf_qa_list_$bug1_id"), "... nor with severity = 'major'");
+$sel->select_ok("bug_severity", "critical");
+$sel->is_visible_ok("cf_qa_list_$bug1_id", "... but is visible with severity = 'critical'");
+edit_bug_and_return($sel, $bug1_id, $bug_summary);
+$sel->is_visible_ok("cf_qa_list_$bug1_id");
+
+go_to_bug($sel, $bug2_id);
+$sel->is_visible_ok("cf_qa_list_$bug1_id");
+$sel->select_ok("bug_severity", "minor");
+ok(!$sel->is_visible("cf_qa_list_$bug1_id"), "List$bug1_id is not displayed with severity = 'minor'");
+edit_bug_and_return($sel, $bug2_id, $bug_summary2);
+ok(!$sel->is_visible("cf_qa_list_$bug1_id"), "List$bug1_id is not displayed with severity = 'minor'");
+
+# Add a new value which is only listed under some condition.
+
+go_to_admin($sel);
+$sel->click_ok("link=Custom Fields");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Custom Fields");
+$sel->click_ok("link=cf_qa_list_$bug1_id");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit the Custom Field 'cf_qa_list_$bug1_id' (List$bug1_id)");
+$sel->select_ok("value_field_id", "label=Resolution (resolution)");
+$sel->click_ok("edit");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Custom Field Updated");
+$sel->click_ok("link=cf_qa_list_$bug1_id");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Edit the Custom Field 'cf_qa_list_$bug1_id' (List$bug1_id)");
+$sel->click_ok("link=Edit legal values for this field");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Select value for the 'List$bug1_id' (cf_qa_list_$bug1_id) field");
+$sel->click_ok("link=Add");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Add Value for the 'List$bug1_id' (cf_qa_list_$bug1_id) field");
+$sel->type_ok("value", "ghost");
+$sel->type_ok("sortkey", "500");
+$sel->select_ok("visibility_value_id", "label=FIXED");
+$sel->click_ok("id=create");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("New Field Value Created");
+
+go_to_bug($sel, $bug1_id);
+my @labels = $sel->get_select_options("cf_qa_list_$bug1_id");
+ok(grep(/^ghost$/, @labels), "ghost is in the DOM of the page...");
+my $disabled = $sel->get_attribute("v4_cf_qa_list_$bug1_id\@disabled");
+ok($disabled, "... but is not available for selection by default");
+$sel->select_ok("bug_status", "label=RESOLVED");
+$sel->select_ok("resolution", "label=FIXED");
+$sel->select_ok("cf_qa_list_$bug1_id", "label=ghost");
+edit_bug_and_return($sel, $bug1_id, $bug_summary);
+$sel->selected_label_is("cf_qa_list_$bug1_id", "ghost");
+
+# Delete an unused field value.
 
 go_to_admin($sel);
 $sel->click_ok("link=Field Values");
@@ -291,9 +345,7 @@ go_to_bug($sel, $bug1_id);
 $sel->is_text_present_ok("Freetext$bug1_id: thanks");
 $sel->click_ok("cc_edit_area_showhide");
 $sel->type_ok("newcc", $config->{unprivileged_user_login});
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id);
 logout($sel);
 
 # Disable the remaining free text field.
@@ -328,16 +380,12 @@ $sel->is_text_present_ok("Sorry, but the 'SUSPENDED' value cannot be deleted");
 
 go_to_bug($sel, $bug2_id);
 $sel->select_ok("bug_status", "CONFIRMED");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug2_id processed");
+edit_bug($sel, $bug2_id);
 
 go_to_bug($sel, $bug1_id);
 $sel->select_ok("bug_status", "VERIFIED");
 $sel->select_ok("resolution", "INVALID");
-$sel->click_ok("commit");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Bug $bug1_id processed");
+edit_bug($sel, $bug1_id);
 
 # Unused values can be deleted.
 
