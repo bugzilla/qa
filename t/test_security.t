@@ -38,7 +38,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Create New Attachment for Bug #$bug1_id");
 $sel->type_ok("attach_text", "<html>\n<head>\n<title>I want your cookies</title>\n<head>\n" .
                              "<body>\n<script type='text/javascript'>document.write(document.cookie);</script>\n" .
-                             "</body>\n</html>");
+                             "</body>\n</html>", "Writing text into the attachment textarea");
 $sel->type_ok("description", "show my cookies");
 edit_bug($sel, $bug1_id, $bug_summary, {id => "create"});
 my $alink = $sel->get_attribute('//a[@title="show my cookies"]@href');
@@ -121,6 +121,34 @@ foreach my $arg (@args) {
     }
 }
 logout($sel);
+
+#######################################################################
+# Security bug 529416.
+#######################################################################
+
+log_in($sel, $config, 'admin');
+file_bug_in_product($sel, "TestProduct");
+$sel->type_ok("alias", "secret_qa_bug_" . ($bug1_id + 1));
+my $bug_summary2 = "Private QA Bug";
+$sel->type_ok("short_desc", $bug_summary2);
+$sel->type_ok("comment", "This private bug is used to test security fixes.");
+$sel->type_ok("dependson", $bug1_id);
+$sel->check_ok('//input[@name="groups" and @value="Master"]');
+my $bug2_id = create_bug($sel, $bug_summary2);
+
+go_to_bug($sel, $bug1_id);
+$sel->is_text_present_ok("secret_qa_bug_$bug2_id");
+logout($sel);
+
+log_in($sel, $config, 'editbugs');
+go_to_bug($sel, $bug1_id);
+ok(!$sel->is_text_present("secret_qa_bug_$bug2_id"), "The alias 'secret_qa_bug_$bug2_id' is not visible for unauthorized users");
+$sel->is_text_present_ok($bug2_id);
+logout($sel);
+
+go_to_bug($sel, $bug1_id);
+ok(!$sel->is_text_present("secret_qa_bug_$bug2_id"), "The alias 'secret_qa_bug_$bug2_id' is not visible for logged out users");
+$sel->is_text_present_ok($bug2_id);
 
 #######################################################################
 # Security bug 472206.
