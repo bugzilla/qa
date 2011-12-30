@@ -1,5 +1,5 @@
 ###########################################
-# Test for xmlrpc call to Bug.get_bugs()  #
+# Test for xmlrpc call to Bug.get()       #
 ###########################################
 
 use strict;
