@@ -3,7 +3,7 @@
 # Product.get_selectable_products()    #
 # Product.get_enterable_products()     #
 # Product.get_accessible_products()    #
-# Product.get_products()               #
+# Product.get()                        #
 ########################################
 
 use strict;
