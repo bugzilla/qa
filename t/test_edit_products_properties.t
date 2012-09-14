@@ -52,25 +52,18 @@ if ($config->{test_extensions}) {
     $sel->type_ok("votestoconfirm", "10");
 }
 $sel->type_ok("version", "0.1a");
-$sel->click_ok("//input[\@value='Add']");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$text = trim($sel->get_text("message"));
-ok($text =~ /You will need to add at least one component before anyone can enter bugs against this product/,
-   "Display a reminder about missing components");
-$sel->click_ok("link=add at least one component");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Add component to the Kill me! product");
 $sel->type_ok("component", "first comp");
-$sel->type_ok("description", "comp 1");
+$sel->type_ok("comp_desc", "comp 1");
 $sel->type_ok("initialowner", $admin_user_login);
-$sel->click_ok("create");
+$sel->click_ok("add-product");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Component Created");
-$text = trim($sel->get_text("message"));
-ok($text eq 'The component first comp has been created.', "Component successfully created");
+$sel->title_is("Product Created");
 
 # Try creating a second component with the same name.
 
+$sel->click_ok("link=Edit components:");
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is("Select component of product 'Kill me!'");
 $sel->click_ok("link=Add");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Add component to the Kill me! product");
@@ -96,7 +89,7 @@ $sel->title_is("Component Created");
 # Add a new version.
 
 edit_product($sel, "Kill me!");
-$sel->click_ok("//a[contains(text(),'Edit\nversions:')]");
+$sel->click_ok("link=Edit versions:");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Select version of product 'Kill me!'");
 $sel->click_ok("link=Add");
@@ -264,14 +257,14 @@ ok($text =~ /Bugs targetted to this milestone have been retargetted to the defau
 $sel->click_ok("link='Kill me nicely'");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Edit Product 'Kill me nicely'");
-$sel->click_ok("//a[contains(text(),'Edit\nversions:')]");
+$sel->click_ok("link=Edit versions:");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Select version of product 'Kill me nicely'");
 $sel->click_ok("//a[contains(\@href, 'editversions.cgi?action=del&product=Kill%20me%20nicely&version=0.1a')]");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Delete Version of Product 'Kill me nicely'");
 $text = trim($sel->get_text("bugzilla-body"));
-ok($text =~ /Sorry, there are 2 bugs outstanding for this version/, "Rejecting version deletion");
+ok($text =~ /Sorry, there are 2 outstanding bugs for this version/, "Rejecting version deletion");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 

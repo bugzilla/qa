@@ -16,7 +16,10 @@ set_parameters($sel, { "Group Security" => {"makeproductgroups-on" => undef} });
 add_product($sel);
 $sel->type_ok("product", "ready_to_die");
 $sel->type_ok("description", "will die");
-$sel->click_ok('//input[@value="Add"]');
+$sel->type_ok("component", "General");
+$sel->type_ok("comp_desc", "No specific role");
+$sel->type_ok("initialowner", $config->{permanent_user});
+$sel->click_ok('add-product');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Product Created");
 go_to_admin($sel);
@@ -72,7 +75,10 @@ $sel->is_text_present_ok("Access to bugs in the ready_to_die product");
 add_product($sel);
 $sel->type_ok("product", "ready_to_die");
 $sel->type_ok("description", "will die");
-$sel->click_ok('//input[@value="Add"]');
+$sel->type_ok("component", "General");
+$sel->type_ok("comp_desc", "No specific role");
+$sel->type_ok("initialowner", $config->{permanent_user});
+$sel->click_ok('add-product');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Product Created");
 
@@ -153,7 +159,10 @@ set_parameters($sel, { "Group Security" => {"makeproductgroups-off" => undef} })
 add_product($sel);
 $sel->type_ok("product", "ready_to_die");
 $sel->type_ok("description", "will die");
-$sel->click_ok('//input[@value="Add"]');
+$sel->type_ok("component", "General");
+$sel->type_ok("comp_desc", "No specific role");
+$sel->type_ok("initialowner", $config->{permanent_user});
+$sel->click_ok('add-product');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Product Created");
 

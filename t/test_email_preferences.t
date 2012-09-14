@@ -59,6 +59,12 @@ $sel->click_ok("email-0-0", undef, 'Set "Any field not mentioned above changes" 
 $sel->click_ok("email-3-8", undef, 'Set "The CC field changes" for CCed role');
 $sel->click_ok("email-1-10", undef, 'Set "A new bug is created" for QA Contact role');
 $sel->click_ok("email-100-101", undef, 'Set "Email me when someone sets a flag I asked for" global option');
+# Restore the old 4.2 behavior for 'Disable All Mail'.
+foreach my $col (0..3) {
+    foreach my $row (50..51) {
+        $sel->click_ok("neg-email-$col-$row");
+    }
+}
 $sel->value_is("email-0-1", "on");
 $sel->value_is("email-0-10", "off");
 $sel->value_is("email-0-6", "off");
