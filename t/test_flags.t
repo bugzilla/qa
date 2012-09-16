@@ -289,7 +289,7 @@ my $attachment1_id = $1;
 
 # Now create another attachment, and set requestees.
 
-$sel->click_ok("//a[contains(text(),'Create\n Another Attachment to Bug $bug1_id')]");
+$sel->click_ok("link=Create Another Attachment to Bug $bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Create New Attachment for Bug #$bug1_id");
 $sel->type_ok("data", "/var/www/html/selenium/bugzilla/patch.diff");
@@ -311,7 +311,7 @@ my $attachment2_id = $1;
 
 # Create a third attachment, but we now set the MIME type manually.
 
-$sel->click_ok("//a[contains(text(),'Create\n Another Attachment to Bug $bug1_id')]");
+$sel->click_ok("link=Create Another Attachment to Bug $bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Create New Attachment for Bug #$bug1_id");
 $sel->type_ok("data", "/var/www/html/selenium/bugzilla/patch.diff");
@@ -385,7 +385,7 @@ $sel->value_is("autodetect", "on");
 
 # canconfirm/editbugs privs are required to edit this flag.
 
-ok(!$sel->is_editable("flag_type-$aflagtype1_id"), "Flag type non editable by powerless users");
+ok(!$sel->is_element_present("flag_type-$aflagtype1_id"), "Flag type 'SeleniumAttachmentFlag1Test' not displayed to powerless users");
 
 # No privs are required to edit this flag.
 

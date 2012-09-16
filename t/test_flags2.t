@@ -247,7 +247,7 @@ $sel->click_ok("set_default_assignee");
 $sel->type_ok("comment", "The selenium flag should be preserved.");
 edit_bug_and_return($sel, $bug2_id, $bug_summary2);
 $sel->selected_label_is("flag-$flag2_id", '?');
-ok(!$sel->is_element_present("flag_type-$flagtype1_id"), "Flag type not available in c2");
+ok(!$sel->is_element_present("flag_type-$flagtype1_id"), "Flag type not available in component c2");
 $sel->is_element_present_ok("flag_type-$flagtype2_id");
 logout($sel);
 
@@ -269,8 +269,8 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Verify New Product Details...");
 edit_bug_and_return($sel, $bug2_id, $bug_summary2, {id => "change_product"});
 ok(!$sel->is_element_present("flag-$flag2_id"), "Flag $flag2_id deleted");
-ok(!$sel->is_editable("flag_type-$flagtype1_id"), "Flag type 'selenium' not editable by powerless users");
-ok(!$sel->is_element_present("flag_type-$flagtype2_id"), "Flag type not available in c1");
+ok(!$sel->is_element_present("flag_type-$flagtype1_id"), "Flag type 'selenium' not displayed to powerless users");
+ok(!$sel->is_element_present("flag_type-$flagtype2_id"), "Flag type not available in component c1");
 logout($sel);
 
 # Time to delete created flag types.
