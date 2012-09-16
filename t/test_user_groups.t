@@ -70,7 +70,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is('User master@selenium.bugzilla.org updated');
 $sel->is_text_present_ok('The account has been added to the Master group');
 
-$sel->click_ok("//a[contains(text(),'add\n    a new user')]");
+$sel->click_ok("link=add a new user");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is('Add user');
 $sel->type_ok('login', 'slave@selenium.bugzilla.org');
@@ -86,7 +86,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is('User slave@selenium.bugzilla.org updated');
 $sel->is_text_present_ok('The account has been added to the Slave group');
 
-$sel->click_ok("//a[contains(text(),'add\n    a new user')]");
+$sel->click_ok("link=add a new user");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is('Add user');
 $sel->type_ok('login', 'reg@selenium.bugzilla.org');
@@ -97,6 +97,18 @@ $sel->click_ok('add');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is('Edit user reg-user <reg@selenium.bugzilla.org>');
 
+# Disabled accounts are not listed by default.
+
+$sel->click_ok('link=find other users');
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+$sel->title_is('Search users');
+$sel->is_checked_ok('enabled_only');
+$sel->click_ok('search');
+$sel->wait_for_page_to_load_ok(WAIT_TIME);
+ok(!$sel->is_text_present('master@selenium.bugzilla.org'), 'Inactive user account master-user not listed by default');
+ok(!$sel->is_text_present('slave@selenium.bugzilla.org'), 'Inactive user account slave-user not listed by default');
+ok(!$sel->is_text_present('reg@selenium.bugzilla.org'), 'Inactive user account reg-user not displayed by default');
+
 # Now make sure group inheritance works correctly.
 
 $sel->click_ok('link=find other users');
@@ -105,6 +117,7 @@ $sel->title_is('Search users');
 $sel->check_ok('grouprestrict');
 $sel->select_ok('groupid', 'label=Master');
 $sel->select_ok('matchtype', 'value=substr');
+$sel->uncheck_ok('enabled_only');
 $sel->click_ok('search');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->is_text_present_ok('master@selenium.bugzilla.org', 'master-user in Master group');
@@ -117,6 +130,7 @@ $sel->title_is('Search users');
 $sel->check_ok('grouprestrict');
 $sel->select_ok('groupid', 'label=Slave');
 $sel->select_ok('matchtype', 'value=substr');
+$sel->uncheck_ok('enabled_only');
 $sel->click_ok('search');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->is_text_present_ok('master@selenium.bugzilla.org', 'master-user in Slave group');
@@ -146,6 +160,7 @@ $sel->title_is('Search users');
 $sel->check_ok('grouprestrict');
 $sel->select_ok('groupid', 'label=Master');
 $sel->select_ok('matchtype', 'value=substr');
+$sel->uncheck_ok('enabled_only');
 $sel->click_ok('search');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->is_text_present_ok('master@selenium.bugzilla.org', 'master-user in Master group');
@@ -158,6 +173,7 @@ $sel->title_is('Search users');
 $sel->check_ok('grouprestrict');
 $sel->select_ok('groupid', 'label=Slave');
 $sel->select_ok('matchtype', 'value=substr');
+$sel->uncheck_ok('enabled_only');
 $sel->click_ok('search');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->is_text_present_ok('master@selenium.bugzilla.org', 'master-user in Slave group');
@@ -179,6 +195,7 @@ sub cleanup_users {
     $sel->title_is("Search users");
     $sel->type_ok('matchstr', '(master|slave|reg)@selenium.bugzilla.org');
     $sel->select_ok('matchtype', 'value=regexp');
+    $sel->uncheck_ok('enabled_only');
     $sel->click_ok("search");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Select user");
