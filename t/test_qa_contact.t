@@ -91,7 +91,7 @@ $sel->is_text_present_ok("You are not authorized to access bug");
 # powerless user, as the QA contact field is disabled.
 # Don't use it log_in() as we want to follow this specific link.
 
-$sel->click_ok("//a[contains(text(),'log\n    in to an account')]", undef, "Log in");
+$sel->click_ok("link=log in to an account", undef, "Log in");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Log in to Bugzilla");
 $sel->is_text_present_ok("Bugzilla needs a legitimate login and password to continue.");
