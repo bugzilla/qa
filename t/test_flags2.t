@@ -243,7 +243,7 @@ my $flagtype2_id = $1;
 
 go_to_bug($sel, $bug2_id);
 $sel->select_ok("component", "label=c2");
-$sel->click_ok("set_default_assignee");
+ok(!$sel->is_checked("set_default_assignee"), "Moving the bug into another component must not change the assignee");
 $sel->type_ok("comment", "The selenium flag should be preserved.");
 edit_bug_and_return($sel, $bug2_id, $bug_summary2);
 $sel->selected_label_is("flag-$flag2_id", '?');
