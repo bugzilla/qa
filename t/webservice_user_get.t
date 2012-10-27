@@ -7,8 +7,8 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(PRIVATE_BUG_USER);
-use Test::More tests => 180;
-my ($config, @clients) = get_rpc_clients();
+use Test::More tests => 207;
+our ($config, @clients) = get_rpc_clients();
 
 my $get_user = $config->{'unprivileged_user_login'};
 my $priv_user = $config->{PRIVATE_BUG_USER . '_user_login'};
@@ -87,13 +87,14 @@ sub post_success {
     my $result = $call->result;
     is(scalar @{ $result->{users} }, 1, "Got exactly one user");
     my $item = $result->{users}->[0];
+    my $user = $t->{user} || '';
 
-    if ($t->{user} && $t->{user} eq 'admin') {
+    if ($user eq 'admin') {
         ok(exists $item->{email} && exists $item->{can_login}
            && exists $item->{email_enabled} && exists $item->{login_denied_text},
            'Admin correctly gets all user fields');
     }
-    elsif ($t->{user}) {
+    elsif ($user) {
         ok(exists $item->{email} && exists $item->{can_login},
            'Logged-in user correctly gets email and can_login');
         ok(!exists $item->{email_enabled} 
@@ -104,6 +105,19 @@ sub post_success {
         my @item_keys = sort keys %$item;
         is_deeply(\@item_keys, ['id', 'name', 'real_name'],
             'Only id, name, and real_name are returned to logged-out users');
+    }
+
+    my $username = $config->{"${user}_user_login"};
+    # XXX We have no way to create a saved search or a saved report from
+    # the WebService, so we cannot test that the correct data is returned
+    # if the user is accessing his own account.
+    if (!$user || $username ne $item->{name}) {
+        ok(!exists $item->{saved_searches} && !exists $item->{saved_reports},
+           "Users cannot get the list of saved searches and reports from someone else's acccount");
+    }
+    else {
+        ok(exists $item->{saved_searches} && exists $item->{saved_reports},
+           'Users can get the list of saved searches and reports for their own account');
     }
 }
 
