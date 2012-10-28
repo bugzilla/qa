@@ -6,7 +6,7 @@ use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
 use Data::Dumper;
 use List::Util qw(first);
 use MIME::Base64;
-use Test::More tests => 325;
+use Test::More tests => 337;
 my ($config, @clients) = get_rpc_clients();
 
 ################
@@ -124,10 +124,8 @@ sub post_success {
     cmp_ok($attachment->{creation_time}, '=~', $rpc->DATETIME_REGEX,
            "creation_time is in the right format");
     is($attachment->{is_obsolete}, 0, 'is_obsolete is 0');
-    cmp_ok($attachment->{bug_id}, '=~', qr/^\d+$/,
-           "bug_id is an integer");
-    cmp_ok($attachment->{id}, '=~', qr/^\d+$/,
-           "id is an integer");
+    cmp_ok($attachment->{bug_id}, '=~', qr/^\d+$/, "bug_id is an integer");
+    cmp_ok($attachment->{id}, '=~', qr/^\d+$/, "id is an integer");
     is($attachment->{content_type}, 'application/x-perl',
        "content_type is correct");
     cmp_ok($attachment->{file_name}, '=~', qr/^\w+\.pl$/,
@@ -139,6 +137,7 @@ sub post_success {
     my $data = $attachment->{data};
     $data = decode_base64($data) if $rpc->isa('QA::RPC::JSONRPC');
     is($data, $content, 'data is correct');
+    is($attachment->{size}, length($data), "size matches data's size");
 }
 
 foreach my $rpc (@clients) {
