@@ -7,10 +7,11 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use QA::Tests qw(PRIVATE_BUG_USER);
-use Test::More tests => 180;
+use Test::More tests => 228;
 my ($config, @clients) = get_rpc_clients();
 
 my $get_user = $config->{'unprivileged_user_login'};
+my $canconfirm_user = $config->{'canconfirm_user_login'};
 my $priv_user = $config->{PRIVATE_BUG_USER . '_user_login'};
 my $disabled = $config->{'disabled_user_login'};
 my $disabled_match = substr($disabled, 0, length($disabled) - 1);
@@ -68,9 +69,28 @@ my @tests = (
       test => 'Specifying just group ids fails',
       error => 'one of the following parameters',
     },
-    { args => { names => [$get_user, $priv_user],
-                groups => ['QA-Selenium-TEST'] },
-      test => 'Limiting the return value to a group'
+    { args => { names => [$get_user, $priv_user], groups => ['QA-Selenium-TEST'] },
+      test => 'Limiting the return value to a group while being logged out fails',
+      error => 'The group you specified, QA-Selenium-TEST, is not valid here',
+    },
+    { user => 'unprivileged',
+      args => { names => [$get_user, $priv_user], groups => ['missing_group'] },
+      test => 'Limiting the return value to a group which does not exist fails',
+      error => 'The group you specified, missing_group, is not valid here',
+    },
+    { user => 'unprivileged',
+      args => { names => [$get_user, $priv_user], groups => ['QA-Selenium-TEST'] },
+      test => 'Limiting the return value to a group you do not belong to fails',
+      error => 'The group you specified, QA-Selenium-TEST, is not valid here',
+    },
+    { user => 'editbugs',
+      args => { names => [$get_user, $priv_user], groups => ['canconfirm', 'editbugs'] },
+      test => 'Limiting the return value to some groups you do not belong to fails',
+      error => 'The group you specified, canconfirm, is not valid here',
+    },
+    { user => 'admin',
+      args => { names => [$canconfirm_user], groups => ['canconfirm', 'editbugs'] },
+      test => 'Limiting the return value to groups you belong to',
     },
     # XXX We have no way of getting group_ids from the WebService, so
     # we can't really test that they work.
