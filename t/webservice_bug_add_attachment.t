@@ -3,7 +3,7 @@ use warnings;
 use lib qw(lib);
 use QA::Util;
 use MIME::Base64 qw(encode_base64 decode_base64);
-use Test::More tests => 177;
+use Test::More tests => 187;
 my ($config, $xmlrpc, $jsonrpc, $jsonrpc_get) = get_rpc_clients();
 
 use constant INVALID_BUG_ID => -1;
@@ -185,6 +185,8 @@ sub pre_call {
 sub post_success {
     my ($call, $t, $rpc) = @_;
 
+    my $ids = $call->result->{ids};
+    $call = $rpc->bz_call_success("Bug.attachments", {attachment_ids => $ids});
     my $attachments = $call->result->{attachments};
 
     foreach my $id (keys %$attachments) {
