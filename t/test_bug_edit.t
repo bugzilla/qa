@@ -329,29 +329,23 @@ if ($config->{test_extensions}) {
                                            }
                          });
 
-    # Mass-move has been removed, see 581690.
-    # Restore these tests once this bug is fixed.
-    # $sel->click_ok("link=My bugs from QA_Selenium");
-    # $sel->wait_for_page_to_load_ok(WAIT_TIME);
-    # $sel->title_is("Bug List: My bugs from QA_Selenium");
-    # $sel->is_text_present_ok("2 bugs found");
-    # $sel->click_ok("link=Change Several Bugs at Once");
-    # $sel->wait_for_page_to_load_ok(WAIT_TIME);
-    # $sel->title_is("Bug List");
-    # $sel->click_ok("check_all");
-    # $sel->type_ok("comment", "-> moved");
-    # $sel->click_ok('oldbugmove');
-    # $sel->wait_for_page_to_load_ok(WAIT_TIME);
-    # $sel->title_is("Bugs processed");
-    # $sel->is_text_present_ok("Bug $bug1_id has been moved to another database");
-    # $sel->is_text_present_ok("Bug $bug2_id has been moved to another database");
-    # $sel->click_ok("link=Bug $bug2_id");
-    # $sel->wait_for_page_to_load_ok(WAIT_TIME);
-    # $sel->title_like(qr/^Bug $bug2_id/);
-    # $sel->selected_label_is("resolution", "MOVED");
-
-    go_to_bug($sel, $bug2_id);
-    edit_bug_and_return($sel, $bug2_id, $bug_summary2, {id => "oldbugmove"});
+    $sel->click_ok("link=My bugs from QA_Selenium");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Bug List: My bugs from QA_Selenium");
+    $sel->is_text_present_ok("2 bugs found");
+    $sel->click_ok("link=Change Several Bugs at Once");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Bug List");
+    $sel->click_ok("check_all");
+    $sel->type_ok("comment", "-> moved");
+    $sel->click_ok('oldbugmove');
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_is("Bugs processed");
+    $sel->is_text_present_ok("Changes submitted for bug $bug1_id");
+    $sel->is_text_present_ok("Changes submitted for bug $bug2_id");
+    $sel->click_ok("link=bug $bug2_id");
+    $sel->wait_for_page_to_load_ok(WAIT_TIME);
+    $sel->title_like(qr/^Bug $bug2_id/);
     $sel->selected_label_is("resolution", "MOVED");
     $sel->is_text_present_ok("Bug moved to http://www.foo.com/.");
 
