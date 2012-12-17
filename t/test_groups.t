@@ -265,6 +265,66 @@ $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Confirm Group Control Change for product 'TestProduct'");
 $sel->is_text_present_ok("the group is no longer applicable and will be removed");
 
+# Make sure that renaming a group which is used as a special group
+# (such as insidergroup or querysharegroup) is correctly propagated
+# and that you cannot delete this group.
+
+set_parameters($sel, { "Group Security" => {"querysharegroup" => {type => "select", value => "Selenium-test"}} });
+
+go_to_admin($sel);
+$sel->click_ok("link=Groups");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Edit Groups");
+$sel->click_ok("link=Selenium-test");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Change Group: Selenium-test");
+$sel->type_ok("name", "X-Selenium-Y");
+$sel->click_ok("update-group");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Change Group: X-Selenium-Y");
+$sel->is_text_present_ok("The name was changed to 'X-Selenium-Y'");
+
+go_to_admin($sel);
+$sel->click_ok("link=Parameters");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Configuration: Required Settings");
+$sel->click_ok("link=Group Security");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Configuration: Group Security");
+$sel->value_is("querysharegroup", "X-Selenium-Y");
+
+# There is no UI to delete this group, so we have to type the URL directly.
+
+$sel->open_ok("/$config->{bugzilla_installation}/editgroups.cgi?action=del&group=$group_id");
+$sel->title_is("Group not deletable");
+$sel->is_text_present_ok("The group 'X-Selenium-Y' is used by the 'querysharegroup' parameter");
+
+$sel->open_ok("/$config->{bugzilla_installation}/editgroups.cgi?action=delete&group=$group_id");
+$sel->title_is("Suspicious Action");
+$sel->is_text_present_ok("you have no valid token for the delete_group action while processing the 'editgroups.cgi' script");
+$sel->click_ok("confirm");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Group not deletable");
+$sel->is_text_present_ok("The group 'X-Selenium-Y' is used by the 'querysharegroup' parameter");
+
+set_parameters($sel, { "Group Security" => {"querysharegroup" => {type => "select", value => ""}} });
+
+# Revert the group name change to not mess with the subsequent tests
+# which expect to see 'Selenium-test'.
+
+go_to_admin($sel);
+$sel->click_ok("link=Groups");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Edit Groups");
+$sel->click_ok("link=X-Selenium-Y");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Change Group: X-Selenium-Y");
+$sel->type_ok("name", "Selenium-test");
+$sel->click_ok("update-group");
+$sel->wait_for_page_to_load(WAIT_TIME);
+$sel->title_is("Change Group: Selenium-test");
+$sel->is_text_present_ok("The name was changed to 'Selenium-test'");
+
 # Delete the Selenium-test group.
 
 go_to_admin($sel);
