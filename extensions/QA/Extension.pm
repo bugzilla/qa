@@ -7,9 +7,8 @@
 
 package Bugzilla::Extension::QA;
 
-use 5.10.1;
 use strict;
-use parent qw(Bugzilla::Extension);
+use base qw(Bugzilla::Extension);
 
 use Bugzilla::Extension::QA::Util;
 use Bugzilla::Constants;
@@ -36,22 +35,20 @@ sub page_before_template {
     my $action = $cgi->param('action') || '';
     my $vars = { sender => $user, action => $action, pid => $$ };
 
-    given ($action) {
-        when ('create') {
-            $tmpl_file = 'qa/create_bug.txt.tmpl';
-        }
-        when ('create_with_headers') {
-            $tmpl_file = 'qa/create_bug_with_headers.txt.tmpl';
-        }
-        when (/^update(_with_headers)?$/) {
-            my $f = $1 // '';
-            $tmpl_file = "qa/update_bug$f.txt.tmpl";
-            my $bug = Bugzilla::Bug->check($cgi->param('bug_id'));
-            $vars->{bug_id} = $bug->id;
-        }
-        default {
-            ThrowUserError('unknown_action', { action => $action });
-        }
+    if ($action eq 'create') {
+        $tmpl_file = 'qa/create_bug.txt.tmpl';
+    }
+    elsif ($action eq 'create_with_headers') {
+        $tmpl_file = 'qa/create_bug_with_headers.txt.tmpl';
+    }
+    elsif ($action =~ /^update(_with_headers)?$/) {
+        my $f = $1 || '';
+        $tmpl_file = "qa/update_bug$f.txt.tmpl";
+        my $bug = Bugzilla::Bug->check($cgi->param('bug_id'));
+        $vars->{bug_id} = $bug->id;
+    }
+    else {
+        ThrowUserError('unknown_action', { action => $action });
     }
 
     $template->process($tmpl_file, $vars, \$output)
