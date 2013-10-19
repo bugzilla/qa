@@ -4,6 +4,8 @@
 use strict;
 use warnings;
 
+use Cwd;
+
 my $conf_path;
 my $config; 
 
@@ -517,16 +519,7 @@ foreach my $f (@fields) {
 
 if (Bugzilla->params->{insidergroup} ne 'QA-Selenium-TEST') {
     SetParam('insidergroup', 'QA-Selenium-TEST');
-    $params_modified = 1;
-}
-
-if ($params_modified) {
     write_params();
-    print <<EOT
-** Parameters have been modified by this script. Please re-run
-** checksetup.pl to set file permissions on data/params correctly.
-
-EOT
 }
 
 ########################
@@ -585,5 +578,19 @@ foreach my $kw (@keywords) {
     next if new Bugzilla::Keyword({ name => $kw->{name} });
     Bugzilla::Keyword->create($kw);
 }
+
+############################
+# Install the QA extension #
+############################
+
+print "copying the QA extension...\n";
+my $output = `cp -R ../extensions/QA $conf_path/extensions/.`;
+print $output if $output;
+
+my $cwd = cwd();
+chdir($conf_path);
+$output = `contrib/fixperms.pl`;
+print $output if $output;
+chdir($cwd);
 
 print "installation and configuration complete!\n";
