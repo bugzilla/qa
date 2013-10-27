@@ -5,7 +5,7 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 14 * 3;
+use Test::More tests => 15 * 3;
 use QA::Util;
 my ($config, @clients) = get_rpc_clients();
 
@@ -22,14 +22,12 @@ foreach my $rpc (@clients) {
     my $extensions = $ext_call->result->{extensions};
     isa_ok($extensions, 'HASH', 'extensions');
 
-    my $cmp = '==';
-    my $desc = 'No extensions returned';
+    # There is always at least the QA extension enabled.
+    my $cmp = $config->{test_extensions} ? '>' : '==';
     my @ext_names = keys %$extensions;
-    if ($config->{test_extensions}) {
-        $cmp = '>';
-        $desc = scalar(@ext_names) . ' extensions returned: ' . join(', ', @ext_names);
-    }
-    cmp_ok(scalar(@ext_names), $cmp, 0, $desc);
+    my $desc = scalar(@ext_names) . ' extension(s) returned: ' . join(', ', @ext_names);
+    cmp_ok(scalar(@ext_names), $cmp, 1, $desc);
+    ok(grep($_ eq 'QA', @ext_names), 'The QA extension is enabled');
 
     my $time_call = $rpc->bz_call_success('Bugzilla.time');
     my $time_result = $time_call->result;
