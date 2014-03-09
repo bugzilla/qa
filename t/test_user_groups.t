@@ -68,7 +68,7 @@ $sel->check_ok("//input[\@name='group_$master_gid']");
 $sel->click_ok('update');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is('User master@selenium.bugzilla.org updated');
-$sel->is_text_present_ok('The account has been added to the Master group');
+$sel->is_text_present_ok('The account has been added to the following group: Master');
 
 $sel->click_ok("link=add a new user");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -84,7 +84,7 @@ $sel->check_ok("//input[\@name='group_$slave_gid']");
 $sel->click_ok('update');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is('User slave@selenium.bugzilla.org updated');
-$sel->is_text_present_ok('The account has been added to the Slave group');
+$sel->is_text_present_ok('The account has been added to the following group: Slave');
 
 $sel->click_ok("link=add a new user");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
