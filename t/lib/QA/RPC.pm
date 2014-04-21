@@ -48,6 +48,7 @@ sub bz_log_in {
     my $call = $self->bz_call_success(
         'User.login', { login => $username, password => $password });
     cmp_ok($call->result->{id}, 'gt', 0, $self->TYPE . ": Logged in as $user");
+    $self->{_bz_credentials}->{token} = $call->result->{token};
 
     # Save the cookies in the cookie file
     $self->transport->cookie_jar->extract_cookies(
@@ -56,7 +57,8 @@ sub bz_log_in {
 }
 
 sub bz_call_success {
-    my ($self, $method, $args, $test_name) = @_;
+    my ($self, $method, $orig_args, $test_name) = @_;
+    my $args = $orig_args ? dclone($orig_args) : {};
 
     if ($self->bz_get_mode and $method eq 'User.logout') {
         $self->_bz_clear_credentials();
@@ -67,7 +69,11 @@ sub bz_call_success {
     # Under XMLRPC::Lite, if we pass undef as the second argument,
     # it sends a single param <value />, which shows up as an
     # empty string on the Bugzilla side.
-    if ($args) {
+    if ($self->{_bz_credentials}->{token}) {
+        $args->{Bugzilla_token} = $self->{_bz_credentials}->{token};
+    }
+
+    if (scalar keys %$args) {
         $call = $self->call($method, $args);
     }
     else {
@@ -81,7 +87,13 @@ sub bz_call_success {
 }
 
 sub bz_call_fail {
-    my ($self, $method, $args, $faultstring, $test_name) = @_;
+    my ($self, $method, $orig_args, $faultstring, $test_name) = @_;
+    my $args = $orig_args ? dclone($orig_args) : {};
+
+    if ($self->{_bz_credentials}->{token}) {
+        $args->{Bugzilla_token} = $self->{_bz_credentials}->{token};
+    }
+
     $test_name ||= "$method failed (as intended)";
     my $call = $self->call($method, $args);
     $self->_handle_undef_response($test_name) if !$call;
