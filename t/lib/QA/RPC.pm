@@ -83,6 +83,10 @@ sub bz_call_success {
     $self->_handle_undef_response($test_name) if !$call;
     ok(!$call->fault, $self->TYPE . ": $test_name")
         or diag($call->faultstring);
+
+    if ($method eq 'User.logout') {
+        delete $self->{_bz_credentials}->{token};
+    }
     return $call;
 }
 
