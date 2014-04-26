@@ -95,12 +95,11 @@ $sel->title_is("Password Required");
 # Now try to start a sudo session directly, with all required credentials.
 
 $sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi?action=begin-sudo&Bugzilla_login=$config->{admin_user_login}&Bugzilla_password=$config->{admin_user_passwd}&target_login=$config->{admin_user_login}", undef, "Impersonate a user directly by providing all required data");
-$sel->title_is("Preparation Required");
+$sel->title_is("Untrusted Authentication Request");
 
-# The link should populate the target_login field correctly.
-# Note that we are trying to sudo an admin, which is not allowed.
+# Now try to sudo an admin, which is not allowed.
 
-$sel->click_ok("link=start your session normally");
+$sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi?action=prepare-sudo&target_login=$config->{admin_user_login}");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Begin sudo session");
 $sel->value_is("target_login", $config->{admin_user_login});
