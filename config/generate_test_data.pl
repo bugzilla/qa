@@ -589,7 +589,7 @@ print $output if $output;
 
 my $cwd = cwd();
 chdir($conf_path);
-$output = `contrib/fixperms.pl`;
+$output = `perl contrib/fixperms.pl`;
 print $output if $output;
 chdir($cwd);
 
