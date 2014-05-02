@@ -103,8 +103,6 @@ if [ "$TEST_SUITE" = "selenium" ]; then
     # This is needed for the selenium tests
     cpanm --quiet --notest Test::WWW::Selenium
 
-    # Selenium setup
-    if [ "$TEST_SUITE" = "selenium" ]; then
     # Start the virtual frame buffer
     echo "== Starting virtual frame buffer"
     export DISPLAY=:99.0
