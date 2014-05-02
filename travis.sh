@@ -17,7 +17,19 @@ echo "== Installing OS packages"
 sudo apt-get install -y perlmagick apache2 libssl-dev g++ libgd2-xpm-dev xvfb
 
 if [ "$TEST_SUITE" = "docs" ]; then
-    sudo apt-get install python-sphinx
+    if [ "$TRAVIS_BRANCH" = "master" ]; then
+        sudo apt-get install -y python-sphinx
+    elif [ "$TRAVIS_BRANCH" = "4.4" ]; then
+        sudo apt-get install -y xmlto lynx texlive-lang-cyrillic
+    else
+        sudo apt-get install -y ldp-docbook-dsssl jade jadetex lynx
+        export JADE_PUB=/usr/share/sgml/declaration
+        export LDP_HOME=/usr/share/sgml/docbook/stylesheet/dsssl/ldp
+    fi
+fi
+
+if [ "$TEST_SUITE" = "selenium" ] || [ "$TEST_SUITE" = "webservices" ]; then
+    sudo apt-get install -y apache2 xvfb
 fi
 
 # Install dependencies from Build.PL
@@ -25,6 +37,7 @@ echo "== Installing Perl dependencies"
 cpanm --quiet --notest --reinstall DateTime
 cpanm --quiet --notest --reinstall Module::Build # Need latest build
 cpanm --quiet --notest --reinstall Software::License # Needed by Module::Build
+cpanm --quiet --notest --reinstall Pod::Coverage
 cpanm --quiet --notest --installdeps --with-recommends .
 
 # Basic sanity tests
@@ -40,7 +53,7 @@ fi
 if [ "$TEST_SUITE" = "docs" ]; then
     echo "== Running documentation build"
     cd docs
-    perl makedocs.pl
+    perl makedocs.pl --with-pdf
     exit $?
 fi
 
