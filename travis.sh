@@ -90,6 +90,9 @@ sudo ln -s $PERLBREW_ROOT/perls/$PERLBREW_PERL/bin/perl /usr/bin/perl
 # We will be using SQLite for our database backend
 cpanm --quiet --notest DBD::SQLite
 
+# This is needed for the extended test suite
+cpanm --quiet --notest Test::WWW::Selenium
+
 # We have to run checksetup.pl twice as the first run creates localconfig
 perl checksetup.pl qa/config/checksetup_answers.txt
 perl checksetup.pl qa/config/checksetup_answers.txt
@@ -101,9 +104,6 @@ cd $TRAVIS_BUILD_DIR/qa/t
 
 # Selenium UI Tests
 if [ "$TEST_SUITE" = "selenium" ]; then
-    # This is needed for the selenium tests
-    cpanm --quiet --notest Test::WWW::Selenium
-
     # Start the virtual frame buffer
     echo "== Starting virtual frame buffer"
     export DISPLAY=:99.0
