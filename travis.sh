@@ -38,6 +38,7 @@ cpanm --quiet --notest --reinstall DateTime
 cpanm --quiet --notest --reinstall Module::Build # Need latest build
 cpanm --quiet --notest --reinstall Software::License # Needed by Module::Build
 cpanm --quiet --notest --reinstall Pod::Coverage
+cpanm --quiet --notest --reinstall XMLRPC::Lite # Needed for version 4.2 and earlier
 cpanm --quiet --notest --installdeps --with-recommends .
 
 # Basic sanity tests
