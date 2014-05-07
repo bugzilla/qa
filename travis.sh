@@ -37,6 +37,7 @@ cpanm --quiet --notest --reinstall Software::License # Needed by Module::Build t
 cpanm --quiet --notest --reinstall Pod::Coverage
 cpanm --quiet --notest --reinstall DBD::mysql
 cpanm --quiet --notest --reinstall DBD::Pg
+cpanm --quiet --notest --reinstall XMLRPC::Lite # Due to the SOAP::Lite split
 cpanm --quiet --notest --reinstall Cache::Memcached::GetParserXS # FIXME test-checksetup.pl fails without this
 cpanm --quiet --notest --installdeps --with-recommends .
 
