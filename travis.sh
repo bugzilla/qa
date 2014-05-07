@@ -38,6 +38,7 @@ cpanm --quiet --notest --reinstall Pod::Coverage
 cpanm --quiet --notest --reinstall DBD::mysql
 cpanm --quiet --notest --reinstall DBD::Pg
 cpanm --quiet --notest --reinstall Cache::Memcached::GetParserXS # FIXME test-checksetup.pl fails without this
+cpanm --quiet --notest --reinstall XMLRPC::Lite # Due to the SOAP::Lite split
 cpanm --quiet --notest --installdeps --with-recommends .
 
 # Link /usr/bin/perl to the current perlbrew perl so that the Bugzilla cgi scripts will work properly
