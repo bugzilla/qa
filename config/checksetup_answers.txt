@@ -1,7 +1,7 @@
  $answer{'db_host'}   = 'localhost';
- $answer{'db_driver'} = 'mysql';
+ $answer{'db_driver'} = '%DB%';
  $answer{'db_port'}   = 0;
- $answer{'db_name'}   = 'bugs';
+ $answer{'db_name'}   = '%DB_NAME%',
  $answer{'db_user'}   = 'bugs';
  $answer{'db_pass'}   = 'bugs';
  $answer{'db_sock'}   = '';

@@ -37,8 +37,8 @@ cpanm --quiet --notest --reinstall Software::License # Needed by Module::Build t
 cpanm --quiet --notest --reinstall Pod::Coverage
 cpanm --quiet --notest --reinstall DBD::mysql
 cpanm --quiet --notest --reinstall DBD::Pg
-cpanm --quiet --notest --reinstall XMLRPC::Lite # Due to the SOAP::Lite split
 cpanm --quiet --notest --reinstall Cache::Memcached::GetParserXS # FIXME test-checksetup.pl fails without this
+cpanm --quiet --notest --reinstall XMLRPC::Lite # Due to the SOAP::Lite split
 cpanm --quiet --notest --installdeps --with-recommends .
 
 # Link /usr/bin/perl to the current perlbrew perl so that the Bugzilla cgi scripts will work properly
@@ -79,33 +79,43 @@ fi
 echo "== Updating config files"
 sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place qa/config/selenium_test.conf
 sed -e "s?%USER%?$USER?g" --in-place qa/config/checksetup_answers.txt
-sed -e "s?%USER%?$USER?g" --in-place qa/config/checksetup_upgrade_answers.txt
-sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place qa/config/config-checksetup-mysql
+if [ "$DB" = "" ]; then
+    DB=mysql
+fi
+sed -e "s?%DB%?$DB?g" --in-place qa/config/checksetup_answers.txt
 
-# Create the bugs user for MySQL
+# MySQL related setup
 if [ "$DB" = "mysql" ]; then
+    echo "== Setting up MySQL"
     mysql -u root mysql -e "GRANT ALL PRIVILEGES ON *.* TO bugs@localhost IDENTIFIED BY 'bugs'; FLUSH PRIVILEGES;"
 fi
 
-# Create the bugs user for PostgreSQL
+# PostgreSQL related setup
 if [ "$DB" = "pg" ]; then
+    echo "== Setting up PostgreSQL"
     sudo -u postgres createuser --superuser bugs
     sudo -u postgres psql -U postgres -d postgres -c "alter user bugs with password 'bugs';"
 fi
 
+# Checksetup test which tests schema changes from older versions to the current
 if [ "$TEST_SUITE" = "checksetup" ] && [ "$DB" = "mysql" ]; then
-    echo "== Running checksetup tests for MySQL"
+    echo "== Running checksetup upgrade tests for MySQL"
+    sed -e "s?%DB_NAME%?bugs_checksetup?g" --in-place qa/config/checksetup_answers.txt
+    sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place qa/config/config-checksetup-mysql
     perl qa/test-checksetup.pl --full --config config/config-checksetup-mysql
     exit $?
 fi
 
 if [ "$TEST_SUITE" = "checksetup" ] && [ "$DB" = "pg" ]; then
-    echo "== Running checksetup tests for PostgreSQL"
+    echo "== Running checksetup upgrade tests for PostgreSQL"
+    sed -e "s?%DB_NAME%?bugs_checksetup?g" --in-place qa/config/checksetup_answers.txt
+    sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place qa/config/config-checksetup-pg
     perl qa/test-checksetup.pl --full --config config/config-checksetup-pg
     exit $?
 fi
 
 # Configure Apache to serve from our build directory and restart
+echo "== Setting up Apache"
 sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place qa/config/bugzilla.conf
 sudo cp qa/config/bugzilla.conf /etc/apache2/sites-available/default
 sudo sed -e "s?APACHE_RUN_USER=www-data?APACHE_RUN_USER=$USER?g" --in-place /etc/apache2/envvars
@@ -116,6 +126,8 @@ sudo service apache2 stop; sudo rm -rf /var/lock/apache2; sudo service apache2 s
 cpanm --quiet --notest Test::WWW::Selenium
 
 # We have to run checksetup.pl twice as the first run creates localconfig
+echo "== Running checksetup"
+sed -e "s?%DB_NAME%?bugs?g" --in-place qa/config/checksetup_answers.txt
 perl checksetup.pl qa/config/checksetup_answers.txt
 perl checksetup.pl qa/config/checksetup_answers.txt
 
