@@ -140,7 +140,7 @@ sub post_success {
     my $expected_count = $t->{bugs};
     $expected_count = 1 if !defined $expected_count;
     if ($expected_count) {
-        my $operator = $t->{exactly} ? '=' : '>=';
+        my $operator = $t->{exactly} ? '==' : '>=';
         cmp_ok(scalar @$bugs, $operator, $expected_count, 
                'The right number of bugs are returned');
         unless ($t->{user} and $t->{user} eq PRIVATE_BUG_USER) {
