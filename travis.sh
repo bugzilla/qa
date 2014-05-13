@@ -9,37 +9,37 @@
 # Setup starts here
 cd $TRAVIS_BUILD_DIR
 
+# Allow alias expansion inside shell scripts
+shopt -s expand_aliases
+
 # Package installation section
+echo -en 'travis_fold:start:packages\r'
 echo "== Installing OS packages"
-sudo apt-get install -y curl perlmagick libssl-dev g++ libgd2-xpm-dev libmysqlclient-dev libpq5 postgresql-server-dev-9.1
+sudo apt-get install -qq -y \
+    perlmagick libssl-dev g++ libgd2-xpm-dev libmysqlclient-dev libpq5 \
+    postgresql-server-dev-9.1 python-sphinx xmlto lynx texlive-lang-cyrillic \
+    ldp-docbook-dsssl jade jadetex lynx apache2 xvfb
+echo -en 'travis_fold:end:packages\r'
 
-if [ "$TEST_SUITE" = "docs" ]; then
-    if [ "$TRAVIS_BRANCH" = "master" ]; then
-        sudo apt-get install -y python-sphinx
-    elif [ "$TRAVIS_BRANCH" = "4.4" ]; then
-        sudo apt-get install -y xmlto lynx texlive-lang-cyrillic
-    else
-        sudo apt-get install -y ldp-docbook-dsssl jade jadetex lynx
-        export JADE_PUB=/usr/share/sgml/declaration
-        export LDP_HOME=/usr/share/sgml/docbook/stylesheet/dsssl/ldp
-    fi
-fi
-
-if [ "$TEST_SUITE" = "selenium" ] || [ "$TEST_SUITE" = "webservices" ]; then
-    sudo apt-get install -y apache2 xvfb
-fi
+# Environment need for docs building
+export JADE_PUB=/usr/share/sgml/declaration
+export LDP_HOME=/usr/share/sgml/docbook/stylesheet/dsssl/ldp
 
 # Install dependencies from Build.PL
+echo -en 'travis_fold:start:perl_dependencies\r'
 echo "== Installing Perl dependencies"
-cpanm --quiet --notest --reinstall DateTime
-cpanm --quiet --notest --reinstall Module::Build # Need latest build
-cpanm --quiet --notest --reinstall Software::License # Needed by Module::Build to find proper Mozilla license
-cpanm --quiet --notest --reinstall Pod::Coverage
-cpanm --quiet --notest --reinstall DBD::mysql
-cpanm --quiet --notest --reinstall DBD::Pg
-cpanm --quiet --notest --reinstall Cache::Memcached::GetParserXS # FIXME test-checksetup.pl fails without this
-cpanm --quiet --notest --reinstall XMLRPC::Lite # Due to the SOAP::Lite split
-cpanm --quiet --notest --installdeps --with-recommends .
+alias cpanm='cpanm --quiet --notest --reinstall'
+cpanm DateTime
+cpanm Module::Build # Need latest build
+cpanm Software::License # Needed by Module::Build to find proper Mozilla license
+cpanm Pod::Coverage
+cpanm DBD::mysql
+cpanm DBD::Pg
+cpanm Cache::Memcached::GetParserXS # FIXME test-checksetup.pl fails without this
+cpanm XMLRPC::Lite # Due to the SOAP::Lite split
+cpanm Test::WWW::Selenium # For webservice and selenium tests
+cpanm --installdeps --with-recommends .  # Install dependencies reported by Build.PL
+echo -en 'travis_fold:end:perl_dependencies\r'
 
 # Link /usr/bin/perl to the current perlbrew perl so that the Bugzilla cgi scripts will work properly
 # PERLBREW_ROOT and PERLBREW_PERL are set by the perlbrew binary when switch perl versions
@@ -64,17 +64,6 @@ if [ "$TEST_SUITE" = "docs" ]; then
     exit $?
 fi
 
-# Switch to the correct branch for the QA repo
-if [ "$TRAVIS_BRANCH" != "master" ]; then
-    echo "== Switch to the proper $TRAVIS_BRANCH QA branch for extended tests"
-    cd $TRAVIS_BUILD_DIR/qa
-    git checkout $TRAVIS_BRANCH
-    if [ ! -f config/selenium_test.conf ]; then
-        exit 1
-    fi
-    cd $TRAVIS_BUILD_DIR
-fi
-
 # We need to replace some variables in the config files from the Travis CI environment
 echo "== Updating config files"
 sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place qa/config/selenium_test.conf
@@ -83,6 +72,13 @@ if [ "$DB" = "" ]; then
     DB=mysql
 fi
 sed -e "s?%DB%?$DB?g" --in-place qa/config/checksetup_answers.txt
+sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place qa/config/config-checksetup-mysql
+sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place qa/config/config-checksetup-pg
+if [ "$TEST_SUITE" == "checksetup" ]; then
+    sed -e "s?%DB_NAME%?bugs_checksetup?g" --in-place qa/config/checksetup_answers.txt
+else
+    sed -e "s?%DB_NAME%?bugs?g" --in-place qa/config/checksetup_answers.txt
+fi
 
 # MySQL related setup
 if [ "$DB" = "mysql" ]; then
@@ -100,16 +96,12 @@ fi
 # Checksetup test which tests schema changes from older versions to the current
 if [ "$TEST_SUITE" = "checksetup" ] && [ "$DB" = "mysql" ]; then
     echo "== Running checksetup upgrade tests for MySQL"
-    sed -e "s?%DB_NAME%?bugs_checksetup?g" --in-place qa/config/checksetup_answers.txt
-    sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place qa/config/config-checksetup-mysql
     perl qa/test-checksetup.pl --full --config config/config-checksetup-mysql
     exit $?
 fi
 
 if [ "$TEST_SUITE" = "checksetup" ] && [ "$DB" = "pg" ]; then
     echo "== Running checksetup upgrade tests for PostgreSQL"
-    sed -e "s?%DB_NAME%?bugs_checksetup?g" --in-place qa/config/checksetup_answers.txt
-    sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place qa/config/config-checksetup-pg
     perl qa/test-checksetup.pl --full --config config/config-checksetup-pg
     exit $?
 fi
@@ -122,12 +114,8 @@ sudo sed -e "s?APACHE_RUN_USER=www-data?APACHE_RUN_USER=$USER?g" --in-place /etc
 sudo sed -e "s?APACHE_RUN_GROUP=www-data?APACHE_RUN_GROUP=$USER?g" --in-place /etc/apache2/envvars
 sudo service apache2 stop; sudo rm -rf /var/lock/apache2; sudo service apache2 start
 
-# This is needed for the extended test suite
-cpanm --quiet --notest Test::WWW::Selenium
-
 # We have to run checksetup.pl twice as the first run creates localconfig
 echo "== Running checksetup"
-sed -e "s?%DB_NAME%?bugs?g" --in-place qa/config/checksetup_answers.txt
 perl checksetup.pl qa/config/checksetup_answers.txt
 perl checksetup.pl qa/config/checksetup_answers.txt
 
@@ -152,14 +140,14 @@ if [ "$TEST_SUITE" = "selenium" ]; then
     sleep 5
 
     echo "== Running Selenium UI tests"
-    perl -Mlib=$TRAVIS_BUILD_DIR/lib /usr/bin/prove -v -j2 -I$TRAVIS_BUILD_DIR/lib test_*.t
+    perl -Mlib=$TRAVIS_BUILD_DIR/lib /usr/bin/prove -v -f -I$TRAVIS_BUILD_DIR/lib test_*.t
     exit $?
 fi
 
 # WebService Tests
 if [ "$TEST_SUITE" = "webservices" ]; then
     echo "== Running WebService tests"
-    perl -Mlib=$TRAVIS_BUILD_DIR/lib /usr/bin/prove -v -I$TRAVIS_BUILD_DIR/lib webservice_*.t
+    perl -Mlib=$TRAVIS_BUILD_DIR/lib /usr/bin/prove -v -f -I$TRAVIS_BUILD_DIR/lib webservice_*.t
     exit $?
 fi
 
