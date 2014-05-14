@@ -18,7 +18,8 @@
  $answer{'interdiffbin'} = '/usr/bin/interdiff';
  $answer{'diffpath'} = '/usr/bin';
  $answer{'webservergroup'} = '%USER%';
- $answer{'ADMIN_EMAIL'}    = 'admin@my.company';
- $answer{'ADMIN_PASSWORD'} = '******';
- $answer{'ADMIN_REALNAME'} = 'admin';
- $answer{'NO_PAUSE'}       = 1;
+ $answer{'ADMIN_OK'} = 'Y';
+ $answer{'ADMIN_EMAIL'} = 'admin@bugzilla.org';
+ $answer{'ADMIN_PASSWORD'} = 'password';
+ $answer{'ADMIN_REALNAME'} = 'QA Admin';
+ $answer{'NO_PAUSE'} = 1;

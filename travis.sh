@@ -119,6 +119,10 @@ echo "== Running checksetup"
 perl checksetup.pl qa/config/checksetup_answers.txt
 perl checksetup.pl qa/config/checksetup_answers.txt
 
+# Add patch file used by tests. FIXME: make this a config option
+sudo mkdir -p /var/www/html/selenium/bugzilla
+sudo cp qa/config/patch.diff /var/www/html/selenium/bugzilla
+
 # Create test data in the SQLite database for use by the extended test suite
 echo "== Generating test data"
 cd $TRAVIS_BUILD_DIR/qa/config
@@ -130,14 +134,14 @@ if [ "$TEST_SUITE" = "selenium" ]; then
     # Start the virtual frame buffer
     echo "== Starting virtual frame buffer"
     export DISPLAY=:99.0
-    sh -e /etc/init.d/xvfb start
+    sudo sh -e /etc/init.d/xvfb start
     sleep 5
 
     # Download and start the selenium server
     echo "== Downloading and starting Selenium server"
     wget http://selenium-release.storage.googleapis.com/2.41/selenium-server-standalone-2.41.0.jar
-    sudo java -jar selenium-server-standalone-2.41.0.jar 1> /dev/null &
-    sleep 5
+    java -jar selenium-server-standalone-2.41.0.jar -DfirefoxDefaultPath=/usr/lib64/firefox/firefox -log ~/sel-`date +%Y%m%d-%H%M%S`.log &
+    sleep 15
 
     echo "== Running Selenium UI tests"
     perl -Mlib=$TRAVIS_BUILD_DIR/lib /usr/bin/prove -v -f -I$TRAVIS_BUILD_DIR/lib test_*.t
