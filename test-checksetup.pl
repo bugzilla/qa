@@ -326,10 +326,8 @@ if (!$switch{'skip-basic'}) {
     print "== Creating a blank database called $test_db_name\n";
     # We only want to test the chart migration once (because it's slow), so 
     # let's do it here.
-    system("cp -r data/mining.bak data/mining");
     db()->drop_db($test_db_name);
     check_test("Test of creating an empty database", run_against_db());
-    system("rm -rf data/mining");
 }
 
 # If we're running --full or if we have version numbers, test that stuff.
