@@ -143,7 +143,7 @@ my $bug_summary = "The selenium flag should be kept on product change";
 $sel->type_ok("short_desc", $bug_summary);
 $sel->type_ok("comment", "pom");
 $sel->click_ok('//input[@value="Add an attachment"]');
-$sel->type_ok("data", "/var/www/html/selenium/bugzilla/patch.diff");
+$sel->type_ok("data", $config->{attachment_file});
 $sel->type_ok("description", "small patch");
 $sel->click_ok("ispatch");
 $sel->value_is("ispatch", "on");
