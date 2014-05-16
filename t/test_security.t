@@ -17,7 +17,7 @@ file_bug_in_product($sel, "TestProduct");
 my $bug_summary = "Security checks";
 $sel->type_ok("short_desc", $bug_summary);
 $sel->type_ok("comment", "This bug will be used to test security fixes.");
-$sel->type_ok("data", "/var/www/html/selenium/bugzilla/patch.diff");
+$sel->type_ok("data", $config->{attachment_file});
 $sel->type_ok("description", "simple patch, v1");
 $sel->click_ok("ispatch");
 my $bug1_id = create_bug($sel, $bug_summary);
