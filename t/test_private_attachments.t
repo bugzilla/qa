@@ -27,7 +27,7 @@ $sel->type_ok("short_desc", $bug_summary);
 $sel->type_ok("comment", "and some attachments too, like this one.");
 $sel->check_ok("comment_is_private");
 $sel->click_ok('//input[@value="Add an attachment"]');
-$sel->type_ok("data", "/var/www/html/selenium/bugzilla/patch.diff");
+$sel->type_ok("data", $config->{attachment_file});
 $sel->type_ok("description", "private attachment, v1");
 $sel->check_ok("ispatch");
 my $bug1_id = create_bug($sel, $bug_summary);
@@ -40,7 +40,7 @@ $sel->is_checked_ok('//a[@id="comment_link_0"]/../..//div//input[@type="checkbox
 $sel->click_ok("link=Add an attachment");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Create New Attachment for Bug #$bug1_id");
-$sel->type_ok("data", "/var/www/html/selenium/bugzilla/patch.diff");
+$sel->type_ok("data", $config->{attachment_file});
 $sel->type_ok("description", "public attachment, v2");
 $sel->check_ok("ispatch");
 # The existing attachment name must be displayed, to mark it as obsolete.
@@ -87,7 +87,7 @@ $sel->is_text_present_ok("This attachment is not mine");
 $sel->click_ok("link=Add an attachment");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Create New Attachment for Bug #$bug1_id");
-$sel->type_ok("data", "/var/www/html/selenium/bugzilla/patch.diff");
+$sel->type_ok("data", $config->{attachment_file});
 $sel->check_ok("ispatch");
 # The user doesn't have editbugs privs.
 ok(!$sel->is_text_present("Check each existing attachment made obsolete by your new attachment"), "No attachments can be marked as obsolete");
