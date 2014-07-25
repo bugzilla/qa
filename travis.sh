@@ -15,6 +15,7 @@ shopt -s expand_aliases
 # Package installation section
 echo -en 'travis_fold:start:packages\r'
 echo "== Installing OS packages"
+sudo apt-get update -qq -y --fix-missing
 sudo apt-get install -qq -y \
     perlmagick libssl-dev g++ libgd2-xpm-dev libmysqlclient-dev libpq5 \
     postgresql-server-dev-9.1 python-sphinx xmlto lynx texlive-lang-cyrillic \
