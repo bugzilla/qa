@@ -101,7 +101,7 @@ sub _get {
     my $callback = $self->_bz_callback;
     if (defined $callback and $result->is_success) {
         my $content = $result->content;
-        $content =~ s/^\Q$callback(\E(.*)\)$/$1/s;
+        $content =~ s/^(?:\/\*\*\/)?\Q$callback(\E(.*)\)$/$1/s;
         $result->content($content);
         # We don't need this anymore, and we don't want it to affect
         # future calls.
