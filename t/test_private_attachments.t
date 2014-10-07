@@ -75,7 +75,7 @@ foreach my $user ('', 'unprivileged') {
 
 $sel->click_ok('//a[@href="attachment.cgi?id=' . $attachment1_id . '&action=edit"]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Attachment $attachment1_id Details for Bug $bug1_id");
+$sel->title_like(qr/Attachment $attachment1_id Details for Bug $bug1_id/);
 $sel->is_text_present_ok("created by admin");
 $sel->type_ok("comment", "This attachment is not mine.");
 edit_bug($sel, $bug1_id, $bug_summary, {id => "update"});
@@ -107,7 +107,7 @@ log_in($sel, $config, 'admin');
 go_to_bug($sel, $bug1_id);
 $sel->click_ok('//a[@href="attachment.cgi?id=' . $attachment2_id . '&action=edit"]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Attachment $attachment2_id Details for Bug $bug1_id");
+$sel->title_like(qr/Attachment $attachment2_id Details for Bug $bug1_id/);
 $sel->check_ok("isprivate");
 $sel->type_ok("comment", "Making the powerless user's patch private.");
 edit_bug($sel, $bug1_id, $bug_summary, {id => "update"});
@@ -143,7 +143,7 @@ log_in($sel, $config, 'admin');
 go_to_bug($sel, $bug1_id);
 $sel->click_ok('//a[@href="attachment.cgi?id=' . $attachment2_id . '&action=edit"]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Attachment $attachment2_id Details for Bug $bug1_id");
+$sel->title_like(qr/Attachment $attachment2_id Details for Bug $bug1_id/);
 $sel->click_ok("link=Delete");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Delete Attachment $attachment2_id of Bug $bug1_id");

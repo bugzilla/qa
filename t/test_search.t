@@ -33,7 +33,7 @@ my $bug_summary = "Update this summary with this bug ID";
 $sel->type_ok("short_desc", $bug_summary);
 $sel->type_ok("comment", "I'm supposed to appear in the coming buglist.");
 my $bug1_id = create_bug($sel, $bug_summary);
-$sel->click_ok("editme_action");
+$sel->click_ok("summary_edit_action");
 $bug_summary .= ": my ID is $bug1_id";
 $sel->type_ok("short_desc", $bug_summary);
 $sel->type_ok("comment", "Updating bug summary....");

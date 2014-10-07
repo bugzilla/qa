@@ -8,7 +8,7 @@ use lib qw(lib);
 use DateTime;
 use QA::Util;
 use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
-use Test::More tests => 358;
+use Test::More tests => 331;
 my ($config, @clients) = get_rpc_clients();
 
 # These gets populated when we call Bug.add_comment.
@@ -34,11 +34,9 @@ sub test_comments {
         my %reverse_map = reverse %comments;
         my $expected_text = $reverse_map{$expected_id};
         is($comment->{text}, $expected_text, "comment has the correct text");
-   
-        my $priv_login = $rpc->bz_config->{PRIVATE_BUG_USER . '_user_login'};
-        is($comment->{author}, $priv_login, "comment author is correct");
-        is($comment->{creator}, $priv_login, "comment creator is correct");
 
+        my $priv_login = $rpc->bz_config->{PRIVATE_BUG_USER . '_user_login'};
+        is($comment->{creator}, $priv_login, "comment creator is correct");
 
         my $creation_day;
         if ($rpc->isa('QA::RPC::XMLRPC')) {
@@ -51,7 +49,7 @@ sub test_comments {
              "comment time has the right format");
     }
     else {
-        foreach my $field (qw(id text author creator time)) {
+        foreach my $field (qw(id text creator time)) {
             ok(defined $comment->{$field}, "$field is defined");
         }
     }

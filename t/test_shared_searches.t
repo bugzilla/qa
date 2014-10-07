@@ -31,10 +31,10 @@ ok($text =~ /OK, you have a new search named Shared Selenium buglist./, "New sea
 
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Saved Searches");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 my $ssname = $sel->get_attribute('//input[@type="checkbox" and @alt="Shared Selenium buglist"]@name');
 $ssname =~ /(?:link_in_footer_(\d+))/;
 my $saved_search1_id = $1;
@@ -47,7 +47,7 @@ ok(!$sel->is_checked("force_$saved_search1_id"), "Shared search not displayed in
 $sel->click_ok("force_$saved_search1_id");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 logout($sel);
 
 # Log in as the "canconfirm" user. The search shared by the admin must appear
@@ -65,10 +65,10 @@ ok(!$sel->is_text_present("Forget Search 'Shared Selenium buglist'"), "'Forget..
 
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Saved Searches");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 $sel->is_text_present_ok($config->{admin_user_login});
 
 # Remove the shared search from your footer.
@@ -77,11 +77,11 @@ $sel->is_checked_ok("link_in_footer_$saved_search1_id");
 $sel->click_ok("link_in_footer_$saved_search1_id");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 # Go to a page where the query name is unlikely to appear in the main page.
 $sel->click_ok("link=Permissions");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Permissions");
 ok(!$sel->is_text_present("Shared Selenium buglist"), "Shared query no longer displayed in the footer");
 
 # Create your own saved search, and share it with the canconfirm group.
@@ -99,10 +99,10 @@ ok($text =~ /OK, you have a new search named helpwanted./, "New search named hel
 
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Saved Searches");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 $ssname = $sel->get_attribute('//input[@type="checkbox" and @alt="helpwanted"]@name');
 $ssname =~ /(?:link_in_footer_(\d+))/;
 my $saved_search2_id = $1;
@@ -111,7 +111,7 @@ $sel->is_checked_ok("link_in_footer_$saved_search2_id");
 $sel->select_ok("share_$saved_search2_id", "label=canconfirm");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 logout($sel);
 
 # Log in as admin again. The other user is not a blesser for the 'canconfirm'
@@ -122,10 +122,10 @@ log_in($sel, $config, 'admin');
 ok(!$sel->is_text_present("helpwanted"), "No 'helpwanted' shared search displayed");
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Saved Searches");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 $sel->is_text_present_ok("helpwanted");
 $sel->is_text_present_ok($config->{canconfirm_user_login});
 
@@ -133,7 +133,7 @@ ok(!$sel->is_checked("link_in_footer_$saved_search2_id"), "Shared query availabl
 $sel->click_ok("link_in_footer_$saved_search2_id");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 # This query is now available from the footer.
 $sel->click_ok("link=helpwanted");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -143,10 +143,10 @@ $sel->title_is("Bug List: helpwanted");
 
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Saved Searches");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 # There is no better way to identify the link
 $sel->click_ok('//a[contains(@href,"buglist.cgi?cmdtype=dorem&remaction=forget&namedcmd=Shared%20Selenium%20buglist")]',
                undef, "Deleting the 'Shared Selenium buglist' search");
@@ -163,10 +163,10 @@ log_in($sel, $config, 'QA_Selenium_TEST');
 ok(!$sel->is_text_present("helpwanted"), "The 'helpwanted' query is not displayed in the footer");
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Saved Searches");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 ok(!$sel->is_text_present("helpwanted"), "The 'helpwanted' query is not shared with this user");
 logout($sel);
 
@@ -175,10 +175,10 @@ logout($sel);
 log_in($sel, $config, 'canconfirm');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Saved Searches");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 ok(!$sel->is_text_present("Shared Selenium buglist"), "The 'Shared Selenium buglist' is no longer available");
 $sel->click_ok('//a[contains(@href,"buglist.cgi?cmdtype=dorem&remaction=forget&namedcmd=helpwanted")]',
                undef, "Deleting the 'helpwanted' search");

@@ -145,18 +145,18 @@ ok(!$sel->is_element_present("b$bug2_id"), "Bug $bug2_id NOT restricted to the b
 # Make the Selenium-test group mandatory for TestProduct.
 
 edit_product($sel, "TestProduct");
-$sel->is_text_present_ok("Selenium-test: Shown/Mandatory");
+$sel->is_text_present_ok("Selenium-test:Shown/Mandatory");
 $sel->click_ok("link=Edit Group Access Controls:");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->select_ok("membercontrol_${group_id}", "Mandatory");
 $sel->click_ok("submit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Confirm Group Control Change for product 'TestProduct'");
-$sel->is_text_present_ok("the group is newly mandatory and will be added");
+$sel->is_text_present_ok("this group is mandatory and will be added");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Update group access controls for TestProduct");
-$sel->is_text_present_ok('regexp:Adding bugs to group \'Selenium-test\' which is\W+mandatory for this product');
+$sel->is_text_present_ok('regexp:Adding bugs to group \'Selenium-test\' which is now mandatory for this product');
 
 # All bugs being in TestProduct must now be restricted to the bug group.
 
@@ -253,7 +253,7 @@ $sel->is_element_present_ok("b$bug4_id", undef, "Bug $bug4_id restricted to the 
 # We just want to make sure a warning is displayed about this removal.
 
 edit_product($sel, "TestProduct");
-$sel->is_text_present_ok("Selenium-test: Mandatory/Mandatory");
+$sel->is_text_present_ok("Selenium-test:Mandatory/Mandatory");
 $sel->click_ok("link=Edit Group Access Controls:");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Edit Group Controls for TestProduct");
@@ -263,7 +263,7 @@ $sel->select_ok("othercontrol_${group_id}", "NA");
 $sel->click_ok("submit");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Confirm Group Control Change for product 'TestProduct'");
-$sel->is_text_present_ok("the group is no longer applicable and will be removed");
+$sel->is_text_present_ok("this group is no longer applicable and will be removed");
 
 # Make sure that renaming a group which is used as a special group
 # (such as insidergroup or querysharegroup) is correctly propagated
@@ -333,7 +333,7 @@ $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Edit Groups");
 $sel->click_ok("//a[\@href='editgroups.cgi?action=del&group=${group_id}']");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("Delete group");
+$sel->title_like(qr/^Delete group/);
 $sel->is_text_present_ok("Do you really want to delete this group?");
 $sel->is_element_present_ok("removebugs");
 $sel->value_is("removebugs", "off");

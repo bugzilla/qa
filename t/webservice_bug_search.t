@@ -10,6 +10,7 @@ use QA::Tests qw(PRIVATE_BUG_USER);
 use DateTime;
 use List::MoreUtils qw(uniq);
 use Test::More;
+use Data::Dumper;
 
 my ($config, @clients) = get_rpc_clients();
 plan tests => $config->{test_extensions} ? 515 : 506;
@@ -97,7 +98,7 @@ push(@tests, (
 
     # Logged-in user who can see private bugs
     { user => PRIVATE_BUG_USER,
-      args => { alias => [$public_bug->{alias}, $private_bug->{alias}] },
+      args => { alias => [$public_bug->{alias}->[0], $private_bug->{alias}->[0]] },
       test => 'Search using two aliases (including one private)',
       bugs => 2, exactly => 1,
     },
@@ -137,6 +138,7 @@ push(@tests,
 sub post_success {
     my ($call, $t) = @_;
     my $bugs = $call->result->{bugs};
+
     my $expected_count = $t->{bugs};
     $expected_count = 1 if !defined $expected_count;
     if ($expected_count) {

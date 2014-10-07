@@ -251,7 +251,7 @@ $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Flag Requestee Not Authorized");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+$sel->title_like(qr/^$bug1_id /);
 $sel->type_ok("requestee_type-$flagtype2_id", $config->{admin_user_login});
 edit_bug_and_return($sel, $bug1_id, $bug_summary);
 
@@ -329,7 +329,7 @@ my $attachment3_id = $1;
 
 $sel->click_ok("link=bug $bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+$sel->title_like(qr/^$bug1_id /);
 $sel->is_text_present_ok("$config->{admin_user_username}: SeleniumAttachmentFlag1Test? ($config->{admin_user_username})");
 $sel->is_text_present_ok("$config->{admin_user_username}: SeleniumAttachmentFlag2Test?");
 $sel->is_text_present_ok("$config->{admin_user_username}: SeleniumAttachmentFlag1Test+");
@@ -366,15 +366,15 @@ ok(grep($_ eq '?', @flag_states), "Flag state '?' available");
 
 $sel->click_ok("//a[\@href='attachment.cgi?id=$attachment2_id&action=edit']");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Attachment $attachment2_id Details for Bug $bug1_id");
-ok(!$sel->is_element_present('//select[@title="attachmentflag2"]'),
+$sel->title_like(qr/Attachment $attachment2_id Details for Bug $bug1_id/);
+ok($sel->is_element_present('//select[@title="attachmentflag2" and @disabled]'),
    "Attachment flags are not editable by a powerless user");
 
 # Add an attachment and set flags on it.
 
-$sel->click_ok("link=Bug $bug1_id");
+$sel->click_ok("//a[contains(\@href, 'show_bug.cgi?id=$bug1_id')]");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+$sel->title_like(qr/^$bug1_id/);
 $sel->click_ok("link=Add an attachment");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Create New Attachment for Bug #$bug1_id");
@@ -402,7 +402,7 @@ log_in($sel, $config, 'admin');
 go_to_bug($sel, $bug1_id);
 $sel->click_ok("//a[\@href='attachment.cgi?id=${attachment3_id}&action=edit']");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Attachment $attachment3_id Details for Bug $bug1_id");
+$sel->title_like(qr/Attachment $attachment3_id Details for Bug $bug1_id/);
 $sel->select_ok('//select[@title="attachmentflag1"]', "label=+");
 edit_bug($sel, $bug1_id, $bug_summary, {id => "update"});
 

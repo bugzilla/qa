@@ -89,10 +89,8 @@ sub post_success {
     my $bug = $call->result->{bugs}->[0];
 
     if ($t->{user} && $t->{user} eq 'admin') {
-        ok(exists $bug->{estimated_time} && exists $bug->{remaining_time}
-           && exists $bug->{deadline},
+        ok(exists $bug->{estimated_time} && exists $bug->{remaining_time},
            'Admin correctly gets time-tracking fields');
-
         is($bug->{deadline}, '2038-01-01', 'deadline is correct');
         cmp_ok($bug->{estimated_time}, '==', '10.0', 
                'estimated_time is correct');
@@ -100,8 +98,7 @@ sub post_success {
                'remaining_time is correct');
     }
     else {
-        ok(!exists $bug->{estimated_time} && !exists $bug->{remaining_time}
-           && !exists $bug->{deadline},
+        ok(!exists $bug->{estimated_time} && !exists $bug->{remaining_time},
            'Time-tracking fields are not returned to non-privileged users');
     }
 

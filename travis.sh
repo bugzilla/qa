@@ -141,7 +141,7 @@ if [ "$TEST_SUITE" = "selenium" ]; then
     # Download and start the selenium server
     echo "== Downloading and starting Selenium server"
     wget http://selenium-release.storage.googleapis.com/2.41/selenium-server-standalone-2.41.0.jar
-    java -jar selenium-server-standalone-2.41.0.jar -DfirefoxDefaultPath=/usr/lib64/firefox/firefox -log ~/sel-`date +%Y%m%d-%H%M%S`.log &
+    java -jar selenium-server-standalone-2.41.0.jar -DfirefoxDefaultPath=/usr/lib64/firefox/firefox-bin -log ~/sel-`date +%Y%m%d-%H%M%S`.log &
     sleep 15
 
     echo "== Running Selenium UI tests"

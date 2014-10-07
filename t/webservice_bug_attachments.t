@@ -6,7 +6,7 @@ use QA::Tests qw(STANDARD_BUG_TESTS PRIVATE_BUG_USER);
 use Data::Dumper;
 use List::Util qw(first);
 use MIME::Base64;
-use Test::More tests => 337;
+use Test::More tests => 313;
 my ($config, @clients) = get_rpc_clients();
 
 ################
@@ -17,6 +17,7 @@ our %attachments;
 
 sub post_bug_success {
     my ($call, $t) = @_;
+
     my $bugs = $call->result->{bugs};
     is(scalar keys %$bugs, 1, "Got exactly one bug")
         or diag(Dumper($call->result));
@@ -26,14 +27,13 @@ sub post_bug_success {
     foreach my $alias (qw(public_bug private_bug)) {
         foreach my $is_private (0, 1) {
             my $find_desc = "${alias}_${is_private}";
-            my $attachment = first { $_->{description} eq $find_desc }
+            my $attachment = first { $_->{summary} eq $find_desc }
                                    reverse @$bug_attachments;
             if ($attachment) {
                 $attachments{$find_desc} = $attachment->{id};
             }
         }
     }
-    
 }
 
 foreach my $rpc (@clients) {
@@ -130,10 +130,8 @@ sub post_success {
        "content_type is correct");
     cmp_ok($attachment->{file_name}, '=~', qr/^\w+\.pl$/,
            "filename is in the expected format");
-    is($attachment->{$_}, $config->{QA_Selenium_TEST_user_login},
-       "$_ is the correct user") foreach qw(attacher creator);
-    is($attachment->{summary}, $attachment->{description},
-       "summary and description have the same values");
+    is($attachment->{creator}, $config->{QA_Selenium_TEST_user_login},
+       "creator is the correct user");
     my $data = $attachment->{data};
     $data = decode_base64($data) if $rpc->isa('QA::RPC::JSONRPC');
     is($data, $content, 'data is correct');

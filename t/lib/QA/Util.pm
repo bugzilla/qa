@@ -4,7 +4,6 @@ package QA::Util;
 
 use strict;
 use Data::Dumper;
-use HTTP::Cookies;
 use Test::More;
 use Test::WWW::Selenium;
 use WWW::Selenium::Util qw(server_is_running);
@@ -100,24 +99,18 @@ sub get_selenium {
 
 sub get_xmlrpc_client {
     my $config = get_config();
-    my $xmlrpc_url = $config->{browser_url} . "/"
-                    . $config->{bugzilla_installation} . "/xmlrpc.cgi";
+    my $xmlrpc_url = $config->{browser_url} . "/" .
+                     $config->{bugzilla_installation} . "/xmlrpc.cgi";
 
     require QA::RPC::XMLRPC;
-    # A temporary cookie jar that isn't saved after the script closes.
-    my $cookie_jar = new HTTP::Cookies();
-    my $rpc        = new QA::RPC::XMLRPC(proxy => $xmlrpc_url);
-    $rpc->transport->cookie_jar($cookie_jar);
+    my $rpc = new QA::RPC::XMLRPC(proxy => $xmlrpc_url);
     return ($rpc, $config);
 }
 
 sub get_jsonrpc_client {
     my ($get_mode) = @_;
     require QA::RPC::JSONRPC;
-    # A temporary cookie jar that isn't saved after the script closes.
-    my $cookie_jar = new HTTP::Cookies();
     my $rpc = new QA::RPC::JSONRPC();
-    $rpc->transport->cookie_jar($cookie_jar);
     # If we don't set a long timeout, then the Bug.add_comment test
     # where we add a too-large comment fails.
     $rpc->transport->timeout(180);
@@ -172,7 +165,7 @@ sub file_bug_in_product {
     $sel->click_ok("link=New", undef, "Go create a new bug");
     $sel->wait_for_page_to_load(WAIT_TIME);
     my $title = $sel->get_title();
-    if ($title eq "Select Classification") {
+    if ($sel->is_text_present("Select Classification")) {
         ok(1, "More than one enterable classification available. Display them in a list");
         $sel->click_ok("link=$classification", undef, "Choose $classification");
         $sel->wait_for_page_to_load(WAIT_TIME);
@@ -196,7 +189,7 @@ sub create_bug {
     $sel->click_ok('commit');
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     my $bug_id = $sel->get_value('//input[@name="id" and @type="hidden"]');
-    $sel->title_is("Bug $bug_id $ndash $bug_summary", "Bug $bug_id created with summary '$bug_summary'");
+    $sel->title_like(qr/$bug_id $ndash( \(.*\))? $bug_summary/, "Bug $bug_id created with summary '$bug_summary'");
     return $bug_id;
 }
 
@@ -207,7 +200,7 @@ sub edit_bug {
 
     $sel->click_ok($btn_id);
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
-    $sel->title_is("Bug $bug_id $ndash $bug_summary", "Changes submitted to bug $bug_id");
+    $sel->title_is("$bug_id $ndash $bug_summary", "Changes submitted to bug $bug_id");
     # If the web browser doesn't support history.ReplaceState or has it turned off,
     # "Bug XXX processed" is displayed instead (as in Bugzilla 4.0 and older).
     # $sel->title_is("Bug $bug_id processed", "Changes submitted to bug $bug_id");
@@ -216,11 +209,10 @@ sub edit_bug {
 sub edit_bug_and_return {
     my ($sel, $bug_id, $bug_summary, $options) = @_;
     my $ndash = NDASH;
-
     edit_bug($sel, $bug_id, $bug_summary, $options);
-    $sel->click_ok("link=bug $bug_id");
+    $sel->click_ok("//a[contains(\@href, 'show_bug.cgi?id=$bug_id')]");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
-    $sel->title_is("Bug $bug_id $ndash $bug_summary", "Returning back to bug $bug_id");
+    $sel->title_is("$bug_id $ndash $bug_summary", "Returning back to bug $bug_id");
 }
 
 # Go to show_bug.cgi.
@@ -232,7 +224,7 @@ sub go_to_bug {
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     my $bug_title = $sel->get_title();
     utf8::encode($bug_title) if utf8::is_utf8($bug_title);
-    $sel->title_like(qr/^Bug $bug_id /, $bug_title);
+    $sel->title_like(qr/^$bug_id /, $bug_title);
 }
 
 # Go to admin.cgi.

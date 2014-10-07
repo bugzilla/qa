@@ -34,7 +34,7 @@ $sel->is_text_present_ok("Additional hours worked: 2.6");
 $sel->open_ok("/$config->{bugzilla_installation}/summarize_time.cgi");
 $sel->title_is("No Bugs Selected");
 my $error_msg = trim($sel->get_text("error_msg"));
-ok($error_msg =~ /You apparently didn't choose any bugs to view/, "No data displayed");
+ok($error_msg =~ /You apparently didn't choose any bugs for viewing/, "No data displayed");
 
 # Search for bugs which have some value in the Hours Worked field.
 

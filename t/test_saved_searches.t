@@ -13,10 +13,10 @@ my ($sel, $config) = get_selenium();
 log_in($sel, $config, 'QA_Selenium_TEST');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Saved Searches");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 
 if($sel->is_text_present("SavedSearchTEST1")) {
     # There is no other way to identify this link (as they are all named "Forget").
@@ -47,17 +47,17 @@ $sel->title_is("Bug List: SavedSearchTEST1");
 
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Saved Searches");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 
 $sel->is_text_present_ok("SavedSearchTEST1");
 $sel->uncheck_ok('//input[@type="checkbox" and @alt="SavedSearchTEST1"]');
 # $sel->value_is("//input[\@type='checkbox' and \@alt='SavedSearchTEST1']", "off");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 $text = trim($sel->get_text("message"));
 ok($text =~ /The changes to your saved searches have been saved./, "Saved searches changes have been saved");
 
@@ -84,10 +84,10 @@ ok($text =~ /Your search named SavedSearchTEST1 has been updated./, "Saved searc
 
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Saved Searches");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Saved Searches");
 
 $sel->is_text_present_ok("SavedSearchTEST1");
 $sel->click_ok('//a[@href="buglist.cgi?cmdtype=dorem&remaction=run&namedcmd=SavedSearchTEST1"]');

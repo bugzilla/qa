@@ -135,7 +135,7 @@ my $fields = {
         },
         commma_or_space_separated => {
             faultstring => 'contains one or more commas or spaces',
-            value       => 'Bug 12345'
+            value       => ['Bug 12345']
         },
 
     },

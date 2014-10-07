@@ -5,7 +5,7 @@ use Data::Dumper;
 use QA::Util;
 use QA::Tests qw(PRIVATE_BUG_USER STANDARD_BUG_TESTS);
 use Storable qw(dclone);
-use Test::More tests => 957;
+use Test::More tests => 927;
 
 use constant NONEXISTANT_BUG => 12_000_000;
 
@@ -308,7 +308,7 @@ sub invalid_values {
 
     my %values = (
         alias => [
-            { value => random_string(21), 
+            { value => random_string(41), 
               error => 'aliases cannot be longer than',
               test  => 'alias cannot be too long' },
             { value => $second_bug->{alias},
@@ -317,12 +317,6 @@ sub invalid_values {
             { value => 123456,
               error => 'at least one letter',
               test  => 'numeric alias fails' },
-            { value => random_string(6) . ' ' . random_string(6),
-              error => 'contains one or more commas or spaces',
-              test  => 'alias with space fails' },
-            { value => random_string(6) . ',' . random_string(6),
-              error => 'contains one or more commas or spaces',
-              test  => 'alias with comma fails' },
             { value => random_string(20), ids => [$public_id, $second_id],
               error => 'aliases when modifying multiple',
               test  => 'setting alias on multiple bugs fails' },
@@ -394,11 +388,6 @@ sub invalid_values {
             { value => '2037',
               error => 'is not a legal date',
               test  => 'year alone fails in deadline' },
-            # We use PRIVATE_BUG_USER because he can modify the bug, but
-            # can't change time-tracking fields.
-            { value => '2037-01-02', user => PRIVATE_BUG_USER,
-              error => 'only a user with the required permissions',
-              test  => 'non-timetracker can not set deadline' },
         ],
         
         dupe_of => [
@@ -447,13 +436,13 @@ sub invalid_values {
         
         keywords => [
             { value => { add => [random_string(20)] },
-              error => 'legal keyword names are listed',
+              error => 'See the list of available keywords',
               test  => 'adding invalid keyword fails' },
             { value => { remove => [random_string(20)] },
-              error => 'legal keyword names are listed',
+              error => 'See the list of available keywords',
               test  => 'removing invalid keyword fails' },
             { value => { set => [random_string(20)] },
-              error => 'legal keyword names are listed',
+              error => 'See the list of available keywords',
               test  => 'setting invalid keyword fails' },
         ],
         
@@ -642,7 +631,7 @@ sub post_success {
 
 sub _check_changes {
     my ($bug, $field, $t) = @_;
-    
+
     my $changes = $bug->{changes}->{$field};
     ok(defined $changes, "$field was changed")
       or diag Dumper($bug, $t);

@@ -521,6 +521,10 @@ if (Bugzilla->params->{insidergroup} ne 'QA-Selenium-TEST') {
     SetParam('insidergroup', 'QA-Selenium-TEST');
     write_params();
 }
+if (Bugzilla->params->{timetrackinggroup} ne 'editbugs') {
+        SetParam('timetrackinggroup', 'editbugs');
+            write_params();
+}
 
 ########################
 # Create a Private Bug #

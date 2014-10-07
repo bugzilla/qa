@@ -20,12 +20,12 @@ set_parameters($sel, { "Bug Fields" => {"useclassification-on" => undef} });
 
 $sel->click_ok("link=New");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Select Classification");
+$sel->is_text_present_ok("Select Classification");
 my $full_text = trim($sel->get_body_text());
 ok($full_text =~ /All: Show all products/, "The 'All' link is displayed");
 $sel->click_ok("link=All");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Enter Bug");
+$sel->is_text_present_ok("Select Product");
 ok(!$sel->is_text_present("QA-Selenium-TEST"), "The QA-Selenium-TEST product is not displayed");
 logout($sel);
 
@@ -35,14 +35,12 @@ logout($sel);
 log_in($sel, $config, 'QA_Selenium_TEST');
 $sel->click_ok("link=New");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Select Classification");
+$sel->is_text_present_ok("Select Classification");
 $sel->click_ok("link=All");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Enter Bug");
+$sel->is_text_present_ok("Select Product");
 $sel->is_text_present_ok("QA-Selenium-TEST");
-# For some unknown reason, Selenium doesn't like hyphens in links.
-# $sel->click_ok("link=QA-Selenium-TEST");
-$sel->click_ok('//a[contains(@href, "QA-Selenium-TEST")]');
+$sel->click_ok('//a[contains(@href, "product=QA-Selenium-TEST")]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Enter Bug: QA-Selenium-TEST");
 logout($sel);

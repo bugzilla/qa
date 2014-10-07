@@ -65,6 +65,13 @@ foreach my $account (@accounts) {
     $sel->click_ok("link=New Account");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Create a new Bugzilla account");
+    # Starting with 5.0, the login field is a type=email and is marked "required"
+    # This means that we need to add the novalidate attribute to the enclosing form
+    # so that the illegal login can still be checked by the backend code.
+    my $script = q{
+        document.getElementById('account_creation_form').setAttribute('novalidate', 1);
+    };
+    $sel->run_script($script);
     $sel->type_ok("login", $account);
     $sel->click_ok("send");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);

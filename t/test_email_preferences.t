@@ -47,7 +47,7 @@ my @email_normal = ($config->{editbugs_user_login});
 log_in($sel, $config, 'admin');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Email Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->is_text_present_ok("Email Preferences");
@@ -139,10 +139,10 @@ logout($sel);
 log_in($sel, $config, 'editbugs');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Email Preferences");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Email Preferences");
 $sel->is_text_present_ok("Email Preferences");
 $sel->click_ok("//input[\@value='Enable All Mail']");
 $sel->click_ok("email-3-1", undef, 'Clear "I\'m added to or removed from this capacity" for CCed role');
@@ -225,8 +225,6 @@ $sel->type_ok("cc", $config->{admin_user_login});
 my $bug1_id = create_bug($sel, $bug_summary);
 my @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
-my @email_excluded = get_email_excluded($sel);
-ok($email_excluded[0] eq "no one", "Nobody excluded from bugmail");
 
 # Make normal user changes (first pass)
 #
@@ -237,24 +235,18 @@ $sel->selected_label_is("bug_severity", "blocker");
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_normal, \@email_sentto, "Normal user got bugmail");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_admin, \@email_excluded, "Admin excluded from bugmail");
 # Add a comment (bugmail to no one)
 $sel->type_ok("comment", "This is a Selenium generated normal user test comment 1 of 2. (No bugmail should be generated for this.)");
 $sel->value_is("comment", "This is a Selenium generated normal user test comment 1 of 2. (No bugmail should be generated for this.)");
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 ok($email_sentto[0] eq "no one", "No bugmail sent");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_both, \@email_excluded, "Admin and normal user excluded from bugmail");
 # Add normal user to CC list (bugmail to admin but not normal user)
 $sel->type_ok("newcc", $config->{editbugs_user_login});
 $sel->value_is("newcc", $config->{editbugs_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_normal, \@email_excluded, "Normal user excluded from bugmail");
 # Request a flag from admin (bugmail to no one, request mail to no one)
 $sel->select_ok("flag_type-1", "label=?");
 $sel->type_ok("requestee_type-1", $config->{admin_user_login});
@@ -262,8 +254,6 @@ $sel->value_is("requestee_type-1", $config->{admin_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 ok($email_sentto[0] eq "no one", "No bugmail sent");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_both, \@email_excluded, "Admin and normal user excluded from bugmail");
 
 # Make admin changes
 #
@@ -276,16 +266,12 @@ $sel->selected_label_is("bug_severity", "trivial");
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_normal, \@email_sentto, "Normal user got bugmail");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_admin, \@email_excluded, "Admin excluded from bugmail");
 # Add a comment (bugmail to normal user but not admin)
 $sel->type_ok("comment", "This is a Selenium generated admin user test comment. (Only normal user should get bugmail for this.)");
 $sel->value_is("comment", "This is a Selenium generated admin user test comment. (Only normal user should get bugmail for this.)");
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_normal, \@email_sentto, "Normal user got bugmail");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_admin, \@email_excluded, "Admin excluded from bugmail");
 # Remove normal user from CC list (bugmail to both normal user and admin)
 $sel->click_ok("removecc");
 $sel->add_selection_ok("cc", "label=$config->{editbugs_user_login}");
@@ -294,16 +280,12 @@ $sel->selected_label_is("cc", $config->{editbugs_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
-@email_excluded = get_email_excluded($sel);
-ok($email_excluded[0] eq "no one", "Nobody excluded from bugmail");
 # Reassign bug to admin user (bugmail to both normal user and admin)
 $sel->type_ok("assigned_to", $config->{admin_user_login});
 $sel->value_is("assigned_to", $config->{admin_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
-@email_excluded = get_email_excluded($sel);
-ok($email_excluded[0] eq "no one", "Nobody excluded from bugmail");
 # Request a flag from normal user (bugmail to admin but not normal user and request mail to admin)
 $sel->select_ok("flag_type-1", "label=?");
 $sel->type_ok("requestee_type-1", $config->{editbugs_user_login});
@@ -311,15 +293,11 @@ $sel->value_is("requestee_type-1", $config->{editbugs_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_normal, \@email_excluded, "Normal user excluded from bugmail");
 # Grant a normal user flag request (bugmail to admin but not normal user and request mail to no one)
 my $flag1_id = set_flag($sel, $config->{admin_user_login}, "?", "+");
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_normal, \@email_excluded, "Normal user excluded from bugmail");
 
 # Make normal user changes (second pass)
 #
@@ -332,39 +310,29 @@ $sel->selected_label_is("bug_severity", "normal");
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
-@email_excluded = get_email_excluded($sel);
-ok($email_excluded[0] eq "no one", "Nobody excluded from bugmail");
 # Add a comment (bugmail to admin but not normal user)
 $sel->type_ok("comment", "This is a Selenium generated normal user test comment 2 of 2. (Only admin should get bugmail for this.)");
 $sel->value_is("comment", "This is a Selenium generated normal user test comment 2 of 2. (Only admin should get bugmail for this.)");
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_normal, \@email_excluded, "Normal user excluded from bugmail");
 # Reassign to normal user (bugmail to admin but not normal user)
 $sel->type_ok("assigned_to", $config->{editbugs_user_login});
 $sel->value_is("assigned_to", $config->{editbugs_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_normal, \@email_excluded, "Normal user excluded from bugmail");
 # Deny a flag requested by admin (bugmail to no one and request mail to admin)
 my $flag2_id = set_flag($sel, $config->{editbugs_user_login}, "?", "-");
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 ok($email_sentto[0] eq "no one", "No bugmail sent");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_both, \@email_excluded, "Admin and normal user excluded from bugmail");
 # Cancel both flags (bugmail and request mail to no one)
 set_flag($sel, undef, "+", "X", $flag1_id);
 set_flag($sel, undef, "-", "X", $flag2_id);
 edit_bug($sel, $bug1_id, $bug_summary);
 @email_sentto = get_email_sentto($sel);
 ok($email_sentto[0] eq "no one", "No bugmail sent");
-@email_excluded = get_email_excluded($sel);
-is_deeply(\@email_both, \@email_excluded, "Admin and normal user excluded from bugmail");
 logout($sel);
 
 # Set "After changing a bug" default preference back to "Do Nothing".
@@ -383,11 +351,6 @@ logout($sel);
 sub get_email_sentto {
     my ($sel) = @_;
     return sort split(/, /, $sel->get_text("//dt[text()='Email sent to:']/following-sibling::dd"));
-}
-
-sub get_email_excluded {
-    my ($sel) = @_;
-    return sort split(/, /, $sel->get_text("//dt[text()='Excluding:']/following-sibling::dd"));
 }
 
 sub set_flag {

@@ -31,14 +31,14 @@ $sel->title_is("Default Preferences");
 
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 ok(!$sel->is_editable("skin"), "The 'skin' user preference is not editable");
 $sel->select_ok("state_addselfcc", "label=Site Default (Never)");
 $sel->select_ok("post_bug_submit_action", "label=Site Default (Show the updated bug)");
 ok(!$sel->is_editable("zoom_textareas"), "The 'zoom_textareas' user preference is not editable");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 
 # File a bug in the 'TestProduct' product. The form fields must follow user prefs.
 
@@ -53,7 +53,7 @@ $sel->value_is("addselfcc", "off");
 $sel->type_ok("tag", "sel-tmp");
 $sel->select_ok("bug_status", "label=IN_PROGRESS");
 edit_bug($sel, $bug1_id, $bug_summary);
-$sel->click_ok("editme_action");
+$sel->click_ok("summary_edit_action");
 $sel->value_is("short_desc", $bug_summary);
 $sel->value_is("addselfcc", "off");
 
@@ -94,10 +94,10 @@ $sel->title_is("Bug List: sel-tmp");
 $sel->is_text_present_ok("2 bugs found");
 $sel->click_ok("link=$bug1_id");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+$sel->title_like(qr/^$bug1_id /);
 $sel->type_ok("comment", "The next bug I should see is this one.");
 edit_bug($sel, $bug1_id, $bug_summary);
-$sel->click_ok("editme_action");
+$sel->click_ok("summary_edit_action");
 $sel->value_is("short_desc", "First bug created");
 $sel->is_text_present_ok("The next bug I should see is this one.");
 
@@ -139,14 +139,14 @@ logout($sel);
 log_in($sel, $config, 'unprivileged');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 ok(!$sel->is_editable("skin"), "The 'skin' user preference is not editable");
 $sel->select_ok("state_addselfcc", "label=Always");
 $sel->select_ok("post_bug_submit_action", "label=Show next bug in my list");
 ok(!$sel->is_editable("zoom_textareas"), "The 'zoom_textareas' user preference is not editable");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 
 # Create a new search named 'my_list'.
 
@@ -174,7 +174,7 @@ $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("Bug List: my_list");
 $sel->click_ok("link=$bug1_id");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+$sel->title_like(qr/^$bug1_id /);
 $sel->value_is("addselfcc", "on");
 $sel->type_ok("comment", "I should be CC'ed and then I should see the next bug.");
 edit_bug($sel, $bug2_id, $bug_summary2);
@@ -183,9 +183,9 @@ ok(!$sel->is_text_present("I should see the next bug"), "The updated bug is no l
 # The user has no privs, so the short_desc field is not present.
 $sel->is_text_present("short_desc", "My second bug");
 $sel->value_is("addselfcc", "on");
-$sel->click_ok("link=bug $bug1_id");
+$sel->click_ok("link=$bug1_id");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+$sel->title_like(qr/^$bug1_id /);
 $sel->is_text_present("1 user including you");
 
 # Delete the saved search and log out.

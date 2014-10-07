@@ -46,7 +46,7 @@ $alink =~ /id=(\d+)/;
 my $attach1_id = $1;
 $sel->click_ok("link=Attachment #$attach1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Attachment $attach1_id Details for Bug $bug1_id");
+$sel->title_like(qr/Attachment $attach1_id Details for Bug $bug1_id/);
 $sel->click_ok("link=edit details");
 $sel->type_ok("contenttypeentry", "text/html");
 edit_bug($sel, $bug1_id, $bug_summary, {id => "update"});
@@ -61,7 +61,7 @@ ok(!$sel->is_cookie_present("Bugzilla_login"), "Bugzilla_login not accessible");
 ok(!$sel->is_cookie_present("Bugzilla_logincookie"), "Bugzilla_logincookie not accessible");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+$sel->title_like(qr/^$bug1_id /);
 
 # Alternate host for attachments; no cookie should be accessible.
 
@@ -78,7 +78,7 @@ ok(!$sel->is_cookie_present("Bugzilla_login"), "Bugzilla_login not accessible");
 ok(!$sel->is_cookie_present("Bugzilla_logincookie"), "Bugzilla_logincookie not accessible");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+$sel->title_like(qr/^$bug1_id /);
 
 set_parameters($sel, { "Attachments" => {"reset-attachment_base" => undef} });
 
@@ -88,20 +88,20 @@ set_parameters($sel, { "Attachments" => {"reset-attachment_base" => undef} });
 
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 my $admin_cookie = $sel->get_value("token");
 logout($sel);
 
 log_in($sel, $config, 'editbugs');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 my $editbugs_cookie = $sel->get_value("token");
 
 # Using our own unused token is fine.
 
 $sel->open_ok("/$urlbase/userprefs.cgi?dosave=1&display_quips=off&token=$editbugs_cookie");
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->is_text_present_ok("The changes to your general preferences have been saved");
 
 # Reusing a token must fail. They must all trigger the Suspicious Action warning.
@@ -184,5 +184,5 @@ $sel->title_is("");
 $sel->is_text_present_ok('@@');
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug $bug1_id /);
+$sel->title_like(qr/$bug1_id /);
 logout($sel);

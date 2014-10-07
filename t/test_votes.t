@@ -26,20 +26,12 @@ $sel->type_ok("description", "A great new product");
 $sel->type_ok("votesperuser", 10);
 $sel->type_ok("maxvotesperbug", 5);
 $sel->type_ok("votestoconfirm", 3);
+$sel->type_ok("component", "Pegasus");
+$sel->type_ok("comp_desc", "A constellation in the north hemisphere.");
+$sel->type_ok("initialowner", $config->{permanent_user}, "Setting the default owner");
 $sel->click_ok('//input[@type="submit" and @value="Add"]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Product Created");
-$sel->click_ok("link=add at least one component");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Add component to the Eureka product");
-$sel->type_ok("component", "Pegasus");
-$sel->type_ok("description", "A constellation in the north hemisphere.");
-$sel->type_ok("initialowner", $config->{permanent_user}, "Setting the default owner");
-$sel->click_ok("create");
-$sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Component Created");
-my $text = trim($sel->get_text("message"));
-ok($text =~ qr/The component Pegasus has been created/, "Component 'Pegasus' created");
 
 # Create a new bug with the CONFIRMED status.
 
@@ -117,7 +109,7 @@ $sel->type_ok("bug_$bug2_id", 15);
 $sel->click_ok("change");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Illegal Vote");
-$text = trim($sel->get_text("error_msg"));
+my $text = trim($sel->get_text("error_msg"));
 ok($text =~ /You may only use at most 5 votes for a single bug in the Eureka product, but you are trying to use 15/,
    "Too many votes per bug");
 
@@ -170,7 +162,7 @@ $sel->is_text_present_ok("removed votes for bug $bug2_id from " . $config->{admi
 
 $sel->click_ok("link=$bug2_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug $bug2_id /);
+$sel->title_like(qr/$bug2_id /);
 $text = trim($sel->get_text("votes_container"));
 ok($text =~ /4 votes/, "4 votes remaining");
 
@@ -190,7 +182,7 @@ $sel->is_text_present_ok("removed votes for bug");
 
 $sel->click_ok("link=$bug3_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug $bug3_id /);
+$sel->title_like(qr/$bug3_id /);
 $text = trim($sel->get_text("votes_container"));
 ok($text =~ /2 votes/, "2 votes remaining");
 

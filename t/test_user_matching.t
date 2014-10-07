@@ -33,7 +33,7 @@ $sel->title_is("Confirm Match");
 $sel->is_text_present_ok("$config->{unprivileged_user_login_truncated} matched");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+$sel->title_like(qr/^$bug1_id/);
 $sel->click_ok("cc_edit_area_showhide");
 
 # We now enter a complete and valid email address, so it must be accepted.
@@ -54,7 +54,7 @@ $sel->title_is("Confirm Match");
 $sel->is_text_present_ok("<$config->{unprivileged_user_login}>");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+$sel->title_like(qr/^$bug1_id/);
 $sel->click_ok("cc_edit_area_showhide");
 
 # This will return more than one account.
@@ -82,7 +82,7 @@ $sel->title_is("Match Failed");
 $sel->is_text_present_ok("matches multiple users");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+$sel->title_like(qr/^$bug1_id/);
 $sel->click_ok("cc_edit_area_showhide");
 
 # We now type a complete and valid email address, so no confirmation
@@ -132,7 +132,7 @@ $sel->title_is("Match Failed");
 $sel->is_text_present_ok("$config->{unprivileged_user_login_truncated} did not match anything");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+$sel->title_like(qr/^$bug1_id/);
 $sel->click_ok("cc_edit_area_showhide");
 
 # This will return too many users (there are at least always three:
@@ -145,7 +145,7 @@ $sel->title_is("Confirm Match");
 $sel->is_text_present_ok("$config->{common_email} matched more than the maximum of 2 users");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id/);
+$sel->title_like(qr/^$bug1_id/);
 $sel->click_ok("cc_edit_area_showhide");
 
 # We can always see ourselves.

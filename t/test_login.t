@@ -23,5 +23,5 @@ $sel->type_ok("Bugzilla_login", 'guest@foo.com');
 $sel->type_ok("Bugzilla_password", 'foo-bar-baz');
 $sel->click_ok("log_in");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Invalid Username Or Password");
-$sel->is_text_present_ok("The username or password you entered is not valid.");
+$sel->title_is("Invalid Login Or Password");
+$sel->is_text_present_ok("The login or password you entered is not valid.");

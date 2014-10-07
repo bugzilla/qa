@@ -62,7 +62,7 @@ $sel->title_is("Invalid User Group");
 $sel->is_text_present_ok("User '$no_privs_user' is not able to edit the 'Another Product' Product");
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+$sel->title_like(qr/^$bug1_id /);
 $sel->click_ok("cc_edit_area_showhide");
 $sel->type_ok("newcc", $qa_user);
 $sel->click_ok("commit");

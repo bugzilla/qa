@@ -61,9 +61,9 @@ edit_bug($sel, $bug1_id, $bug_summary);
 
 # Now move the bug into another product, which has a mandatory group.
 
-$sel->click_ok("link=bug $bug1_id");
+$sel->click_ok("link=$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+$sel->title_like(qr/^$bug1_id /);
 $sel->select_ok("product", "label=QA-Selenium-TEST");
 $sel->type_ok("comment", "moving to QA-Selenium-TEST");
 $sel->click_ok("commit");
@@ -130,7 +130,7 @@ log_in($sel, $config, 'unprivileged');
 $sel->type_ok("quicksearch_top", $bug1_id);
 $sel->click_ok("find_top");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Access Denied");
+$sel->title_is("Bug Access Denied");
 $sel->is_text_present_ok("You are not authorized to access bug #$bug1_id");
 logout($sel);
 
@@ -269,7 +269,7 @@ $sel->title_is("Suspicious Action");
 $sel->is_text_present_ok("no valid token for the create_bug action while processing the 'post_bug.cgi' script");
 $sel->click_ok("confirm");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug \d+ \S $bug_summary2/, "Bug created");
+$sel->title_like(qr/\d+ \S $bug_summary2/, "Bug created");
 $sel->type_ok("comment", "New comment not allowed");
 $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
@@ -303,9 +303,9 @@ $sel->click_ok("commit");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Bugs processed");
 
-$sel->click_ok("link=bug $bug1_id");
+$sel->click_ok("link=$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug $bug1_id /);
+$sel->title_like(qr/$bug1_id /);
 $sel->selected_label_is("resolution", "WORKSFORME");
 $sel->select_ok("resolution", "label=INVALID");
 edit_bug_and_return($sel, $bug1_id, $bug_summary);
@@ -343,9 +343,9 @@ if ($config->{test_extensions}) {
     $sel->title_is("Bugs processed");
     $sel->is_text_present_ok("Changes submitted for bug $bug1_id");
     $sel->is_text_present_ok("Changes submitted for bug $bug2_id");
-    $sel->click_ok("link=bug $bug2_id");
+    $sel->click_ok("link=$bug2_id");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
-    $sel->title_like(qr/^Bug $bug2_id/);
+    $sel->title_like(qr/^$bug2_id/);
     $sel->selected_label_is("resolution", "MOVED");
     $sel->is_text_present_ok("Bug moved to http://www.foo.com/.");
 
@@ -376,9 +376,9 @@ foreach my $params (["no_token_mass_change", ""], ["invalid_token_mass_change", 
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Bugs processed");
     foreach my $bug_id ($bug1_id, $bug2_id) {
-        $sel->click_ok("link=bug $bug_id");
+        $sel->click_ok("link=$bug_id");
         $sel->wait_for_page_to_load_ok(WAIT_TIME);
-        $sel->title_like(qr/^Bug $bug_id /);
+        $sel->title_like(qr/^$bug_id /);
         $sel->is_text_present_ok($comment);
         next if $bug_id == $bug2_id;
         $sel->go_back_ok();

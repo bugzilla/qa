@@ -72,10 +72,10 @@ ok($text =~ /The sudo session has been started/, "The sudo session has been star
 
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->click_ok("link=Permissions");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("Permissions");
 $sel->is_text_present_ok("There are no permission bits set on your account");
 # We access the page directly as there is no link pointing to it.
 $sel->open_ok("/$config->{bugzilla_installation}/editusers.cgi");
@@ -116,10 +116,17 @@ ok($error_msg =~ /^The user $config->{admin_user_login} may not be impersonated 
 $sel->go_back_ok();
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Begin sudo session");
+# Starting with 5.0, the password field is a type=password and is marked 
+# "required". This means that we need to remove the required attribute from
+# the input so that it can still be checked by the backend code.
+my $script = q{
+    document.getElementById('Bugzilla_password').removeAttribute('required');
+};
+$sel->run_script($script);
 $sel->type_ok("target_login", 'foo@bar.com');
 $sel->click_ok('//input[@value="Begin Session"]');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Invalid Username Or Password");
+$sel->title_is("Invalid Login Or Password");
 
 # Same as above, but with your password.
 

@@ -73,7 +73,7 @@ $sel->is_text_present_ok("One bug found");
 $sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id is on the list");
 $sel->click_ok("link=$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/^Bug $bug1_id /);
+$sel->title_like(qr/^$bug1_id /);
 # The 'QA Contact' label must not be displayed.
 ok(!$sel->is_text_present("QA Contact"), "The QA Contact label is not present");
 logout($sel);
@@ -84,7 +84,7 @@ logout($sel);
 $sel->type_ok("quicksearch_top", $bug1_id);
 $sel->click_ok("find_top");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Access Denied");
+$sel->title_is("Bug Access Denied");
 $sel->is_text_present_ok("You are not authorized to access bug");
 
 # You are still not allowed to access the bug when logged in as the
@@ -99,7 +99,7 @@ $sel->type_ok("Bugzilla_login", $config->{unprivileged_user_login}, "Enter login
 $sel->type_ok("Bugzilla_password", $config->{unprivileged_user_passwd}, "Enter password");
 $sel->click_ok("log_in", undef, "Submit credentials");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Access Denied");
+$sel->title_is("Bug Access Denied");
 $sel->is_text_present_ok("You are not authorized to access bug");
 logout($sel);
 
@@ -115,11 +115,11 @@ logout($sel);
 log_in($sel, $config, 'unprivileged');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 $sel->select_ok("state_addselfcc", "value=never");
 $sel->click_ok("update");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("User Preferences");
+$sel->title_is("General Preferences");
 
 open_advanced_search_page($sel);
 $sel->remove_all_selections_ok("product");
@@ -136,7 +136,7 @@ $sel->is_element_present_ok("b$bug1_id", undef, "Bug $bug1_id is on the list");
 $sel->is_text_present_ok("Test for QA contact");
 $sel->click_ok("link=$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_like(qr/Bug $bug1_id /);
+$sel->title_like(qr/$bug1_id /);
 $sel->click_ok("bz_qa_contact_edit_action");
 $sel->value_is("qa_contact", $config->{unprivileged_user_login}, "The powerless user is the current QA contact");
 $sel->check_ok("set_default_qa_contact");
@@ -146,7 +146,9 @@ edit_bug($sel, $bug1_id, $bug_summary);
 # with the bug. He can no longer see it.
 
 $sel->is_text_present_ok("(list of e-mails not available)");
-$sel->click_ok("link=bug $bug1_id");
+$sel->click_ok("link=$bug1_id");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->title_is("Access Denied");
+$sel->title_is("Bug Access Denied");
 logout($sel);
+
+$sel->stop();
