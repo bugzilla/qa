@@ -31,14 +31,8 @@ foreach my $rpc (@clients) {
 
     my $time_call = $rpc->bz_call_success('Bugzilla.time');
     my $time_result = $time_call->result;
-    foreach my $type (qw(db_time web_time web_time_utc)) {
+    foreach my $type (qw(db_time web_time)) {
         cmp_ok($time_result->{$type}, '=~', $rpc->DATETIME_REGEX, 
                "Bugzilla.time returns a datetime for $type");
     }
-    cmp_ok($time_result->{tz_offset}, '=~', qr/^(?:\+|-)\d{4}$/,
-           "Bugzilla.time's tz_offset is in the right format");
-    cmp_ok($time_result->{tz_short_name}, '=~', qr/^[A-Z]{3,4}/,
-           "Bugzilla.time's tz_short_name is in the right format");
-    cmp_ok($time_result->{tz_name}, '=~', qr{^(?:(?:\w+/\w+)|(?:UTC))$},
-           "Bugzilla.time's tz_name is in the right format");
 }
