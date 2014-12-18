@@ -5,7 +5,7 @@
 use strict;
 use warnings;
 use lib qw(lib);
-use Test::More tests => 15 * 3;
+use Test::More tests => 11 * 3;
 use QA::Util;
 my ($config, @clients) = get_rpc_clients();
 
