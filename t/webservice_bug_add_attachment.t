@@ -34,7 +34,7 @@ sub attach {
 }
 
 my ($public_bug, $private_bug) =
-    $xmlrpc->bz_create_test_bugs($config, 'private');
+    $xmlrpc->bz_create_test_bugs('private');
 my $public_id = $public_bug->{id};
 my $private_id = $private_bug->{id};
 
