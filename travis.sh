@@ -12,33 +12,89 @@ cd $TRAVIS_BUILD_DIR
 # Allow alias expansion inside shell scripts
 shopt -s expand_aliases
 
+alias cpanm='cpanm --quiet --notest --reinstall'
+
+# Basic sanity tests
+if [ "$TEST_SUITE" = "sanity" ]; then
+    echo -en 'travis_fold:start:perl_dependencies\r'
+    echo "== Installing Perl dependencies"a
+    cpanm Authen::Radius
+    cpanm DBI
+    cpanm Daemon::Generic
+    cpanm Date::Format
+    cpanm DateTime::TimeZone
+    cpanm Email::Address
+    cpanm Email::MIME
+    cpanm Email::Reply
+    cpanm Email::Sender::Simple
+    cpanm File::Slurp
+    cpanm JSON::RPC
+    cpanm JSON::XS
+    cpanm LWP::UserAgent
+    cpanm Math::Random::ISAAC
+    cpanm Net::LDAP
+    cpanm PatchReader
+    cpanm Pod::Coverage
+    cpanm Template
+    cpanm Test::Taint
+    cpanm Text::Markdown
+    cpanm TheSchwartz
+    cpanm URI
+    cpanm XMLRPC::Lite
+    echo -en 'travis_fold:end:perl_dependencies\r'
+
+    echo "== Running sanity tests"
+    prove -v -f t/*.t
+    exit $?
+fi
+
+echo "== Updating OS packages"
+sudo apt-get update -qq -y --fix-missing
+
+# Documentation build testing
+if [ "$TEST_SUITE" = "docs" ]; then
+    echo -en 'travis_fold:start:packages\r'
+    echo "== Installing OS packages"
+    sudo apt-get install -qq -y python-sphinx xmlto lynx texlive-lang-cyrillic \
+        ldp-docbook-dsssl jade jadetex
+    echo -en 'travis_fold:end:packages\r'
+
+    # Environment need for docs building
+    export JADE_PUB=/usr/share/sgml/declaration
+    export LDP_HOME=/usr/share/sgml/docbook/stylesheet/dsssl/ldp
+
+    echo "== Running documentation build"
+    cd docs
+    perl makedocs.pl --with-pdf
+    exit $?
+fi
+
 # Package installation section
+EXTRA_PKGS=""
+if [ "$DB" = "pg" ]; then
+    EXTRA_PKGS="postgresql-server-dev-9.3"
+fi
+if [ "$DB" = "mysql" ]; then
+   EXTRA_PKGS="libmysqlclient-dev"
+fi
+
 echo -en 'travis_fold:start:packages\r'
 echo "== Installing OS packages"
-sudo apt-get update -qq -y --fix-missing
-sudo apt-get install -qq -y \
-    perlmagick libssl-dev g++ libgd2-xpm-dev libmysqlclient-dev libpq5 \
-    postgresql-server-dev-9.1 python-sphinx xmlto lynx texlive-lang-cyrillic \
-    ldp-docbook-dsssl jade jadetex lynx apache2 xvfb
+sudo apt-get install -qq -y perlmagick libssl-dev g++ libgd2-xpm-dev libpq5 \
+    apache2 xvfb $EXTRA_PKGS
 echo -en 'travis_fold:end:packages\r'
-
-# Environment need for docs building
-export JADE_PUB=/usr/share/sgml/declaration
-export LDP_HOME=/usr/share/sgml/docbook/stylesheet/dsssl/ldp
 
 # Install dependencies from Build.PL
 echo -en 'travis_fold:start:perl_dependencies\r'
 echo "== Installing Perl dependencies"
-alias cpanm='cpanm --quiet --notest --reinstall'
+cpanm Cache::Memcached::GetParserXS # FIXME test-checksetup.pl fails without this
 cpanm DateTime
-cpanm Module::Build # Need latest build
-cpanm Software::License # Needed by Module::Build to find proper Mozilla license
-cpanm Pod::Coverage
 cpanm DBD::mysql
 cpanm DBD::Pg
-cpanm Cache::Memcached::GetParserXS # FIXME test-checksetup.pl fails without this
-cpanm XMLRPC::Lite # Due to the SOAP::Lite split
+cpanm Module::Build # Need latest build
+cpanm Software::License # Needed by Module::Build to find proper Mozilla license
 cpanm Test::WWW::Selenium # For webservice and selenium tests
+cpanm XMLRPC::Lite # Due to the SOAP::Lite split
 cpanm --installdeps --with-recommends .  # Install dependencies reported by Build.PL
 echo -en 'travis_fold:end:perl_dependencies\r'
 
@@ -47,23 +103,6 @@ echo -en 'travis_fold:end:perl_dependencies\r'
 echo "== Fixing Perl"
 sudo mv /usr/bin/perl /usr/bin/perl.bak
 sudo ln -s $PERLBREW_ROOT/perls/$PERLBREW_PERL/bin/perl /usr/bin/perl
-
-# Basic sanity tests
-if [ "$TEST_SUITE" = "sanity" ]; then
-    echo "== Running sanity tests"
-    perl Build.PL
-    perl Build
-    perl Build test
-    exit $?
-fi
-
-# Documentation build testing
-if [ "$TEST_SUITE" = "docs" ]; then
-    echo "== Running documentation build"
-    cd docs
-    perl makedocs.pl --with-pdf
-    exit $?
-fi
 
 # We need to replace some variables in the config files from the Travis CI environment
 echo "== Updating config files"
