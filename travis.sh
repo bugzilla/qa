@@ -26,6 +26,7 @@ if [ "$TEST_SUITE" = "sanity" ]; then
     cpanm Email::Address
     cpanm Email::MIME
     cpanm Email::Reply
+    cpanm Email::Send
     cpanm Email::Sender::Simple
     cpanm File::Slurp
     cpanm JSON::RPC
