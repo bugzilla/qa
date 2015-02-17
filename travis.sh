@@ -73,10 +73,10 @@ fi
 # Package installation section
 EXTRA_PKGS=""
 if [ "$DB" = "pg" ]; then
-    EXTRA_PKGS="postgresql-server-dev-9.3"
+    EXTRA_PKGS="postgresql-server-dev-9.1"
 fi
 if [ "$DB" = "mysql" ]; then
-   EXTRA_PKGS="libmysqlclient-dev"
+    EXTRA_PKGS="libmysqlclient-dev"
 fi
 
 echo -en 'travis_fold:start:packages\r'
@@ -88,10 +88,14 @@ echo -en 'travis_fold:end:packages\r'
 # Install dependencies from Build.PL
 echo -en 'travis_fold:start:perl_dependencies\r'
 echo "== Installing Perl dependencies"
-cpanm Cache::Memcached::GetParserXS # FIXME test-checksetup.pl fails without this
 cpanm DateTime
-cpanm DBD::mysql
-cpanm DBD::Pg
+if [ "$DB" = "pg" ]; then
+    cpanm DBD::Pg
+fi
+if [ "$DB" = "mysql" ]; then
+    cpanm DBD::mysql
+fi
+cpanm Cache::Memcached::GetParserXS # FIXME test-checksetup.pl fails without this
 cpanm Module::Build # Need latest build
 cpanm Software::License # Needed by Module::Build to find proper Mozilla license
 cpanm Test::WWW::Selenium # For webservice and selenium tests
@@ -119,19 +123,6 @@ if [ "$TEST_SUITE" == "checksetup" ]; then
     sed -e "s?%DB_NAME%?bugs_checksetup?g" --in-place qa/config/checksetup_answers.txt
 else
     sed -e "s?%DB_NAME%?bugs?g" --in-place qa/config/checksetup_answers.txt
-fi
-
-# MySQL related setup
-if [ "$DB" = "mysql" ]; then
-    echo "== Setting up MySQL"
-    mysql -u root mysql -e "GRANT ALL PRIVILEGES ON *.* TO bugs@localhost IDENTIFIED BY 'bugs'; FLUSH PRIVILEGES;"
-fi
-
-# PostgreSQL related setup
-if [ "$DB" = "pg" ]; then
-    echo "== Setting up PostgreSQL"
-    sudo -u postgres createuser --superuser bugs
-    sudo -u postgres psql -U postgres -d postgres -c "alter user bugs with password 'bugs';"
 fi
 
 # Checksetup test which tests schema changes from older versions to the current
