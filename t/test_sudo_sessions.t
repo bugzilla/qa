@@ -95,7 +95,13 @@ $sel->title_is("Password Required");
 # Now try to start a sudo session directly, with all required credentials.
 
 $sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi?action=begin-sudo&Bugzilla_login=$config->{admin_user_login}&Bugzilla_password=$config->{admin_user_passwd}&target_login=$config->{admin_user_login}", undef, "Impersonate a user directly by providing all required data");
-$sel->title_is("Untrusted Authentication Request");
+# A direct access to the page is supposed to have no Referer header set,
+# which would trigger the "Untrusted Authentication Request" error, but
+# due to the way Selenium works, the Referer header is set and the
+# "Preparation Required" error is thrown instead. In any case, one of
+# those two errors must be thrown.
+my $title = $sel->get_title();
+ok($title eq "Untrusted Authentication Request" || $title eq "Preparation Required", $title);
 
 # Now try to sudo an admin, which is not allowed.
 
