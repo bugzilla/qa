@@ -15,7 +15,7 @@ if ($sel->is_text_present("My QA query")) {
     $sel->click_ok("link=My QA query");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Bug List: My QA query");
-    $sel->click_ok("link=Forget Search 'My QA query'");
+    $sel->click_ok("forget_search");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
     $sel->title_is("Search is gone");
     $sel->is_text_present_ok("OK, the My QA query search is gone.");
