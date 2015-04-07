@@ -85,7 +85,7 @@ sudo apt-get install -qq -y perlmagick libssl-dev g++ libgd2-xpm-dev libpq5 \
     apache2 xvfb $EXTRA_PKGS
 echo -en 'travis_fold:end:packages\r'
 
-# Install dependencies from Build.PL
+# Install Perl dependencies
 echo -en 'travis_fold:start:perl_dependencies\r'
 echo "== Installing Perl dependencies"
 cpanm DateTime
@@ -100,7 +100,20 @@ cpanm Module::Build # Need latest build
 cpanm Software::License # Needed by Module::Build to find proper Mozilla license
 cpanm Test::WWW::Selenium # For webservice and selenium tests
 cpanm XMLRPC::Lite # Due to the SOAP::Lite split
-cpanm --installdeps --with-recommends .  # Install dependencies reported by Build.PL
+cpanm File::Slurp # For checksetup.pl to work
+
+CPANM_DB_EXCLUDES="--without-feature oracle --without-feature sqlite"
+if [ "$DB" = "pg" ]; then
+    cpanm DBD::Pg
+    CPANM_DB_EXCLUDES="$CPANM_DB_EXCLUDES --without-feature mysql"
+fi
+if [ "$DB" = "mysql" ]; then
+    cpanm DBD::mysql
+    CPANM_DB_EXCLUDES="$CPANM_DB_EXCLUDES --without-feature pg"
+fi
+
+perl checksetup.pl --cpanfile
+cpanm --installdeps --with-recommends --with-all-features $CPANM_DB_EXCLUDES .
 echo -en 'travis_fold:end:perl_dependencies\r'
 
 # Link /usr/bin/perl to the current perlbrew perl so that the Bugzilla cgi scripts will work properly
