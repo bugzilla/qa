@@ -48,9 +48,9 @@ log_in($sel, $config, 'admin');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("General Preferences");
-$sel->click_ok("link=Email Preferences");
+$sel->click_ok("link=Email Notifications");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->is_text_present_ok("Email Preferences");
+$sel->is_text_present_ok("Email Notifications");
 $sel->click_ok("//input[\@value='Disable All Mail']");
 $sel->click_ok("email-0-1", undef, 'Set "I\'m added to or removed from this capacity" for Assignee role');
 $sel->click_ok("email-0-5", undef, 'Set "The priority, status, severity, or milestone changes" for Assignee role');
@@ -121,7 +121,7 @@ $sel->value_is("email-100-100", "off");
 $sel->value_is("email-100-101", "on");
 $sel->click_ok("update", undef, "Submit modified admin email preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->is_text_present_ok("The changes to your email preferences have been saved.");
+$sel->is_text_present_ok("The changes to your email notifications have been saved.");
 
 # Set "After changing a bug" default preference to "Show the updated bug"
 # This simplifies bug changes below
@@ -140,10 +140,10 @@ log_in($sel, $config, 'editbugs');
 $sel->click_ok("link=Preferences");
 $sel->wait_for_page_to_load(WAIT_TIME);
 $sel->title_is("General Preferences");
-$sel->click_ok("link=Email Preferences");
+$sel->click_ok("link=Email Notifications");
 $sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("Email Preferences");
-$sel->is_text_present_ok("Email Preferences");
+$sel->title_is("Email Notifications");
+$sel->is_text_present_ok("Email Notifications");
 $sel->click_ok("//input[\@value='Enable All Mail']");
 $sel->click_ok("email-3-1", undef, 'Clear "I\'m added to or removed from this capacity" for CCed role');
 $sel->click_ok("email-3-5", undef, 'Clear "The priority, status, severity, or milestone changes" for CCed role');
@@ -211,14 +211,14 @@ $sel->value_is("email-100-100", "on");
 $sel->value_is("email-100-101", "off");
 $sel->click_ok("update", undef, "Submit modified normal user email preferences");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
-$sel->is_text_present_ok("The changes to your email preferences have been saved.");
+$sel->is_text_present_ok("The changes to your email notifications have been saved.");
 
 # Create a test bug (bugmail to both normal user and admin)
 file_bug_in_product($sel, "Another Product");
 $sel->select_ok("component", "label=c1");
 my $bug_summary = "Selenium Email Preference test bug";
 $sel->type_ok("short_desc", $bug_summary, "Enter bug summary");
-$sel->type_ok("comment", "Created by Selenium to test Email Preferences", "Enter bug description");
+$sel->type_ok("comment", "Created by Selenium to test Email Notifications", "Enter bug description");
 $sel->type_ok("assigned_to", $config->{editbugs_user_login});
 $sel->type_ok("qa_contact", $config->{admin_user_login});
 $sel->type_ok("cc", $config->{admin_user_login});
