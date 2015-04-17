@@ -94,7 +94,7 @@ $sel->is_text_present_ok("You are not authorized to access bug");
 $sel->click_ok("link=log in to an account", undef, "Log in");
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Log in to Bugzilla");
-$sel->is_text_present_ok("Bugzilla needs a legitimate login and password to continue.");
+$sel->is_text_present_ok("Bugzilla needs a legitimate login and password to continue");
 $sel->type_ok("Bugzilla_login", $config->{unprivileged_user_login}, "Enter login name");
 $sel->type_ok("Bugzilla_password", $config->{unprivileged_user_passwd}, "Enter password");
 $sel->click_ok("log_in", undef, "Submit credentials");
