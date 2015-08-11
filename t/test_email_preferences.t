@@ -9,9 +9,14 @@ use QA::Util;
 my ($sel, $config) = get_selenium();
 
 # Used to test sent bugmails
+use constant RCPT_BOTH   => 1;
+use constant RCPT_ADMIN  => 2;
+use constant RCPT_NORMAL => 3;
+use constant RCPT_NONE   => 4;
 my @email_both = ($config->{admin_user_login}, $config->{editbugs_user_login});
 my @email_admin = ($config->{admin_user_login});
 my @email_normal = ($config->{editbugs_user_login});
+my @email_none = ("no one");
 
 # Test script to test email preferences.
 # For reference, following bugmail and request mails should be generated.
@@ -223,8 +228,7 @@ $sel->type_ok("assigned_to", $config->{editbugs_user_login});
 $sel->type_ok("qa_contact", $config->{admin_user_login});
 $sel->type_ok("cc", $config->{admin_user_login});
 my $bug1_id = create_bug($sel, $bug_summary);
-my @email_sentto = get_email_sentto($sel);
-is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
+verify_bugmail_recipients($sel, RCPT_BOTH);
 
 # Make normal user changes (first pass)
 #
@@ -233,27 +237,23 @@ go_to_bug($sel, $bug1_id);
 $sel->select_ok("bug_severity", "label=blocker");
 $sel->selected_label_is("bug_severity", "blocker");
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_normal, \@email_sentto, "Normal user got bugmail");
+verify_bugmail_recipients($sel, RCPT_NORMAL);
 # Add a comment (bugmail to no one)
 $sel->type_ok("comment", "This is a Selenium generated normal user test comment 1 of 2. (No bugmail should be generated for this.)");
 $sel->value_is("comment", "This is a Selenium generated normal user test comment 1 of 2. (No bugmail should be generated for this.)");
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-ok($email_sentto[0] eq "no one", "No bugmail sent");
+verify_bugmail_recipients($sel, RCPT_NONE);
 # Add normal user to CC list (bugmail to admin but not normal user)
 $sel->type_ok("newcc", $config->{editbugs_user_login});
 $sel->value_is("newcc", $config->{editbugs_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
+verify_bugmail_recipients($sel, RCPT_ADMIN);
 # Request a flag from admin (bugmail to no one, request mail to no one)
 $sel->select_ok("flag_type-1", "label=?");
 $sel->type_ok("requestee_type-1", $config->{admin_user_login});
 $sel->value_is("requestee_type-1", $config->{admin_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-ok($email_sentto[0] eq "no one", "No bugmail sent");
+verify_bugmail_recipients($sel, RCPT_NONE);
 
 # Make admin changes
 #
@@ -264,40 +264,34 @@ go_to_bug($sel, $bug1_id);
 $sel->select_ok("bug_severity", "label=trivial");
 $sel->selected_label_is("bug_severity", "trivial");
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_normal, \@email_sentto, "Normal user got bugmail");
+verify_bugmail_recipients($sel, RCPT_NORMAL);
 # Add a comment (bugmail to normal user but not admin)
 $sel->type_ok("comment", "This is a Selenium generated admin user test comment. (Only normal user should get bugmail for this.)");
 $sel->value_is("comment", "This is a Selenium generated admin user test comment. (Only normal user should get bugmail for this.)");
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_normal, \@email_sentto, "Normal user got bugmail");
+verify_bugmail_recipients($sel, RCPT_NORMAL);
 # Remove normal user from CC list (bugmail to both normal user and admin)
 $sel->click_ok("removecc");
 $sel->add_selection_ok("cc", "label=$config->{editbugs_user_login}");
 $sel->value_is("removecc", "on");
 $sel->selected_label_is("cc", $config->{editbugs_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
+verify_bugmail_recipients($sel, RCPT_BOTH);
 # Reassign bug to admin user (bugmail to both normal user and admin)
 $sel->type_ok("assigned_to", $config->{admin_user_login});
 $sel->value_is("assigned_to", $config->{admin_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
+verify_bugmail_recipients($sel, RCPT_BOTH);
 # Request a flag from normal user (bugmail to admin but not normal user and request mail to admin)
 $sel->select_ok("flag_type-1", "label=?");
 $sel->type_ok("requestee_type-1", $config->{editbugs_user_login});
 $sel->value_is("requestee_type-1", $config->{editbugs_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
+verify_bugmail_recipients($sel, RCPT_ADMIN);
 # Grant a normal user flag request (bugmail to admin but not normal user and request mail to no one)
 my $flag1_id = set_flag($sel, $config->{admin_user_login}, "?", "+");
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
+verify_bugmail_recipients($sel, RCPT_ADMIN);
 
 # Make normal user changes (second pass)
 #
@@ -308,31 +302,26 @@ go_to_bug($sel, $bug1_id);
 $sel->select_ok("bug_severity", "label=normal");
 $sel->selected_label_is("bug_severity", "normal");
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_both, \@email_sentto, "Admin and normal user got bugmail");
+verify_bugmail_recipients($sel, RCPT_BOTH);
 # Add a comment (bugmail to admin but not normal user)
 $sel->type_ok("comment", "This is a Selenium generated normal user test comment 2 of 2. (Only admin should get bugmail for this.)");
 $sel->value_is("comment", "This is a Selenium generated normal user test comment 2 of 2. (Only admin should get bugmail for this.)");
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
+verify_bugmail_recipients($sel, RCPT_ADMIN);
 # Reassign to normal user (bugmail to admin but not normal user)
 $sel->type_ok("assigned_to", $config->{editbugs_user_login});
 $sel->value_is("assigned_to", $config->{editbugs_user_login});
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-is_deeply(\@email_admin, \@email_sentto, "Admin got bugmail");
+verify_bugmail_recipients($sel, RCPT_ADMIN);
 # Deny a flag requested by admin (bugmail to no one and request mail to admin)
 my $flag2_id = set_flag($sel, $config->{editbugs_user_login}, "?", "-");
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-ok($email_sentto[0] eq "no one", "No bugmail sent");
+verify_bugmail_recipients($sel, RCPT_NONE);
 # Cancel both flags (bugmail and request mail to no one)
 set_flag($sel, undef, "+", "X", $flag1_id);
 set_flag($sel, undef, "-", "X", $flag2_id);
 edit_bug($sel, $bug1_id, $bug_summary);
-@email_sentto = get_email_sentto($sel);
-ok($email_sentto[0] eq "no one", "No bugmail sent");
+verify_bugmail_recipients($sel, RCPT_NONE);
 logout($sel);
 
 # Set "After changing a bug" default preference back to "Do Nothing".
@@ -348,9 +337,44 @@ $sel->title_is("Default Preferences");
 logout($sel);
 
 # Help functions
-sub get_email_sentto {
-    my ($sel) = @_;
-    return sort split(/, /, $sel->get_text("//dt[text()='Email sent to:']/following-sibling::dd"));
+sub verify_bugmail_recipients {
+    my ($sel, $rcpt_sentto) = @_;
+    my $wanted_sentto;
+    my $err = 0;
+
+    # Verify sentto field
+    my @email_sentto
+        = sort split(/, /, $sel->get_text("//dt[text()='Email sent to:']/following-sibling::dd"));
+    if ($rcpt_sentto == RCPT_BOTH) {
+      $wanted_sentto = \@email_both;
+      is_deeply(\@email_sentto, $wanted_sentto, "Bugmail sent to both")
+          or $err = 1;
+    }
+    elsif ($rcpt_sentto == RCPT_ADMIN) {
+      $wanted_sentto = \@email_admin;
+      is_deeply(\@email_sentto, $wanted_sentto, "Bugmail sent to admin")
+          or $err = 1;
+    }
+    elsif ($rcpt_sentto == RCPT_NORMAL) {
+      $wanted_sentto = \@email_normal;
+      is_deeply(\@email_sentto, $wanted_sentto, "Bugmail sent to normal user")
+          or $err = 1;
+    } else {
+      $wanted_sentto = \@email_none;
+      is_deeply(\@email_sentto, $wanted_sentto, "Bugmail sent to no one")
+          or $err = 1;
+    }
+
+    # In case of an error, retrieve and show diagnostics info
+    if ($err) {
+        diag("Sent, actual     : " . join(', ', @email_sentto));
+        diag("Sent, wanted     : " . join(', ', @$wanted_sentto));
+        diag("Changer          : " . trim($sel->get_text('//a[contains(@href, "logout")]/../text()[3]')));
+        diag("Reporter         : " . $sel->get_attribute('//th[contains(text(), "Reported:")]/following-sibling::td//a@title'));
+        diag("Assignee         : " . $sel->get_value('assigned_to'));
+        diag("QA contact       : " . $sel->get_value('qa_contact'));
+        diag("CC List          : " . join(', ', $sel->get_select_options('cc')));
+    }
 }
 
 sub set_flag {
