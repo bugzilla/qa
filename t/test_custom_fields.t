@@ -302,7 +302,9 @@ $sel->title_is("New Field Value Created");
 
 go_to_bug($sel, $bug1_id);
 my @labels = $sel->get_select_options("cf_qa_list_$bug1_id");
-ok(!grep(/^ghost$/, @labels), "ghost is not in the DOM of the page...");
+ok(grep(/^ghost$/, @labels), "ghost is in the DOM of the page...");
+my $disabled = $sel->get_attribute("v4_cf_qa_list_$bug1_id\@disabled");
+ok($disabled, "... but is not available for selection by default");
 $sel->select_ok("bug_status", "label=RESOLVED");
 $sel->select_ok("resolution", "label=FIXED");
 $sel->select_ok("cf_qa_list_$bug1_id", "label=ghost");
