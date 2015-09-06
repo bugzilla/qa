@@ -29,7 +29,7 @@ $sel->type_ok("votestoconfirm", 3);
 $sel->type_ok("component", "Pegasus");
 $sel->type_ok("comp_desc", "A constellation in the north hemisphere.");
 $sel->type_ok("initialowner", $config->{permanent_user}, "Setting the default owner");
-$sel->click_ok('//input[@type="submit" and @value="Add"]');
+$sel->click_ok('add-product');
 $sel->wait_for_page_to_load_ok(WAIT_TIME);
 $sel->title_is("Product Created");
 
