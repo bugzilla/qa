@@ -122,7 +122,7 @@ my $fields = {
     },
     alias => {
         long => {
-            faultstring => 'Bug aliases cannot be longer than 20 characters',
+            faultstring => 'Bug aliases cannot be longer than 40 characters',
             value       => 'MyyyyyyyyyyyyyyyyyyBugggggggggggggggggggggg'
         },
         existing => {
