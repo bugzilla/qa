@@ -61,6 +61,9 @@ foreach my $account (@accounts) {
 
 # These accounts are illegal.
 @accounts = ('test\bugzilla@bugzilla.test', 'test@bugzilla.org@bugzilla.test');
+# Logins larger than 127 characters must be rejected, for security reasons.
+push  @accounts, 'selenium-' . random_string(110) . '@bugzilla.test';
+
 foreach my $account (@accounts) {
     $sel->click_ok("link=New Account");
     $sel->wait_for_page_to_load_ok(WAIT_TIME);
