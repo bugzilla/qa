@@ -95,7 +95,7 @@ $sel->title_is("Password Required");
 # Now try to start a sudo session directly, with all required credentials.
 
 $sel->open_ok("/$config->{bugzilla_installation}/relogin.cgi?action=begin-sudo&Bugzilla_login=$config->{admin_user_login}&Bugzilla_password=$config->{admin_user_passwd}&target_login=$config->{admin_user_login}", undef, "Impersonate a user directly by providing all required data");
-$sel->title_is("Untrusted Authentication Request");
+$sel->title_is("Preparation Required");
 
 # Now try to sudo an admin, which is not allowed.
 
