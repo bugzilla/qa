@@ -517,6 +517,10 @@ if (Bugzilla->params->{timetrackinggroup} ne 'editbugs') {
 ########################
 
 my $test_user = Bugzilla::User->check($config->{QA_Selenium_TEST_user_login});
+$test_user->{'groups'} = [
+    Bugzilla::Group->new({ name => 'editbugs' }),
+    Bugzilla::Group->new({ name => 'QA-Selenium-TEST' })
+]; # editbugs is needed for alias creation
 Bugzilla->set_user($test_user);
 
 if (Bugzilla::Bug->new('private_bug')->{error}) {
