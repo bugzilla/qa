@@ -13,9 +13,30 @@ use Test::More;
 use Data::Dumper;
 
 my ($config, @clients) = get_rpc_clients();
-plan tests => $config->{test_extensions} ? 515 : 506;
+plan tests => $config->{test_extensions} ? 531 : 522;
 
 my ($public_bug, $private_bug) = $clients[0]->bz_create_test_bugs('private');
+ 
+# Add aliases to both bugs
+$public_bug->{alias}  = random_string(40);
+$private_bug->{alias} = random_string(40);
+my $alias_tests = [
+    { user => 'editbugs',
+      args => { ids => [ $public_bug->{id} ], alias => $public_bug->{alias} },
+      test => 'Add alias to public bug' },
+    { user => PRIVATE_BUG_USER,
+      args => { ids => [ $private_bug->{id} ],
+                cc  => { add => [ $config->{'editbugs_user_login'} ] } },
+      test => 'Add editusers to cc of private bug' },
+    { user => 'editbugs',
+      args => { ids => [ $private_bug->{id} ], alias => $private_bug->{alias} },
+      test => 'Add alias to private bug' },
+    { user => PRIVATE_BUG_USER,
+      args => { ids => [ $private_bug->{id} ],
+                cc  => { remove => [ $config->{'editbugs_user_login'} ] } },
+      test => 'Remove editusers from cc of private bug' },
+];
+$clients[0]->bz_run_tests(tests => $alias_tests, method => 'Bug.update');
 
 my @tests;
 foreach my $field (keys %$public_bug) {
@@ -27,7 +48,6 @@ foreach my $field (keys %$public_bug) {
     }
     push(@tests, $test);
 }
-
 
 push(@tests, (
     { args  => { offset => 1 },
@@ -98,7 +118,7 @@ push(@tests, (
 
     # Logged-in user who can see private bugs
     { user => PRIVATE_BUG_USER,
-      args => { alias => [$public_bug->{alias}->[0], $private_bug->{alias}->[0]] },
+      args => { alias => [$public_bug->{alias}, $private_bug->{alias}] },
       test => 'Search using two aliases (including one private)',
       bugs => 2, exactly => 1,
     },
