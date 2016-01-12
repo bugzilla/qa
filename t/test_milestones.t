@@ -8,12 +8,11 @@ use QA::Util;
 
 my ($sel, $config) = get_selenium();
 
-# 1st step: turn on usetargetmilestone, musthavemilestoneonaccept and letsubmitterchoosemilestone.
+# 1st step: turn on usetargetmilestone and letsubmitterchoosemilestone.
 
 log_in($sel, $config, 'admin');
 set_parameters($sel, {'Bug Fields'          => {'usetargetmilestone-on'          => undef},
-                      'Bug Change Policies' => {'musthavemilestoneonaccept-on'   => undef,
-                                                'letsubmitterchoosemilestone-on' => undef},
+                      'Bug Change Policies' => {'letsubmitterchoosemilestone-on' => undef},
                      }
               );
 
@@ -45,15 +44,10 @@ $sel->type_ok("short_desc", $bug_summary);
 $sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept'");
 my $bug1_id = create_bug($sel, $bug_summary);
 
-# 4th step: edit the bug (test musthavemilestoneonaccept ON).
+# 4th step: edit the bug
 
-$sel->select_ok("bug_status", "label=IN_PROGRESS", "Change bug status to IN_PROGRESS");
-$sel->click_ok("commit", undef, "Save changes");
-$sel->wait_for_page_to_load(WAIT_TIME);
-$sel->title_is("Milestone Required", "Change rejected: musthavemilestoneonaccept is on but the milestone selected is the default one");
-$sel->is_text_present_ok("You must select a target milestone", undef, "Display error message");
-# We cannot use go_back_ok() because we just left post_bug.cgi where data has been submitted using POST.
 go_to_bug($sel, $bug1_id);
+$sel->select_ok("bug_status", "label=IN_PROGRESS", "Change bug status to IN_PROGRESS");
 $sel->select_ok("target_milestone", "label=2.0", "Select a non-default milestone");
 edit_bug($sel, $bug1_id, $bug_summary);
 
@@ -65,10 +59,10 @@ $sel->selected_label_is("component", "TestComponent", "Component already selecte
 $sel->selected_label_is("version", "unspecified", "Version already selected (no other version defined)");
 my $bug_summary2 = "Target Milestone set to non-default";
 $sel->type_ok("short_desc", $bug_summary2);
-$sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept'");
+$sel->type_ok("comment", "Created by Selenium to test milestone support");
 my $bug2_id = create_bug($sel, $bug_summary2);
 
-# 6th step: edit the bug (test musthavemilestoneonaccept ON).
+# 6th step: edit the bug
 
 $sel->select_ok("bug_status", "label=IN_PROGRESS");
 edit_bug($sel, $bug2_id, $bug_summary2);
@@ -136,16 +130,10 @@ $sel->selected_label_is("target_milestone", "---", "Default milestone selected")
 $sel->selected_label_is("component", "TestComponent");
 my $bug_summary3 = "Only one Target Milestone available";
 $sel->type_ok("short_desc", $bug_summary3);
-$sel->type_ok("comment", "Created by Selenium to test 'musthavemilestoneonaccept'");
+$sel->type_ok("comment", "Created by Selenium to test milestone support");
 my $bug3_id = create_bug($sel, $bug_summary3);
-
-# 10th step: musthavemilestoneonaccept must have no effect as there is
-#            no other milestone available besides the default one.
 
 $sel->select_ok("bug_status", "label=IN_PROGRESS");
 edit_bug($sel, $bug3_id, $bug_summary3);
 
-# 11th step: turn musthavemilestoneonaccept back to OFF.
-
-set_parameters($sel, {'Bug Change Policies' => {'musthavemilestoneonaccept-off' => undef}});
 logout($sel);
