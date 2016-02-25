@@ -7,8 +7,11 @@
 
 package Bugzilla::Extension::QA::Util;
 
+use 5.10.1;
 use strict;
-use base qw(Exporter);
+use warnings;
+
+use parent qw(Exporter);
 
 our @EXPORT = qw(
     parse_output
