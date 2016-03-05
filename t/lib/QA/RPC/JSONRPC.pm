@@ -1,7 +1,15 @@
-# -*- Mode: perl; indent-tabs-mode: nil -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# This Source Code Form is "Incompatible With Secondary Licenses", as
+# defined by the Mozilla Public License, v. 2.0.
 
 package QA::RPC::JSONRPC;
+
+use 5.10.1;
 use strict;
+use warnings;
 
 use QA::RPC;
 BEGIN {
@@ -113,7 +121,10 @@ sub _get {
 1;
 
 package QA::RPC::JSONRPC::ReturnObject;
+
+use 5.10.1;
 use strict;
+use warnings;
 
 BEGIN {
     if (eval { require JSON::RPC::Client }) {
@@ -136,8 +147,12 @@ sub fault { $_[0]->is_error }
 1;
 
 package QA::RPC::UserAgent;
+
+use 5.10.1;
 use strict;
-use base qw(LWP::UserAgent);
+use warnings;
+
+use parent qw(LWP::UserAgent);
 
 ########################################
 # Consistency with XMLRPC::Lite's ->ua #
@@ -159,3 +174,5 @@ sub http_response {
     if (@_) { $self->{'_http_response'} = shift; return $self }
     return $self->{'_http_response'};
 }
+
+1;

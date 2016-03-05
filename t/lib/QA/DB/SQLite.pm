@@ -5,10 +5,11 @@
 # This Source Code Form is "Incompatible With Secondary Licenses", as
 # defined by the Mozilla Public License, v. 2.0.
 
+package QA::DB::SQLite;
+
+use 5.10.1;
 use strict;
 use warnings;
-
-package QA::DB::SQLite;
 
 use DBI;
 use File::Basename;
